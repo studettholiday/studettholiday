@@ -59,7 +59,17 @@ const STUDENT_SCHEDULE = [
   { day: 'Saturday',  time: '12:00', subject: 'Band Practice' },
 ];
 
-const STUDENT_GROUPS = ALL_GROUP_NAMES.slice(0, 3);
+const STUDENT_GROUPS          = ALL_GROUP_NAMES.slice(0, 3);
+const STUDENT_CURRENT_GROUP   = 'Guitar Beginners';
+const STUDENT_ENROLLED        = ['Guitar Basics', 'Music Theory'];
+const ALL_SUBJECTS             = ['Guitar Basics', 'Music Theory', 'Vocals', 'Band Practice'];
+
+const INIT_REQUESTS = [
+  { id: 1, student: 'Ana K.',    type: 'Change group',   desc: 'Guitar Beginners → Guitar Advanced', status: 'pending' },
+  { id: 2, student: 'Giorgi M.', type: 'Add subject',    desc: 'Vocals',                             status: 'pending' },
+  { id: 3, student: 'Nino T.',   type: 'Remove subject', desc: 'Band',                               status: 'pending' },
+  { id: 4, student: 'Luka B.',   type: 'Change group',   desc: 'Vocals A → Band Practice',           status: 'pending' },
+];
 
 const LIBRARY_CATS = [
   { label: 'Beginner Chords', icon: '🎸', desc: 'Am, Em, G, C, D'   },
@@ -103,6 +113,10 @@ const PANEL_TITLES = {
   'notes':           'Notes',
   'practice-diary':  'Practice Diary',
   'report-absence':  'Report Absence',
+  'change-group':    'Change Group',
+  'add-subject':     'Add Subject',
+  'remove-subject':  'Remove Subject',
+  'requests':        'Requests',
 };
 
 // ─── Admin / Assistant panels ─────────────────────────────────────────────────
@@ -340,6 +354,51 @@ function InvitePanel({ role }) {
   );
 }
 
+function AssistantRequestsPanel() {
+  const [requests, setRequests] = useState(INIT_REQUESTS);
+
+  function resolve(id, status) {
+    setRequests(rs => rs.map(r => r.id === id ? { ...r, status } : r));
+  }
+
+  return (
+    <div className="space-y-2">
+      {requests.map(r => (
+        <div key={r.id} className={`rounded-xl border p-3 transition-colors ${
+          r.status === 'approved' ? 'border-emerald-500/30 bg-emerald-500/[0.07]' :
+          r.status === 'rejected' ? 'border-red-500/30 bg-red-500/[0.07]' :
+          'border-white/10 bg-white/[0.02]'
+        }`}>
+          <p className="text-xs text-white">
+            <span className="font-medium">{r.student}</span>
+            <span className="text-gray-400"> · {r.type}: </span>
+            <span>{r.desc}</span>
+          </p>
+          {r.status === 'pending' ? (
+            <div className="flex gap-2 mt-2">
+              <button onClick={() => resolve(r.id, 'approved')}
+                className="text-xs px-2.5 py-1 rounded-lg bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/40 transition-colors">
+                ✅ Approve
+              </button>
+              <button onClick={() => resolve(r.id, 'rejected')}
+                className="text-xs px-2.5 py-1 rounded-lg bg-red-600/20 text-red-400 hover:bg-red-600/40 transition-colors">
+                ❌ Reject
+              </button>
+            </div>
+          ) : (
+            <p className={`text-xs mt-1 font-medium ${r.status === 'approved' ? 'text-emerald-400' : 'text-red-400'}`}>
+              {r.status === 'approved' ? '✅ Approved' : '❌ Rejected'}
+            </p>
+          )}
+        </div>
+      ))}
+      {requests.every(r => r.status !== 'pending') && (
+        <p className="text-xs text-gray-500 text-center py-2">All requests resolved.</p>
+      )}
+    </div>
+  );
+}
+
 // ─── Teacher panels ───────────────────────────────────────────────────────────
 
 function MySchedulePanel() {
@@ -526,6 +585,109 @@ function StudentReportAbsencePanel() {
   );
 }
 
+function StudentChangeGroupPanel() {
+  const available = ALL_GROUP_NAMES.filter(g => g !== STUDENT_CURRENT_GROUP);
+  const [newGroup, setNewGroup] = useState(available[0]);
+  const [reason, setReason] = useState('');
+  const [sent, setSent] = useState(false);
+
+  function submit() { if (newGroup) { setSent(true); setReason(''); setTimeout(() => setSent(false), 3000); } }
+
+  return (
+    <div className="space-y-3">
+      <div className="rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2">
+        <p className="text-xs text-gray-500">Current group</p>
+        <p className="text-sm text-white font-medium mt-0.5">{STUDENT_CURRENT_GROUP}</p>
+      </div>
+      <div>
+        <p className="text-xs text-gray-500 mb-1.5">Request transfer to</p>
+        <select value={newGroup} onChange={e => setNewGroup(e.target.value)} style={{ colorScheme: 'dark' }}
+          className={`${FIELD} cursor-pointer`}>
+          {available.map(g => <option key={g}>{g}</option>)}
+        </select>
+      </div>
+      <textarea rows={2} value={reason} onChange={e => setReason(e.target.value)}
+        placeholder="Reason for transfer (optional)…" className={FIELD} />
+      {sent
+        ? <p className="text-emerald-400 text-sm">✅ Request sent to assistant</p>
+        : <button onClick={submit}
+            className="rounded-xl bg-emerald-600 hover:bg-emerald-500 px-4 py-2 text-sm text-white font-medium transition-colors">
+            Submit Request
+          </button>
+      }
+    </div>
+  );
+}
+
+function StudentAddSubjectPanel() {
+  const available = ALL_SUBJECTS.filter(s => !STUDENT_ENROLLED.includes(s));
+  const [subject, setSubject] = useState(available[0] ?? '');
+  const [sent, setSent] = useState(false);
+
+  function submit() { if (subject) { setSent(true); setTimeout(() => setSent(false), 3000); } }
+
+  return (
+    <div className="space-y-3">
+      <div className="rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2">
+        <p className="text-xs text-gray-500 mb-1">Currently enrolled</p>
+        <div className="flex flex-wrap gap-1.5">
+          {STUDENT_ENROLLED.map(s => (
+            <span key={s} className="text-xs bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full">{s}</span>
+          ))}
+        </div>
+      </div>
+      <div>
+        <p className="text-xs text-gray-500 mb-1.5">Subject to add</p>
+        <select value={subject} onChange={e => setSubject(e.target.value)} style={{ colorScheme: 'dark' }}
+          className={`${FIELD} cursor-pointer`}>
+          {available.map(s => <option key={s}>{s}</option>)}
+        </select>
+      </div>
+      {sent
+        ? <p className="text-emerald-400 text-sm">✅ Request sent to assistant</p>
+        : <button onClick={submit} disabled={!subject}
+            className="rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
+            Submit Request
+          </button>
+      }
+    </div>
+  );
+}
+
+function StudentRemoveSubjectPanel() {
+  const [checked, setChecked] = useState([]);
+  const [sent, setSent] = useState(false);
+
+  function toggle(s) { setChecked(cs => cs.includes(s) ? cs.filter(x => x !== s) : [...cs, s]); }
+  function submit() { if (checked.length) { setSent(true); setChecked([]); setTimeout(() => setSent(false), 3000); } }
+
+  return (
+    <div className="space-y-3">
+      <p className="text-xs text-gray-500">Select subjects to remove</p>
+      <div className="space-y-2">
+        {STUDENT_ENROLLED.map(s => (
+          <label key={s} className="flex items-center gap-3 cursor-pointer rounded-xl border border-white/10 px-3 py-2 hover:bg-white/[0.03] transition-colors">
+            <input
+              type="checkbox"
+              checked={checked.includes(s)}
+              onChange={() => toggle(s)}
+              className="accent-emerald-500 w-4 h-4 flex-shrink-0"
+            />
+            <span className="text-sm text-white">{s}</span>
+          </label>
+        ))}
+      </div>
+      {sent
+        ? <p className="text-emerald-400 text-sm">✅ Request sent to assistant</p>
+        : <button onClick={submit} disabled={!checked.length}
+            className="rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
+            Submit Request
+          </button>
+      }
+    </div>
+  );
+}
+
 // ─── Panel router ─────────────────────────────────────────────────────────────
 
 function panelContent(role, panel) {
@@ -546,6 +708,10 @@ function panelContent(role, panel) {
     case 'notes':           return <StudentNotesPanel />;
     case 'practice-diary':  return <StudentPracticeDiaryPanel />;
     case 'report-absence':  return <StudentReportAbsencePanel />;
+    case 'change-group':    return <StudentChangeGroupPanel />;
+    case 'add-subject':     return <StudentAddSubjectPanel />;
+    case 'remove-subject':  return <StudentRemoveSubjectPanel />;
+    case 'requests':        return <AssistantRequestsPanel />;
     default:                return null;
   }
 }
@@ -567,6 +733,7 @@ export const ROLE_BUTTONS = {
     { id: 'students', label: 'Students' },
     { id: 'announce', label: 'Announce' },
     { id: 'invite',   label: 'Invite'   },
+    { id: 'requests', label: 'Requests' },
   ],
   teacher: [
     { id: 'my-schedule', label: 'My Schedule' },
@@ -578,8 +745,11 @@ export const ROLE_BUTTONS = {
     { id: 'events',         label: 'Events'         },
     { id: 'library',        label: 'Library'        },
     { id: 'notes',          label: 'Notes'          },
-    { id: 'practice-diary', label: 'Practice Diary' },
-    { id: 'report-absence', label: 'Report Absence' },
+    { id: 'practice-diary',  label: 'Practice Diary'  },
+    { id: 'report-absence',  label: 'Report Absence'  },
+    { id: 'change-group',    label: 'Change Group'    },
+    { id: 'add-subject',     label: 'Add Subject'     },
+    { id: 'remove-subject',  label: 'Remove Subject'  },
   ],
 };
 
