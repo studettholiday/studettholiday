@@ -177,16 +177,24 @@ export default function App() {
     () => Object.fromEntries(FEATURES.map((f) => [f.id, true]))
   );
   const [modalOpen, setModalOpen] = useState(false);
-  const [events, setEvents] = useState([]);
-  const [schedule, setSchedule] = useState([]);
 
   const closeModal = useCallback(() => setModalOpen(false), []);
   const t = T[lang];
 
-  useEffect(() => {
-    fetch('/api/events').then(r => r.json()).then(setEvents).catch(() => {});
-    fetch('/api/schedule').then(r => r.json()).then(data => setSchedule(groupSchedule(data))).catch(() => {});
-  }, []);
+  const events = [
+    { name: 'End of Year Concert', event_date: '2025-06-20T00:00:00.000Z', event_time: '19:00', place: 'City Concert Hall' },
+    { name: 'Summer Workshop',     event_date: '2025-07-15T00:00:00.000Z', event_time: '11:00', place: 'Studio Main Hall' },
+  ];
+
+  const schedule = groupSchedule([
+    { group_name: 'Guitar Beginners', day_of_week: 0, lesson_time: '16:00' },
+    { group_name: 'Guitar Beginners', day_of_week: 2, lesson_time: '16:00' },
+    { group_name: 'Guitar Advanced',  day_of_week: 1, lesson_time: '17:00' },
+    { group_name: 'Guitar Advanced',  day_of_week: 3, lesson_time: '17:00' },
+    { group_name: 'Vocals Group A',   day_of_week: 0, lesson_time: '18:00' },
+    { group_name: 'Vocals Group A',   day_of_week: 4, lesson_time: '18:00' },
+    { group_name: 'Band Practice',    day_of_week: 5, lesson_time: '12:00' },
+  ]);
 
   useEffect(() => {
     document.body.style.overflow = modalOpen ? 'hidden' : '';
