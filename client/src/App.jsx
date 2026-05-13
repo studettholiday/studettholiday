@@ -67,7 +67,7 @@ const FEATURES = [
   { id: 'schedule', icon: '📅', EN: { title: 'Schedule',          desc: 'Weekly timetable for every group'  }, GEO: { title: 'განრიგი',                desc: 'კვირის განრიგი'             } },
   { id: 'events',   icon: '🎪', EN: { title: 'Events',            desc: 'Upcoming concerts and activities'  }, GEO: { title: 'ღონისძიებები',           desc: 'მომავალი ღონისძიებები'     } },
   { id: 'notes',    icon: '📒', EN: { title: 'Notes',             desc: 'Lesson notes and practice diary'   }, GEO: { title: 'ჩანაწერები',             desc: 'გაკვეთილის ჩანაწერები'     } },
-  { id: 'library',  icon: '🎸', EN: { title: 'Music Library',     desc: 'Chords, scales, diagrams'          }, GEO: { title: 'მუსიკალური ბიბლიოთეკა', desc: 'აკორდები, გამები'           } },
+  { id: 'library',  icon: '📚', EN: { title: 'Library',           desc: 'Chords, scales, diagrams'          }, GEO: { title: 'ბიბლიოთეკა',            desc: 'აკორდები, გამები'           } },
   { id: 'reminders',icon: '🔔', EN: { title: 'Reminders',         desc: 'Automatic lesson reminders'        }, GEO: { title: 'შეხსენებები',            desc: 'ავტომატური შეხსენებები'    } },
 ];
 
@@ -154,30 +154,9 @@ function SignupModal({ lang, onClose }) {
   );
 }
 
-function Toggle({ on, onToggle }) {
-  return (
-    <button
-      role="switch"
-      aria-checked={on}
-      onClick={onToggle}
-      className={`relative inline-flex h-5 w-9 flex-shrink-0 rounded-full transition-colors duration-200 focus:outline-none ${
-        on ? 'bg-indigo-600' : 'bg-white/10'
-      }`}
-    >
-      <span
-        className={`inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-200 mt-0.5 ${
-          on ? 'translate-x-4' : 'translate-x-0.5'
-        }`}
-      />
-    </button>
-  );
-}
 
 export default function App() {
   const [lang, setLang] = useState('EN');
-  const [enabled, setEnabled] = useState(
-    () => Object.fromEntries(FEATURES.map((f) => [f.id, true]))
-  );
   const [modalOpen, setModalOpen] = useState(false);
   const [role, setRole] = useState('student');
 
@@ -264,21 +243,9 @@ export default function App() {
           {FEATURES.map((f) => (
             <div
               key={f.id}
-              className={`rounded-2xl border p-6 flex flex-col gap-4 transition-all duration-200 ${
-                enabled[f.id]
-                  ? 'bg-white/[0.04] border-white/[0.08]'
-                  : 'bg-white/[0.02] border-white/[0.04] opacity-40'
-              }`}
+              className="rounded-2xl border border-white/[0.08] bg-white/[0.04] p-6 flex flex-col gap-4"
             >
-              <div className="flex items-start justify-between gap-3">
-                <span className="text-3xl leading-none">{f.icon}</span>
-                <Toggle
-                  on={enabled[f.id]}
-                  onToggle={() =>
-                    setEnabled((prev) => ({ ...prev, [f.id]: !prev[f.id] }))
-                  }
-                />
-              </div>
+              <span className="text-3xl leading-none">{f.icon}</span>
               <div>
                 <p className="font-semibold text-white text-sm">{f[lang].title}</p>
                 <p className="mt-1 text-sm text-gray-400 leading-relaxed">{f[lang].desc}</p>
