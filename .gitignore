@@ -7,7 +7,6 @@ node_modules/
 **/.env
 
 # Build output
-client/dist/
 client/.vite/
 
 # Logs
@@ -22,3 +21,4 @@ Thumbs.db
 .vscode/
 .idea/
 .env.save
+
