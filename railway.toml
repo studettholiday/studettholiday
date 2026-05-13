@@ -1,14 +1,8 @@
 [build]
 builder = "nixpacks"
+buildCommand = "npm install && npm run build && cd server && npm install"
 
-[[services]]
-name = "server"
-source = "."
-
-[services.build]
-buildCommand = "cd client && npm install && npm run build && cd ../server && npm install"
-
-[services.deploy]
-startCommand = "cd server && npm start"
+[deploy]
+startCommand = "cd server && node index.js"
 healthcheckPath = "/health"
 healthcheckTimeout = 30
