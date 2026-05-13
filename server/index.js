@@ -13,9 +13,9 @@ app.use(express.json());
 app.use('/api/chat', chatRouter);
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
-app.use(express.static(path.join(__dirname, '../client/dist')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.get('*', (_req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+  res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 app.listen(PORT, () => {
