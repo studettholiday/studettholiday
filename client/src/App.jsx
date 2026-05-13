@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import ChatWindow from './components/ChatWindow';
 
 const T = {
@@ -13,6 +13,8 @@ const T = {
     schoolLabel: 'School name',
     typeLabel: 'School type',
     schoolTypes: ['Music School', 'Language School', 'University', 'Gym', 'Other'],
+    chatTitle: 'Try Sherlock',
+    chatSubtitle: 'Ask anything. See how it works.',
     thankYou: "You're on the list! We'll be in touch soon.",
   },
   GEO: {
@@ -26,6 +28,8 @@ const T = {
     schoolLabel: 'სკოლის სახელი',
     typeLabel: 'სკოლის ტიპი',
     schoolTypes: ['მუსიკალური სკოლა', 'ენის სკოლა', 'უნივერსიტეტი', 'სპორტ დარბაზი', 'სხვა'],
+    chatTitle: 'სცადე შერლოკი',
+    chatSubtitle: 'ნებისმიერი კითხვა. ნახეთ როგორ მუშაობს.',
     thankYou: 'თქვენ ჩაეწერეთ! მალე დაგიკავშირდებით.',
   },
 };
@@ -148,6 +152,7 @@ export default function App() {
   );
   const [modalOpen, setModalOpen] = useState(false);
 
+  const closeModal = useCallback(() => setModalOpen(false), []);
   const t = T[lang];
 
   useEffect(() => {
@@ -159,7 +164,7 @@ export default function App() {
     <div className="min-h-screen bg-[#08080f] text-white">
 
       {modalOpen && (
-        <SignupModal lang={lang} onClose={() => setModalOpen(false)} />
+        <SignupModal lang={lang} onClose={closeModal} />
       )}
 
       {/* Nav */}
@@ -172,7 +177,7 @@ export default function App() {
             onClick={() => setLang((l) => (l === 'EN' ? 'GEO' : 'EN'))}
             className="rounded-full border border-white/20 px-4 py-1.5 text-sm font-medium text-gray-400 hover:border-white/40 hover:text-white transition-colors duration-200"
           >
-            {lang}
+            {lang === 'EN' ? 'GEO' : 'EN'}
           </button>
         </div>
       </nav>
@@ -197,7 +202,10 @@ export default function App() {
           >
             {t.getStarted}
           </button>
-          <button className="rounded-xl border border-white/15 px-7 py-3 text-sm font-semibold text-gray-300 hover:border-white/30 hover:text-white active:scale-95 transition-all duration-150">
+          <button
+            onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}
+            className="rounded-xl border border-white/15 px-7 py-3 text-sm font-semibold text-gray-300 hover:border-white/30 hover:text-white active:scale-95 transition-all duration-150"
+          >
             {t.tryDemo}
           </button>
         </div>
@@ -236,8 +244,16 @@ export default function App() {
         </div>
       </section>
 
-      {/* Chat */}
-      <ChatWindow />
+      {/* Demo / Chat */}
+      <section id="demo" className="pb-20">
+        <div className="mx-auto max-w-6xl px-6 pt-4 pb-10 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+            {t.chatTitle}
+          </h2>
+          <p className="mt-3 text-gray-400">{t.chatSubtitle}</p>
+        </div>
+        <ChatWindow />
+      </section>
 
     </div>
   );
