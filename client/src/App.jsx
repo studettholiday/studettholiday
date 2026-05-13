@@ -209,47 +209,7 @@ export default function App() {
         {/* Radial glow */}
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(99,102,241,0.12),transparent)]" />
 
-        {/* Sherlock silhouette — z-[1] so content at z-[2] sits above it */}
-        <div className="pointer-events-none select-none absolute right-0 sm:right-4 lg:right-10 top-[-10px] bottom-[-220px] flex items-start opacity-[0.13] max-sm:opacity-[0.07] z-[1]">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 530"
-               fill="rgb(216,180,254)" width="420" height="530" aria-hidden="true">
-            {/* Hat crown — dome */}
-            <ellipse cx="128" cy="52" rx="74" ry="52" />
-            {/* Hat brim strip */}
-            <rect x="52" y="88" width="156" height="22" rx="3" />
-            {/* Front (left-pointing) peak */}
-            <path d="M 52,88 L 12,108 L 52,110 Z" />
-            {/* Rear (right-pointing) peak */}
-            <path d="M 208,88 L 250,108 L 208,110 Z" />
-            {/* Head — facing left */}
-            <ellipse cx="120" cy="172" rx="66" ry="76" />
-            {/* Ear — right side of head */}
-            <ellipse cx="187" cy="170" rx="13" ry="11" />
-            {/* Nose — sharp leftward protrusion */}
-            <path d="M 54,152 L 10,168 L 54,186 Z" />
-            {/* Neck */}
-            <rect x="95" y="236" width="58" height="44" rx="6" />
-            {/* Cravat */}
-            <path d="M 88,262 L 68,290 L 128,305 L 188,290 L 168,262 Z" />
-            {/* Left Inverness cape panel */}
-            <path d="M 86,276 Q 34,304 10,362 Q -4,404 8,444 Q 20,468 60,470 Q 96,470 118,436 L 126,282 Z" />
-            {/* Right Inverness cape panel */}
-            <path d="M 170,276 Q 222,304 246,362 Q 260,404 248,444 Q 236,468 196,470 Q 160,470 138,436 L 130,282 Z" />
-            {/* Coat body */}
-            <rect x="94" y="286" width="72" height="158" rx="5" />
-            {/* Left leg */}
-            <rect x="94" y="438" width="34" height="88" rx="8" />
-            {/* Right leg */}
-            <rect x="132" y="438" width="34" height="88" rx="8" />
-            {/* Left shoe */}
-            <path d="M 90,516 L 62,526 L 128,526 L 128,516 Z" />
-            {/* Right shoe */}
-            <path d="M 166,516 L 194,526 L 128,526 L 128,516 Z" />
-          </svg>
-        </div>
-
-        {/* Content — z-[2] renders above silhouette */}
-        <div className="relative z-[2]">
+        <div className="relative">
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight bg-gradient-to-br from-white via-gray-100 to-gray-500 bg-clip-text text-transparent leading-tight">
             Sherlock Is Smart
           </h1>
@@ -344,7 +304,7 @@ export default function App() {
       )}
 
       {/* Demo / Chat */}
-      <section id="demo" className="pb-20">
+      <section id="demo" className="pb-8">
         <div className="mx-auto max-w-6xl px-6 pt-4 pb-6 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
             {t.chatTitle}
@@ -358,7 +318,7 @@ export default function App() {
       </section>
 
       {/* Quote */}
-      <section className="border-t border-white/[0.06] py-24">
+      <section className="border-t border-white/[0.06] pt-14 pb-16">
         <div className="mx-auto max-w-[700px] px-8 text-center">
           <div className="text-7xl leading-none text-purple-500/30 font-serif mb-6 select-none">&ldquo;</div>
           <p className="italic text-lg leading-loose text-gray-400">
