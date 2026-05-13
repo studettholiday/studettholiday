@@ -117,6 +117,10 @@ const PANEL_TITLES = {
   'add-subject':     'Add Subject',
   'remove-subject':  'Remove Subject',
   'requests':        'Requests',
+  'subjects':        'Subjects',
+  'view-events':     'View Events',
+  'add-event':       'Add Event',
+  'delete-event':    'Delete Event',
 };
 
 // ─── Admin / Assistant panels ─────────────────────────────────────────────────
@@ -350,6 +354,96 @@ function InvitePanel({ role }) {
             Send Invitation
           </button>
       }
+    </div>
+  );
+}
+
+function SubjectsPanel({ role }) {
+  const th = TH[role];
+  const [subjects, setSubjects] = useState(['Guitar Basics', 'Music Theory', 'Vocals', 'Band Practice', 'Ear Training']);
+  const [draft, setDraft] = useState('');
+
+  function add() { if (draft.trim()) { setSubjects(ss => [...ss, draft.trim()]); setDraft(''); } }
+
+  return (
+    <div className="space-y-2">
+      <div className="space-y-1.5">
+        {subjects.map((s, i) => (
+          <div key={i} className="flex items-center justify-between rounded-xl border border-white/10 px-3 py-2">
+            <span className="text-sm text-white">{s}</span>
+            <button onClick={() => setSubjects(ss => ss.filter((_, j) => j !== i))} className="text-gray-600 hover:text-red-400 text-xs transition-colors">✕</button>
+          </div>
+        ))}
+      </div>
+      <div className="flex gap-2">
+        <input value={draft} onChange={e => setDraft(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter') add(); }}
+          placeholder="Add subject…" className={`${FIELD} py-1.5`} />
+        <button onClick={add} className={`rounded-xl ${th.btn} px-3 py-1.5 text-sm text-white transition-colors`}>+</button>
+      </div>
+    </div>
+  );
+}
+
+function AdminViewEventsPanel() {
+  return (
+    <div className="space-y-2">
+      {INIT_EVENTS.map(ev => (
+        <div key={ev.id} className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
+          <p className="text-xs text-white font-medium">{ev.name}</p>
+          <p className="text-xs text-gray-500 mt-1">📅 {ev.date} · {ev.time}&nbsp;&nbsp;📍 {ev.place}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AdminAddEventPanel({ role }) {
+  const th = TH[role];
+  const [form, setForm] = useState({ name: '', date: '', time: '', place: '' });
+  const [added, setAdded] = useState(false);
+
+  function add() {
+    if (form.name.trim()) {
+      setAdded(true);
+      setForm({ name: '', date: '', time: '', place: '' });
+      setTimeout(() => setAdded(false), 3000);
+    }
+  }
+
+  return (
+    <div className="space-y-3">
+      {[['name','Event name'],['date','Date (e.g. 1 Jan 2026)'],['time','Time (e.g. 18:00)'],['place','Place']].map(([field, placeholder]) => (
+        <input key={field} value={form[field]} onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
+          placeholder={placeholder} className={FIELD} />
+      ))}
+      {added
+        ? <p className="text-emerald-400 text-sm">✅ Event added!</p>
+        : <button onClick={add} disabled={!form.name.trim()}
+            className={`rounded-xl ${th.btn} disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors`}>
+            Add Event
+          </button>
+      }
+    </div>
+  );
+}
+
+function AdminDeleteEventPanel() {
+  const [events, setEvents] = useState(INIT_EVENTS);
+
+  return (
+    <div className="space-y-2">
+      {events.length === 0 && <p className="text-xs text-gray-500 text-center py-4">No events.</p>}
+      {events.map(ev => (
+        <div key={ev.id} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2.5">
+          <div className="flex-1 min-w-0">
+            <p className="text-xs text-white font-medium truncate">{ev.name}</p>
+            <p className="text-xs text-gray-500">{ev.date} · {ev.time}</p>
+          </div>
+          <button onClick={() => setEvents(es => es.filter(e => e.id !== ev.id))}
+            className="text-gray-600 hover:text-red-400 text-xs flex-shrink-0 transition-colors">✕</button>
+        </div>
+      ))}
     </div>
   );
 }
@@ -712,6 +806,10 @@ function panelContent(role, panel) {
     case 'add-subject':     return <StudentAddSubjectPanel />;
     case 'remove-subject':  return <StudentRemoveSubjectPanel />;
     case 'requests':        return <AssistantRequestsPanel />;
+    case 'subjects':        return <SubjectsPanel role={role} />;
+    case 'view-events':     return <AdminViewEventsPanel />;
+    case 'add-event':       return <AdminAddEventPanel role={role} />;
+    case 'delete-event':    return <AdminDeleteEventPanel />;
     default:                return null;
   }
 }
