@@ -193,7 +193,7 @@ export default function ChatWindow() {
   }
 
   return (
-    <div className={`relative flex flex-col h-screen max-w-2xl mx-auto border-t border-white/[0.06] overflow-hidden ${s.wrap}`}>
+    <div className={`relative flex flex-col max-w-2xl mx-auto border border-white/[0.08] rounded-2xl overflow-hidden ${s.wrap}`}>
 
       {/* Per-role ambient glow */}
       <div
@@ -302,7 +302,7 @@ export default function ChatWindow() {
       </div>
 
       {/* Messages + active panel */}
-      <div className="flex-1 overflow-y-auto px-4 py-4">
+      <div className="h-[400px] overflow-y-auto px-4 py-4">
         {activePanel && (
           <div className="mb-4">
             <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)} />

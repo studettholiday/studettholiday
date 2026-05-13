@@ -302,14 +302,16 @@ export default function App() {
 
       {/* Demo / Chat */}
       <section id="demo" className="pb-20">
-        <div className="mx-auto max-w-6xl px-6 pt-4 pb-8 text-center">
+        <div className="mx-auto max-w-6xl px-6 pt-4 pb-6 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
             {t.chatTitle}
           </h2>
           <p className="mt-3 text-gray-400">{t.chatSubtitle}</p>
         </div>
 
-        <ChatWindow />
+        <div className="mx-auto max-w-2xl px-4">
+          <ChatWindow />
+        </div>
       </section>
 
     </div>

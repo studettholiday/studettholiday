@@ -555,15 +555,13 @@ export const PANEL_ACTIVE_CLS = {
 export function RolePanel({ role, panel, onClose }) {
   const th = TH[role];
   return (
-    <div className="mx-auto max-w-2xl px-4 pb-4">
-      <div className={`rounded-2xl border ${th.border} bg-[#0d0d18] overflow-hidden`}>
-        <div className={`flex items-center justify-between px-5 py-3 border-b ${th.border} ${th.hdr}`}>
-          <span className={`text-sm font-semibold ${th.accent}`}>{PANEL_TITLES[panel] ?? panel}</span>
-          <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-sm leading-none">✕</button>
-        </div>
-        <div className="p-5 max-h-96 overflow-y-auto">
-          {panelContent(role, panel)}
-        </div>
+    <div className={`rounded-2xl border ${th.border} bg-[#0d0d18] overflow-hidden flex flex-col max-h-[300px]`}>
+      <div className={`flex items-center justify-between px-4 py-2.5 border-b ${th.border} ${th.hdr} flex-shrink-0`}>
+        <span className={`text-sm font-semibold ${th.accent}`}>{PANEL_TITLES[panel] ?? panel}</span>
+        <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-sm leading-none">✕</button>
+      </div>
+      <div className="p-4 overflow-y-auto flex-1">
+        {panelContent(role, panel)}
       </div>
     </div>
   );
