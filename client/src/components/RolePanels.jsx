@@ -124,6 +124,7 @@ const PANEL_TITLES = {
   'report-event-absence':  'Report Event Absence',
   'report-exam-absence':   'Report Exam Absence',
   'share-files':           'Share Files',
+  'knowledge-library':     'Knowledge Library',
 };
 
 // ─── Admin / Assistant panels ─────────────────────────────────────────────────
@@ -581,6 +582,159 @@ function TeacherShareFilesPanel() {
   );
 }
 
+function KnowledgeLibraryPanel({ role }) {
+  const th = TH[role];
+  const [tab, setTab] = useState('upload');
+  const [files, setFiles] = useState([
+    { id: 1, name: 'DoReMi Student Handbook.pdf',  when: '3 days ago'  },
+    { id: 2, name: 'Guitar Course Curriculum.pdf',  when: '1 week ago'  },
+    { id: 3, name: 'School Rules & Policy.txt',     when: '2 weeks ago' },
+  ]);
+  const [dragOver, setDragOver]   = useState(false);
+  const [justAdded, setJustAdded] = useState('');
+
+  const [previewMsgs,    setPreviewMsgs]    = useState([]);
+  const [previewInput,   setPreviewInput]   = useState('');
+  const [previewLoading, setPreviewLoading] = useState(false);
+
+  function addFile(file) {
+    if (!file) return;
+    setFiles(fs => [...fs, { id: Date.now(), name: file.name, when: 'just now' }]);
+    setJustAdded(file.name);
+    setTimeout(() => setJustAdded(''), 3000);
+  }
+
+  function onDrop(e) {
+    e.preventDefault();
+    setDragOver(false);
+    addFile(e.dataTransfer.files?.[0]);
+  }
+
+  async function sendPreview(e) {
+    e?.preventDefault();
+    const text = previewInput.trim();
+    if (!text || previewLoading) return;
+    const userMsg = { role: 'user', content: text };
+    const history = [...previewMsgs, userMsg];
+    setPreviewMsgs(history);
+    setPreviewInput('');
+    setPreviewLoading(true);
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [
+            { role: 'user',      content: '[System context] You are a school knowledge assistant. Answer questions as if you have read the uploaded school documents. Be helpful and specific.' },
+            { role: 'assistant', content: 'Understood.' },
+            ...history,
+          ],
+          provider: 'anthropic',
+        }),
+      });
+      const data = await res.json();
+      setPreviewMsgs(prev => [...prev, { role: 'assistant', content: data.message ?? 'No response.' }]);
+    } catch {
+      setPreviewMsgs(prev => [...prev, { role: 'assistant', content: 'Error: could not reach the server.' }]);
+    } finally {
+      setPreviewLoading(false);
+    }
+  }
+
+  return (
+    <div className="space-y-3">
+      {/* Tab row */}
+      <div className="flex gap-2">
+        {[['upload', '⬆️ Upload'], ['preview', '🔍 Preview']].map(([id, label]) => (
+          <button key={id} onClick={() => setTab(id)}
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+              tab === id
+                ? `${th.btn} text-white`
+                : 'border border-white/15 text-gray-400 hover:text-white'
+            }`}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'upload' ? (
+        <div className="space-y-3">
+          <label
+            onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={onDrop}
+            className={`flex flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-5 cursor-pointer transition-colors ${
+              dragOver ? `border-white/50 bg-white/[0.07]` : 'border-white/20 hover:border-white/40'
+            }`}>
+            <span className="text-2xl mb-1.5">📄</span>
+            <p className="text-sm text-white font-medium">Upload your school knowledge</p>
+            <p className="text-xs text-gray-500 mt-1 text-center leading-relaxed">
+              Students can ask the AI questions based on this content
+            </p>
+            <p className="text-xs text-gray-600 mt-2">Drop files here or click · .pdf .txt .docx</p>
+            <input type="file" accept=".pdf,.txt,.docx"
+              onChange={e => addFile(e.target.files?.[0])}
+              className="hidden" />
+          </label>
+          {justAdded && (
+            <p className="text-emerald-400 text-xs">✅ "{justAdded}" added to library</p>
+          )}
+          <div className="space-y-1.5">
+            {files.map(f => (
+              <div key={f.id} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2">
+                <span className="text-sm flex-shrink-0">📄</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-white truncate">{f.name}</p>
+                  <p className="text-xs text-gray-600">{f.when}</p>
+                </div>
+                <button onClick={() => setFiles(fs => fs.filter(x => x.id !== f.id))}
+                  className="text-gray-600 hover:text-red-400 text-sm flex-shrink-0 transition-colors leading-none">🗑</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <p className="text-xs text-gray-500 font-medium">Test your library</p>
+          <div className="h-32 overflow-y-auto rounded-xl border border-white/10 bg-white/[0.02] p-2 space-y-1.5">
+            {previewMsgs.length === 0 && (
+              <p className="text-xs text-gray-600 text-center mt-8">Ask a question about your uploaded content</p>
+            )}
+            {previewMsgs.map((m, i) => (
+              <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[85%] px-2.5 py-1.5 rounded-xl text-xs leading-relaxed ${
+                  m.role === 'user'
+                    ? `${th.btn} text-white rounded-br-sm`
+                    : 'bg-white/[0.10] text-gray-200 rounded-bl-sm'
+                }`}>{m.content}</div>
+              </div>
+            ))}
+            {previewLoading && (
+              <div className="flex justify-start">
+                <div className="px-2.5 py-1.5 rounded-xl text-xs bg-white/[0.10] text-gray-500 animate-pulse">Thinking…</div>
+              </div>
+            )}
+          </div>
+          <form onSubmit={sendPreview} className="flex gap-2">
+            <input
+              value={previewInput}
+              onChange={e => setPreviewInput(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) sendPreview(e); }}
+              placeholder="Ask something from your uploaded content..."
+              disabled={previewLoading}
+              className={`${FIELD} py-1.5 flex-1 text-xs`}
+            />
+            <button type="submit" disabled={!previewInput.trim() || previewLoading}
+              className={`rounded-xl ${th.btn} disabled:opacity-40 px-3 py-1.5 text-xs text-white font-medium transition-colors flex-shrink-0`}>
+              Send
+            </button>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Student panels ───────────────────────────────────────────────────────────
 
 function StudentSchedulePanel() {
@@ -898,7 +1052,8 @@ function panelContent(role, panel) {
     case 'invite':          return <InvitePanel role={role} />;
     case 'my-schedule':     return <MySchedulePanel />;
     case 'my-groups':       return <MyGroupsPanel />;
-    case 'share-files':     return <TeacherShareFilesPanel />;
+    case 'share-files':       return <TeacherShareFilesPanel />;
+    case 'knowledge-library': return <KnowledgeLibraryPanel role={role} />;
     case 'schedule':        return <StudentSchedulePanel />;
     case 'events':          return <StudentEventsPanel />;
     case 'library':         return <StudentLibraryPanel />;

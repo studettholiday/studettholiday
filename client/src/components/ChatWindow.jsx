@@ -132,6 +132,7 @@ const BUTTON_GROUPS = {
     { id: 'manage',    label: '📋 Manage',    children: [{ id: 'groups', label: 'Groups' }, { id: 'admin-schedule', label: 'Schedule' }, { id: 'subjects', label: 'Subjects' }] },
     { id: 'broadcast', label: '📢 Notify', children: [{ id: 'broadcast', label: 'Notify' }, { id: 'admin-announce', label: 'Announce' }] },
     { id: 'events',    label: '🎪 Events',    children: [{ id: 'view-events', label: 'View Events' }, { id: 'add-event', label: 'Add Event' }, { id: 'delete-event', label: 'Delete Event' }] },
+    { id: 'knowledge-library', label: '📚 Library' },
   ],
   assistant: [
     { id: 'people',   label: '👥 People',   children: [{ id: 'students', label: 'Students' }, { id: 'invite', label: 'Invite' }] },
@@ -139,11 +140,13 @@ const BUTTON_GROUPS = {
     { id: 'events',   label: '🎪 Events',   children: [{ id: 'view-events', label: 'View Events' }, { id: 'add-event', label: 'Add Event' }, { id: 'delete-event', label: 'Delete Event' }] },
     { id: 'requests', label: '📬 Requests', children: [{ id: 'requests', label: 'Pending Requests' }] },
     { id: 'announce', label: '📢 Announce', children: [{ id: 'announce', label: 'Announce' }] },
+    { id: 'knowledge-library', label: '📚 Library' },
   ],
   teacher: [
-    { id: 'my-work',     label: '📅 My Work',     children: [{ id: 'my-schedule', label: 'My Schedule' }, { id: 'my-groups', label: 'My Groups' }] },
-    { id: 'announce',    label: '📢 Announce'    },
-    { id: 'share-files', label: '📁 Share Files' },
+    { id: 'my-work',           label: '📅 My Work',     children: [{ id: 'my-schedule', label: 'My Schedule' }, { id: 'my-groups', label: 'My Groups' }] },
+    { id: 'announce',          label: '📢 Announce'    },
+    { id: 'share-files',       label: '📁 Share Files' },
+    { id: 'knowledge-library', label: '📚 Library'     },
   ],
   student: [
     { id: 'schedule', label: 'Schedule' },
