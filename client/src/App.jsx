@@ -205,86 +205,74 @@ export default function App() {
       </nav>
 
       {/* Hero */}
-      <section className="relative flex flex-col items-center justify-center px-6 pt-28 pb-32 text-center overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(99,102,241,0.12),transparent)]" />
+      <section className="relative flex flex-col items-center justify-center px-6 pt-28 pb-32 text-center">
+        {/* Radial glow */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(99,102,241,0.12),transparent)]" />
 
-        {/* Sherlock silhouette */}
-        <div className="pointer-events-none select-none absolute -z-10 right-0 sm:right-4 lg:right-12 top-0 bottom-[-160px] flex items-start pt-8 opacity-[0.055] sm:opacity-[0.055] max-sm:opacity-[0.03]">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 260 520"
-            fill="white"
-            width="340"
-            height="520"
-            aria-hidden="true"
-          >
-            {/* Deerstalker hat — front peak */}
-            <path d="M 90 130 Q 85 105 95 88 Q 105 72 125 68 Q 145 64 160 72 Q 175 80 178 95 Q 182 110 175 130 Z" />
-            {/* Deerstalker hat — rear peak (pointing left/back) */}
-            <path d="M 90 130 Q 80 120 65 115 Q 52 112 50 120 Q 49 128 60 132 Q 72 136 90 138 Z" />
-            {/* Deerstalker hat — crown */}
-            <path d="M 90 138 Q 88 150 92 158 L 172 158 Q 178 150 175 138 Q 160 145 130 146 Q 105 145 90 138 Z" />
-            {/* Hat band */}
-            <rect x="90" y="155" width="82" height="10" rx="2" opacity="0.6" />
-            {/* Head */}
-            <path d="M 95 165 Q 90 185 92 205 Q 94 225 102 238 Q 112 252 125 256 Q 140 260 152 250 Q 165 240 168 222 Q 172 202 168 182 Q 164 165 155 162 L 108 162 Z" />
-            {/* Prominent nose — side profile hint (right-facing) */}
-            <path d="M 168 200 Q 176 204 178 212 Q 180 220 172 224 L 168 218 Z" />
-            {/* Ear */}
-            <path d="M 95 198 Q 86 200 84 210 Q 83 220 92 222 L 95 215 Z" />
-            {/* Strong jaw / chin */}
-            <path d="M 102 250 Q 108 268 118 275 Q 128 280 138 276 Q 150 270 155 255 L 125 258 Z" />
+        {/* Sherlock silhouette — z-[1] so content at z-[2] sits above it */}
+        <div className="pointer-events-none select-none absolute right-0 sm:right-4 lg:right-10 top-[-10px] bottom-[-220px] flex items-start opacity-[0.13] max-sm:opacity-[0.07] z-[1]">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 530"
+               fill="rgb(216,180,254)" width="420" height="530" aria-hidden="true">
+            {/* Hat crown — dome */}
+            <ellipse cx="128" cy="52" rx="74" ry="52" />
+            {/* Hat brim strip */}
+            <rect x="52" y="88" width="156" height="22" rx="3" />
+            {/* Front (left-pointing) peak */}
+            <path d="M 52,88 L 12,108 L 52,110 Z" />
+            {/* Rear (right-pointing) peak */}
+            <path d="M 208,88 L 250,108 L 208,110 Z" />
+            {/* Head — facing left */}
+            <ellipse cx="120" cy="172" rx="66" ry="76" />
+            {/* Ear — right side of head */}
+            <ellipse cx="187" cy="170" rx="13" ry="11" />
+            {/* Nose — sharp leftward protrusion */}
+            <path d="M 54,152 L 10,168 L 54,186 Z" />
             {/* Neck */}
-            <path d="M 110 272 L 108 295 L 148 295 L 145 272 Q 135 278 125 278 Q 115 278 110 272 Z" />
-            {/* Shirt collar / cravat */}
-            <path d="M 105 293 L 100 308 L 128 318 L 155 308 L 150 293 L 128 300 Z" />
-            {/* Inverness cape — outer layer, sweeping wide */}
-            <path d="M 100 308 Q 60 330 30 380 Q 15 415 20 450 Q 25 470 45 475 Q 70 480 95 460 Q 110 448 118 430 L 128 318 Z" />
-            <path d="M 155 308 Q 195 330 220 385 Q 235 420 228 455 Q 222 475 200 478 Q 175 482 155 462 Q 140 448 138 430 L 128 318 Z" />
-            {/* Cape inner — darker overlap suggesting depth */}
-            <path d="M 108 310 Q 85 345 75 390 Q 68 420 78 448 Q 88 460 105 455 Q 118 450 122 435 L 128 320 Z" opacity="0.7" />
-            <path d="M 148 310 Q 170 345 178 390 Q 185 420 175 448 Q 165 460 150 455 Q 137 450 133 435 L 128 320 Z" opacity="0.7" />
-            {/* Body beneath cape — coat */}
-            <path d="M 108 295 L 104 380 L 128 385 L 152 380 L 148 295 Z" opacity="0.5" />
-            {/* Left arm (viewer's right) along side */}
-            <path d="M 104 310 Q 88 340 82 380 Q 78 405 85 425 Q 90 438 98 432 Q 108 424 110 405 Q 114 380 115 350 L 112 310 Z" />
-            {/* Right arm */}
-            <path d="M 150 310 Q 165 338 170 375 Q 174 400 168 420 Q 163 433 155 430 Q 145 425 143 405 Q 140 378 142 350 L 145 310 Z" />
-            {/* Lower coat / legs */}
-            <path d="M 104 378 L 100 460 L 116 462 L 128 460 L 140 462 L 156 460 L 152 378 Z" opacity="0.6" />
+            <rect x="95" y="236" width="58" height="44" rx="6" />
+            {/* Cravat */}
+            <path d="M 88,262 L 68,290 L 128,305 L 188,290 L 168,262 Z" />
+            {/* Left Inverness cape panel */}
+            <path d="M 86,276 Q 34,304 10,362 Q -4,404 8,444 Q 20,468 60,470 Q 96,470 118,436 L 126,282 Z" />
+            {/* Right Inverness cape panel */}
+            <path d="M 170,276 Q 222,304 246,362 Q 260,404 248,444 Q 236,468 196,470 Q 160,470 138,436 L 130,282 Z" />
+            {/* Coat body */}
+            <rect x="94" y="286" width="72" height="158" rx="5" />
             {/* Left leg */}
-            <path d="M 100 455 L 96 510 Q 96 520 106 520 L 118 520 L 120 462 Z" />
+            <rect x="94" y="438" width="34" height="88" rx="8" />
             {/* Right leg */}
-            <path d="M 156 455 L 160 510 Q 160 520 150 520 L 138 520 L 136 462 Z" />
+            <rect x="132" y="438" width="34" height="88" rx="8" />
             {/* Left shoe */}
-            <path d="M 96 512 Q 88 516 84 520 L 118 520 L 118 512 Z" />
+            <path d="M 90,516 L 62,526 L 128,526 L 128,516 Z" />
             {/* Right shoe */}
-            <path d="M 160 512 Q 168 516 172 520 L 138 520 L 138 512 Z" />
+            <path d="M 166,516 L 194,526 L 128,526 L 128,516 Z" />
           </svg>
         </div>
 
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight bg-gradient-to-br from-white via-gray-100 to-gray-500 bg-clip-text text-transparent leading-tight">
-          Sherlock Is Smart
-        </h1>
+        {/* Content — z-[2] renders above silhouette */}
+        <div className="relative z-[2]">
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight bg-gradient-to-br from-white via-gray-100 to-gray-500 bg-clip-text text-transparent leading-tight">
+            Sherlock Is Smart
+          </h1>
 
-        <p className="mt-5 max-w-lg text-lg text-gray-400 leading-relaxed">
-          {t.sub1}{' '}
-          <span className="text-gray-300">{t.sub2}</span>
-        </p>
+          <p className="mt-5 max-w-lg text-lg text-gray-400 leading-relaxed">
+            {t.sub1}{' '}
+            <span className="text-gray-300">{t.sub2}</span>
+          </p>
 
-        <div className="mt-10 flex flex-wrap gap-3 justify-center">
-          <button
-            onClick={() => setModalOpen(true)}
-            className="rounded-xl bg-indigo-600 px-7 py-3 text-sm font-semibold text-white hover:bg-indigo-500 active:scale-95 transition-all duration-150 shadow-lg shadow-indigo-900/40"
-          >
-            {t.getStarted}
-          </button>
-          <button
-            onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}
-            className="rounded-xl border border-white/15 px-7 py-3 text-sm font-semibold text-gray-300 hover:border-white/30 hover:text-white active:scale-95 transition-all duration-150"
-          >
-            {t.tryDemo}
-          </button>
+          <div className="mt-10 flex flex-wrap gap-3 justify-center">
+            <button
+              onClick={() => setModalOpen(true)}
+              className="rounded-xl bg-indigo-600 px-7 py-3 text-sm font-semibold text-white hover:bg-indigo-500 active:scale-95 transition-all duration-150 shadow-lg shadow-indigo-900/40"
+            >
+              {t.getStarted}
+            </button>
+            <button
+              onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}
+              className="rounded-xl border border-white/15 px-7 py-3 text-sm font-semibold text-gray-300 hover:border-white/30 hover:text-white active:scale-95 transition-all duration-150"
+            >
+              {t.tryDemo}
+            </button>
+          </div>
         </div>
       </section>
 

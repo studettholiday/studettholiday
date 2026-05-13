@@ -148,7 +148,6 @@ const BUTTON_GROUPS = {
   student: [
     { id: 'schedule', label: 'Schedule' },
     { id: 'events',   label: 'Events'   },
-    { id: 'library',  label: 'Library'  },
     { id: 'plan',     label: '📋 Plan',     children: [{ id: 'change-group', label: 'Change Group' }, { id: 'add-subject', label: 'Add Subject' }, { id: 'remove-subject', label: 'Remove Subject' }] },
     { id: 'my-notes', label: '📓 My Notes', children: [{ id: 'notes', label: 'Notes' }, { id: 'practice-diary', label: 'Practice Diary' }] },
     { id: 'report',   label: '⚠️ Report',   children: [{ id: 'report-absence', label: 'Report Absence' }, { id: 'report-event-absence', label: 'Report Event Absence' }, { id: 'report-exam-absence', label: 'Report Exam Absence' }] },
