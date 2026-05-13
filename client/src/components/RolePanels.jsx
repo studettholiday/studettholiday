@@ -2,29 +2,6 @@ import { useState } from 'react';
 
 // ─── Fake data ────────────────────────────────────────────────────────────────
 
-const FAKE_SCHEDULE = [
-  { day: 'Monday',    time: '16:00', subject: 'Guitar — Beginners' },
-  { day: 'Wednesday', time: '16:00', subject: 'Guitar — Beginners' },
-  { day: 'Thursday',  time: '17:00', subject: 'Music Theory'       },
-  { day: 'Friday',    time: '18:00', subject: 'Vocals'             },
-  { day: 'Saturday',  time: '12:00', subject: 'Band Practice'      },
-];
-
-const FAKE_EVENTS = [
-  { name: 'End of Year Concert', date: '20 Jun 2025', time: '19:00', place: 'City Concert Hall' },
-  { name: 'Summer Workshop',     date: '15 Jul 2025', time: '11:00', place: 'Studio Main Hall'  },
-  { name: 'Open Mic Night',      date: '30 Aug 2025', time: '20:00', place: 'The Music Bar'     },
-];
-
-const FAKE_STUDENTS = [
-  { name: 'Ana Beridze',        group: 'Guitar Beginners', status: 'active'  },
-  { name: 'Giorgi Kasreli',     group: 'Vocals A',          status: 'active'  },
-  { name: 'Mariam Joria',       group: 'Band Practice',     status: 'active'  },
-  { name: 'Luka Tvauri',        group: 'Guitar Advanced',   status: 'pending' },
-  { name: 'Nino Kvaratskhelia', group: 'Vocals B',          status: 'active'  },
-  { name: 'David Elisashvili',  group: 'Guitar Beginners',  status: 'pending' },
-];
-
 const INIT_GROUPS = [
   { id: 1, name: 'Guitar Beginners', count: 8 },
   { id: 2, name: 'Guitar Advanced',  count: 5 },
@@ -33,322 +10,354 @@ const INIT_GROUPS = [
   { id: 5, name: 'Band Practice',    count: 5 },
 ];
 
-const TEACHER_GROUPS = [
-  { name: 'Guitar Beginners', count: 8 },
-  { name: 'Vocals A',         count: 6 },
-  { name: 'Band Practice',    count: 5 },
+const ALL_GROUP_NAMES = INIT_GROUPS.map(g => g.name);
+
+const INIT_STUDENTS = [
+  { id: 1, name: 'Ana Beridze',        group: 'Guitar Beginners', status: 'active'  },
+  { id: 2, name: 'Giorgi Kasreli',     group: 'Vocals A',         status: 'active'  },
+  { id: 3, name: 'Mariam Joria',       group: 'Band Practice',    status: 'active'  },
+  { id: 4, name: 'Luka Tvauri',        group: 'Guitar Advanced',  status: 'pending' },
+  { id: 5, name: 'Nino Kvaratskhelia', group: 'Vocals B',         status: 'active'  },
+  { id: 6, name: 'David Elisashvili',  group: 'Guitar Beginners', status: 'pending' },
 ];
 
-const ALL_GROUP_NAMES = INIT_GROUPS.map((g) => g.name);
+const INIT_SCHEDULE = [
+  { id: 1, group: 'Guitar Beginners', day: 'Monday',    time: '16:00', subject: 'Guitar Basics'      },
+  { id: 2, group: 'Guitar Beginners', day: 'Wednesday', time: '16:00', subject: 'Guitar Basics'      },
+  { id: 3, group: 'Guitar Advanced',  day: 'Tuesday',   time: '17:00', subject: 'Fingerpicking'      },
+  { id: 4, group: 'Guitar Advanced',  day: 'Thursday',  time: '17:00', subject: 'Improvisation'      },
+  { id: 5, group: 'Vocals A',         day: 'Monday',    time: '18:00', subject: 'Breathing & Pitch'  },
+  { id: 6, group: 'Vocals A',         day: 'Friday',    time: '18:00', subject: 'Song Rehearsal'     },
+  { id: 7, group: 'Band Practice',    day: 'Saturday',  time: '12:00', subject: 'Full Ensemble'      },
+];
+
+const INIT_EVENTS = [
+  { id: 1, name: 'End of Year Concert', date: '20 Jun 2025', time: '19:00', place: 'City Concert Hall' },
+  { id: 2, name: 'Summer Workshop',     date: '15 Jul 2025', time: '11:00', place: 'Studio Main Hall'  },
+  { id: 3, name: 'Open Mic Night',      date: '30 Aug 2025', time: '20:00', place: 'The Music Bar'     },
+];
+
+const TEACHER_SCHEDULE = [
+  { day: 'Monday',    time: '16:00', group: 'Guitar Beginners' },
+  { day: 'Tuesday',   time: '17:00', group: 'Guitar Advanced'  },
+  { day: 'Wednesday', time: '16:00', group: 'Guitar Beginners' },
+  { day: 'Thursday',  time: '17:00', group: 'Guitar Advanced'  },
+  { day: 'Friday',    time: '18:00', group: 'Vocals A'         },
+];
+
+const TEACHER_GROUPS = [
+  { name: 'Guitar Beginners', count: 8 },
+  { name: 'Guitar Advanced',  count: 5 },
+  { name: 'Vocals A',         count: 6 },
+];
+
+const STUDENT_SCHEDULE = [
+  { day: 'Monday',    time: '16:00', subject: 'Guitar Basics' },
+  { day: 'Wednesday', time: '16:00', subject: 'Guitar Basics' },
+  { day: 'Thursday',  time: '17:00', subject: 'Music Theory'  },
+  { day: 'Friday',    time: '18:00', subject: 'Vocals'        },
+  { day: 'Saturday',  time: '12:00', subject: 'Band Practice' },
+];
+
+const STUDENT_GROUPS = ALL_GROUP_NAMES.slice(0, 3);
 
 const LIBRARY_CATS = [
-  { label: 'Beginner Chords', icon: '🎸', desc: 'Am, Em, G, C, D'      },
-  { label: 'Advanced Chords', icon: '🎵', desc: 'Bm7, Cmaj7, Dm9…'     },
-  { label: 'Beginner Scales', icon: '🎼', desc: 'Pentatonic, Major'     },
-  { label: 'Advanced Scales', icon: '🎹', desc: 'Modes, Jazz scales'   },
+  { label: 'Beginner Chords', icon: '🎸', desc: 'Am, Em, G, C, D'   },
+  { label: 'Advanced Chords', icon: '🎵', desc: 'Bm7, Cmaj7, Dm9…'  },
+  { label: 'Beginner Scales', icon: '🎼', desc: 'Pentatonic, Major'  },
+  { label: 'Advanced Scales', icon: '🎹', desc: 'Modes, Jazz scales' },
 ];
 
 const MOODS = ['😤', '😐', '😊', '🔥'];
 
-// ─── Per-role theme tokens ────────────────────────────────────────────────────
+// ─── Theme tokens ─────────────────────────────────────────────────────────────
 
 const TH = {
-  admin:   { border: 'border-purple-500/20', hdr: 'bg-purple-500/10', accent: 'text-purple-400',  btn: 'bg-purple-600 hover:bg-purple-500',   ring: 'focus:ring-purple-500/40',  conf: 'text-purple-400'  },
-  teacher: { border: 'border-blue-500/20',   hdr: 'bg-blue-500/10',   accent: 'text-blue-400',    btn: 'bg-blue-600 hover:bg-blue-500',       ring: 'focus:ring-blue-500/40',    conf: 'text-blue-400'    },
-  student: { border: 'border-emerald-500/20',hdr: 'bg-emerald-500/10',accent: 'text-emerald-400', btn: 'bg-emerald-600 hover:bg-emerald-500', ring: 'focus:ring-emerald-500/40', conf: 'text-emerald-400' },
+  admin:     { border: 'border-purple-500/20', hdr: 'bg-purple-500/10', accent: 'text-purple-400',  btn: 'bg-purple-600 hover:bg-purple-500',   ring: 'focus:ring-purple-500/40',  conf: 'text-purple-400'  },
+  assistant: { border: 'border-orange-500/20', hdr: 'bg-orange-500/10', accent: 'text-orange-400',  btn: 'bg-orange-600 hover:bg-orange-500',   ring: 'focus:ring-orange-500/40',  conf: 'text-orange-400'  },
+  teacher:   { border: 'border-blue-500/20',   hdr: 'bg-blue-500/10',   accent: 'text-blue-400',    btn: 'bg-blue-600 hover:bg-blue-500',       ring: 'focus:ring-blue-500/40',    conf: 'text-blue-400'    },
+  student:   { border: 'border-emerald-500/20',hdr: 'bg-emerald-500/10',accent: 'text-emerald-400', btn: 'bg-emerald-600 hover:bg-emerald-500', ring: 'focus:ring-emerald-500/40', conf: 'text-emerald-400' },
 };
 
-// ─── Reusable sub-components ─────────────────────────────────────────────────
+// ─── Shared field styles ──────────────────────────────────────────────────────
 
-function Input({ role, value, onChange, placeholder, type = 'text' }) {
+const FIELD = 'w-full rounded-xl border border-white/15 bg-white/[0.05] px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none resize-none';
+const CELL  = 'w-full bg-transparent text-white text-xs outline-none border-b border-transparent focus:border-white/30 py-0.5';
+
+// ─── Panel titles ─────────────────────────────────────────────────────────────
+
+const PANEL_TITLES = {
+  'groups':          'Groups',
+  'admin-schedule':  'Schedule',
+  'students':        'Students',
+  'admin-events':    'Events',
+  'broadcast':       'Broadcast',
+  'admin-announce':  'Announce',
+  'announce':        'Announce',
+  'invite':          'Invite',
+  'my-schedule':     'My Schedule',
+  'my-groups':       'My Groups',
+  'schedule':        'My Schedule',
+  'events':          'Upcoming Events',
+  'library':         'Library',
+  'notes':           'Notes',
+  'practice-diary':  'Practice Diary',
+  'report-absence':  'Report Absence',
+};
+
+// ─── Admin / Assistant panels ─────────────────────────────────────────────────
+
+function GroupsPanel({ role }) {
   const th = TH[role];
-  return (
-    <input
-      type={type}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      className={`w-full rounded-xl border border-white/15 bg-white/[0.05] px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${th.ring}`}
-    />
-  );
-}
+  const [groups, setGroups] = useState(INIT_GROUPS);
+  const [editingId, setEditingId] = useState(null);
+  const [draft, setDraft] = useState('');
 
-function Textarea({ role, value, onChange, placeholder, rows = 3 }) {
-  const th = TH[role];
-  return (
-    <textarea
-      rows={rows}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      className={`w-full rounded-xl border border-white/15 bg-white/[0.05] px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${th.ring} resize-none`}
-    />
-  );
-}
+  function startEdit(g) { setEditingId(g.id); setDraft(g.name); }
+  function saveEdit() {
+    if (draft.trim()) setGroups(gs => gs.map(g => g.id === editingId ? { ...g, name: draft.trim() } : g));
+    setEditingId(null);
+  }
+  function addGroup() {
+    const id = Date.now();
+    setGroups(gs => [...gs, { id, name: 'New Group', count: 0 }]);
+    setEditingId(id);
+    setDraft('New Group');
+  }
 
-function Select({ role, value, onChange, children }) {
-  const th = TH[role];
   return (
-    <select
-      value={value}
-      onChange={onChange}
-      style={{ colorScheme: 'dark' }}
-      className={`w-full rounded-xl border border-white/15 bg-white/[0.05] px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 ${th.ring}`}
-    >
-      {children}
-    </select>
-  );
-}
-
-function PrimaryBtn({ role, onClick, disabled, children }) {
-  const th = TH[role];
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className={`px-5 py-2 rounded-xl text-white text-sm font-medium disabled:opacity-40 active:scale-95 transition-all duration-150 ${th.btn}`}
-    >
-      {children}
-    </button>
-  );
-}
-
-function GhostBtn({ onClick, children }) {
-  return (
-    <button
-      onClick={onClick}
-      className="px-4 py-2 rounded-xl border border-white/15 text-gray-400 hover:text-white text-sm transition-colors"
-    >
-      {children}
-    </button>
-  );
-}
-
-function ScheduleTable({ rows, onDelete }) {
-  return (
-    <table className="w-full text-sm">
-      <thead>
-        <tr className="border-b border-white/10">
-          {['Day', 'Time', 'Subject'].map((h) => (
-            <th key={h} className="text-left py-2 pr-4 text-gray-400 font-medium text-xs uppercase tracking-wide">{h}</th>
-          ))}
-          {onDelete && <th />}
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((row, i) => (
-          <tr key={row.id ?? i} className="border-b border-white/[0.05] last:border-0">
-            <td className="py-2.5 pr-4 text-gray-300">{row.day}</td>
-            <td className="py-2.5 pr-4 text-white font-medium tabular-nums">{row.time}</td>
-            <td className="py-2.5 text-gray-200 flex-1">{row.subject}</td>
-            {onDelete && (
-              <td className="py-2.5 pl-2 text-right">
-                <button onClick={() => onDelete(row.id ?? i)} className="text-gray-600 hover:text-red-400 text-xs transition-colors">✕</button>
-              </td>
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-2">
+        {groups.map(g => (
+          <div key={g.id} className={`rounded-xl border ${th.border} p-3 flex items-center gap-2 min-w-0`}>
+            {editingId === g.id ? (
+              <input
+                autoFocus
+                value={draft}
+                onChange={e => setDraft(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') saveEdit(); if (e.key === 'Escape') setEditingId(null); }}
+                onBlur={saveEdit}
+                className="flex-1 min-w-0 bg-transparent text-white text-xs outline-none border-b border-white/40"
+              />
+            ) : (
+              <span
+                className="flex-1 min-w-0 text-xs text-white cursor-pointer hover:opacity-70 truncate"
+                onClick={() => startEdit(g)}
+                title="Click to edit"
+              >{g.name}</span>
             )}
-          </tr>
+            <span className="text-xs text-gray-600 flex-shrink-0">{g.count}</span>
+            <button
+              onClick={() => setGroups(gs => gs.filter(x => x.id !== g.id))}
+              className="text-gray-600 hover:text-red-400 text-xs flex-shrink-0"
+            >✕</button>
+          </div>
         ))}
-      </tbody>
-    </table>
-  );
-}
-
-function DashedAddBtn({ onClick, label }) {
-  return (
-    <button
-      onClick={onClick}
-      className="w-full py-2.5 rounded-xl border border-dashed border-white/15 text-gray-400 hover:text-white hover:border-white/30 text-sm transition-colors"
-    >
-      {label}
-    </button>
-  );
-}
-
-function ConfirmMsg({ role, children }) {
-  return <p className={`text-center py-6 text-sm ${TH[role].conf}`}>{children}</p>;
-}
-
-// ─── Student panels ───────────────────────────────────────────────────────────
-
-function StudentSchedule() {
-  return <ScheduleTable rows={FAKE_SCHEDULE} />;
-}
-
-function StudentEvents() {
-  return (
-    <div className="space-y-3">
-      {FAKE_EVENTS.map((ev, i) => (
-        <div key={i} className="rounded-xl border border-white/10 bg-white/[0.04] p-4">
-          <p className="font-semibold text-white text-sm">{ev.name}</p>
-          <p className="text-xs text-gray-400 mt-1">📅 {ev.date} · {ev.time}</p>
-          <p className="text-xs text-gray-500 mt-0.5">📍 {ev.place}</p>
-        </div>
-      ))}
+      </div>
+      <button
+        onClick={addGroup}
+        className={`w-full rounded-xl border border-dashed ${th.border} py-2 text-xs text-gray-500 hover:text-white transition-colors`}
+      >+ Add Group</button>
     </div>
   );
 }
 
-function StudentLibrary() {
+function AdminSchedulePanel() {
+  const [rows, setRows] = useState(INIT_SCHEDULE);
+
+  function update(id, col, val) { setRows(rs => rs.map(r => r.id === id ? { ...r, [col]: val } : r)); }
+  function addRow() {
+    setRows(rs => [...rs, { id: Date.now(), group: 'New Group', day: 'Monday', time: '09:00', subject: 'Subject' }]);
+  }
+
   return (
-    <div className="grid grid-cols-2 gap-3">
-      {LIBRARY_CATS.map((cat, i) => (
-        <button key={i} className="rounded-xl border border-white/10 bg-white/[0.04] p-4 text-left hover:bg-white/[0.08] transition-colors">
-          <span className="text-2xl">{cat.icon}</span>
-          <p className="text-sm font-semibold text-white mt-2">{cat.label}</p>
-          <p className="text-xs text-gray-500 mt-0.5">{cat.desc}</p>
-        </button>
-      ))}
+    <div className="space-y-2">
+      <table className="w-full text-xs border-separate border-spacing-y-0.5">
+        <thead>
+          <tr className="text-gray-500">
+            <th className="text-left pb-1.5 font-medium pr-2">Group</th>
+            <th className="text-left pb-1.5 font-medium pr-2">Day</th>
+            <th className="text-left pb-1.5 font-medium pr-2">Time</th>
+            <th className="text-left pb-1.5 font-medium pr-2">Subject</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(r => (
+            <tr key={r.id} className="border-t border-white/[0.05]">
+              {['group', 'day', 'time', 'subject'].map(col => (
+                <td key={col} className="py-1 pr-2">
+                  <input value={r[col]} onChange={e => update(r.id, col, e.target.value)} className={CELL} />
+                </td>
+              ))}
+              <td>
+                <button onClick={() => setRows(rs => rs.filter(x => x.id !== r.id))} className="text-gray-600 hover:text-red-400">✕</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <button onClick={addRow} className="text-xs text-gray-500 hover:text-white transition-colors">+ Add row</button>
     </div>
   );
 }
 
-function StudentNotes({ role }) {
-  const [notes, setNotes] = useState([]);
-  const [adding, setAdding] = useState(false);
-  const [text, setText] = useState('');
+function StudentsPanel({ role }) {
+  const th = TH[role];
+  const [students, setStudents] = useState(INIT_STUDENTS);
+
+  function toggle(id) {
+    setStudents(ss => ss.map(s => s.id === id ? { ...s, status: s.status === 'active' ? 'pending' : 'active' } : s));
+  }
+  function add() {
+    setStudents(ss => [...ss, { id: Date.now(), name: 'New Student', group: ALL_GROUP_NAMES[0], status: 'pending' }]);
+  }
 
   return (
-    <div className="space-y-3">
-      {notes.length === 0 && !adding && (
-        <p className="text-gray-500 text-sm text-center py-4">No notes yet.</p>
-      )}
-      {notes.map((n, i) => (
-        <div key={i} className="rounded-xl border border-white/10 bg-white/[0.04] p-4 flex justify-between items-start gap-3">
-          <p className="text-sm text-gray-200 whitespace-pre-wrap flex-1">{n}</p>
-          <button onClick={() => setNotes((p) => p.filter((_, j) => j !== i))} className="text-gray-600 hover:text-red-400 text-xs transition-colors flex-shrink-0">✕</button>
+    <div className="space-y-1">
+      {students.map(s => (
+        <div key={s.id} className={`flex items-center gap-2 py-2 border-b ${th.border}`}>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs text-white truncate">{s.name}</p>
+            <p className="text-xs text-gray-500 truncate">{s.group}</p>
+          </div>
+          <button
+            onClick={() => toggle(s.id)}
+            className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 ${
+              s.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'
+            }`}
+          >{s.status}</button>
+          <button
+            onClick={() => setStudents(ss => ss.filter(x => x.id !== s.id))}
+            className="text-gray-600 hover:text-red-400 text-xs flex-shrink-0"
+          >✕</button>
         </div>
       ))}
-      {adding ? (
-        <div className="space-y-2">
-          <Textarea role={role} value={text} onChange={(e) => setText(e.target.value)} placeholder="Write your note…" />
+      <button onClick={add} className="text-xs text-gray-500 hover:text-white transition-colors pt-1">+ Add student</button>
+    </div>
+  );
+}
+
+function AdminEventsPanel() {
+  const [events, setEvents] = useState(INIT_EVENTS);
+
+  function update(id, field, val) { setEvents(es => es.map(e => e.id === id ? { ...e, [field]: val } : e)); }
+  function add() {
+    setEvents(es => [...es, { id: Date.now(), name: 'New Event', date: '1 Jan 2026', time: '10:00', place: 'TBD' }]);
+  }
+
+  return (
+    <div className="space-y-2">
+      {events.map(ev => (
+        <div key={ev.id} className="rounded-xl border border-white/10 bg-white/[0.02] p-3 space-y-1.5">
+          <div className="flex items-center gap-2">
+            <input
+              value={ev.name}
+              onChange={e => update(ev.id, 'name', e.target.value)}
+              className="flex-1 bg-transparent text-white text-xs font-medium outline-none border-b border-transparent focus:border-white/30"
+            />
+            <button onClick={() => setEvents(es => es.filter(e => e.id !== ev.id))} className="text-gray-600 hover:text-red-400 text-xs flex-shrink-0">✕</button>
+          </div>
           <div className="flex gap-2">
-            <PrimaryBtn role={role} onClick={() => { if (text.trim()) { setNotes((p) => [...p, text.trim()]); setText(''); setAdding(false); } }}>Save</PrimaryBtn>
-            <GhostBtn onClick={() => { setAdding(false); setText(''); }}>Cancel</GhostBtn>
+            <input value={ev.date}  onChange={e => update(ev.id, 'date',  e.target.value)} className="bg-transparent text-gray-400 text-xs outline-none border-b border-transparent focus:border-white/30 w-28" />
+            <input value={ev.time}  onChange={e => update(ev.id, 'time',  e.target.value)} className="bg-transparent text-gray-400 text-xs outline-none border-b border-transparent focus:border-white/30 w-14" />
+            <input value={ev.place} onChange={e => update(ev.id, 'place', e.target.value)} className="bg-transparent text-gray-400 text-xs outline-none border-b border-transparent focus:border-white/30 flex-1" />
           </div>
         </div>
-      ) : (
-        <DashedAddBtn onClick={() => setAdding(true)} label="+ Add Note" />
-      )}
+      ))}
+      <button onClick={add} className="text-xs text-gray-500 hover:text-white transition-colors">+ Add event</button>
     </div>
   );
 }
 
-function StudentPracticeDiary({ role }) {
-  const [mood, setMood] = useState(null);
-  const [practiced, setPracticed] = useState('');
-  const [hard, setHard] = useState('');
-  const [done, setDone] = useState(false);
+function BroadcastPanel() {
+  const [msg, setMsg] = useState('');
+  const [sent, setSent] = useState(false);
 
-  if (done) return <ConfirmMsg role={role}>✓ Practice diary saved!</ConfirmMsg>;
-
-  return (
-    <div className="space-y-4">
-      <div>
-        <p className="text-xs text-gray-400 mb-2 uppercase tracking-wide">How did it go?</p>
-        <div className="flex gap-3">
-          {MOODS.map((m) => (
-            <button key={m} onClick={() => setMood(m)} className={`text-2xl w-10 h-10 rounded-xl transition-all ${mood === m ? 'bg-white/20 scale-110' : 'hover:bg-white/10'}`}>{m}</button>
-          ))}
-        </div>
-      </div>
-      <div>
-        <p className="text-xs text-gray-400 mb-1 uppercase tracking-wide">What I practiced</p>
-        <Textarea role={role} rows={2} value={practiced} onChange={(e) => setPracticed(e.target.value)} placeholder="e.g. C major scale, Am chord transitions…" />
-      </div>
-      <div>
-        <p className="text-xs text-gray-400 mb-1 uppercase tracking-wide">What was hard</p>
-        <Textarea role={role} rows={2} value={hard} onChange={(e) => setHard(e.target.value)} placeholder="e.g. Switching from G to D quickly…" />
-      </div>
-      <PrimaryBtn role={role} disabled={!mood || !practiced.trim()} onClick={() => setDone(true)}>Save Entry</PrimaryBtn>
-    </div>
-  );
-}
-
-function StudentReportAbsence({ role }) {
-  const [group, setGroup] = useState('');
-  const [reason, setReason] = useState('');
-  const [done, setDone] = useState(false);
-
-  if (done) return <ConfirmMsg role={role}>✓ Absence reported!</ConfirmMsg>;
+  function send() { if (msg.trim()) { setSent(true); setMsg(''); setTimeout(() => setSent(false), 3000); } }
 
   return (
     <div className="space-y-3">
-      <Select role={role} value={group} onChange={(e) => setGroup(e.target.value)}>
-        <option value="">Select group…</option>
-        {ALL_GROUP_NAMES.map((g) => <option key={g} value={g}>{g}</option>)}
-      </Select>
-      <Textarea role={role} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason for absence…" />
-      <PrimaryBtn role={role} disabled={!group || !reason.trim()} onClick={() => setDone(true)}>Submit</PrimaryBtn>
+      <textarea rows={4} value={msg} onChange={e => setMsg(e.target.value)}
+        placeholder="Write your broadcast message…" className={FIELD} />
+      {sent
+        ? <p className="text-emerald-400 text-sm">✅ Broadcast sent!</p>
+        : <button onClick={send} disabled={!msg.trim()}
+            className="rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
+            Send to Everyone
+          </button>
+      }
+    </div>
+  );
+}
+
+function AnnouncePanel({ role }) {
+  const th = TH[role];
+  const [group, setGroup] = useState(ALL_GROUP_NAMES[0]);
+  const [msg, setMsg] = useState('');
+  const [sent, setSent] = useState('');
+
+  function send() { if (msg.trim()) { setSent(group); setMsg(''); setTimeout(() => setSent(''), 3000); } }
+
+  return (
+    <div className="space-y-3">
+      <select value={group} onChange={e => setGroup(e.target.value)} style={{ colorScheme: 'dark' }}
+        className={`${FIELD} cursor-pointer`}>
+        {ALL_GROUP_NAMES.map(g => <option key={g}>{g}</option>)}
+      </select>
+      <textarea rows={3} value={msg} onChange={e => setMsg(e.target.value)}
+        placeholder="Your message…" className={FIELD} />
+      {sent
+        ? <p className={`text-sm ${th.conf}`}>✅ Announced to {sent}!</p>
+        : <button onClick={send} disabled={!msg.trim()}
+            className={`rounded-xl ${th.btn} disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors`}>
+            Send Announcement
+          </button>
+      }
+    </div>
+  );
+}
+
+function InvitePanel({ role }) {
+  const th = TH[role];
+  const [email, setEmail] = useState('');
+  const [sent, setSent] = useState('');
+
+  function send() { if (email.trim()) { setSent(email.trim()); setEmail(''); setTimeout(() => setSent(''), 3000); } }
+
+  return (
+    <div className="space-y-3">
+      <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+        placeholder="Email address" className={FIELD} />
+      {sent
+        ? <p className={`text-sm ${th.conf}`}>✅ Invitation sent to {sent}!</p>
+        : <button onClick={send} disabled={!email.trim()}
+            className={`rounded-xl ${th.btn} disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors`}>
+            Send Invitation
+          </button>
+      }
     </div>
   );
 }
 
 // ─── Teacher panels ───────────────────────────────────────────────────────────
 
-function TeacherGroups() {
+function MySchedulePanel() {
   return (
-    <div className="space-y-3">
-      {TEACHER_GROUPS.map((g, i) => (
-        <div key={i} className="rounded-xl border border-white/10 bg-white/[0.04] p-4 flex items-center justify-between">
-          <div>
-            <p className="font-semibold text-white text-sm">{g.name}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{g.count} students</p>
-          </div>
-          <span className="text-xs text-blue-400 font-medium">View →</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function TeacherAnnounce({ role }) {
-  const [group, setGroup] = useState('');
-  const [msg, setMsg] = useState('');
-  const [file, setFile] = useState(null);
-  const [sent, setSent] = useState(false);
-
-  if (sent) return <ConfirmMsg role={role}>✓ Sent!</ConfirmMsg>;
-
-  return (
-    <div className="space-y-3">
-      <Select role={role} value={group} onChange={(e) => setGroup(e.target.value)}>
-        <option value="">Select group…</option>
-        {TEACHER_GROUPS.map((g) => <option key={g.name} value={g.name}>{g.name}</option>)}
-      </Select>
-      <Textarea role={role} value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="Your message…" />
-      <div className="flex items-center gap-3">
-        <label className="px-4 py-2 rounded-xl border border-white/15 text-gray-400 hover:text-white text-sm cursor-pointer transition-colors">
-          📎 {file ? file.name : 'Attach file'}
-          <input type="file" className="hidden" onChange={(e) => setFile(e.target.files[0] ?? null)} />
-        </label>
-        <PrimaryBtn role={role} disabled={!group || !msg.trim()} onClick={() => setSent(true)}>Send</PrimaryBtn>
-      </div>
-    </div>
-  );
-}
-
-// ─── Admin panels ─────────────────────────────────────────────────────────────
-
-function AdminStudents() {
-  return (
-    <table className="w-full text-sm">
+    <table className="w-full text-xs">
       <thead>
-        <tr className="border-b border-white/10">
-          {['Name', 'Group', 'Status'].map((h) => (
-            <th key={h} className="text-left py-2 pr-4 text-gray-400 font-medium text-xs uppercase tracking-wide">{h}</th>
-          ))}
+        <tr className="text-gray-500">
+          <th className="text-left pb-2 font-medium">Day</th>
+          <th className="text-left pb-2 font-medium">Time</th>
+          <th className="text-left pb-2 font-medium">Group</th>
         </tr>
       </thead>
       <tbody>
-        {FAKE_STUDENTS.map((s, i) => (
-          <tr key={i} className="border-b border-white/[0.05] last:border-0">
-            <td className="py-2.5 pr-4 text-white">{s.name}</td>
-            <td className="py-2.5 pr-4 text-gray-400 text-xs">{s.group}</td>
-            <td className="py-2.5">
-              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${s.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
-                {s.status}
-              </span>
-            </td>
+        {TEACHER_SCHEDULE.map((r, i) => (
+          <tr key={i} className="border-t border-white/[0.05]">
+            <td className="py-1.5 text-gray-400">{r.day}</td>
+            <td className="py-1.5 text-gray-300 font-mono">{r.time}</td>
+            <td className="py-1.5 text-white">{r.group}</td>
           </tr>
         ))}
       </tbody>
@@ -356,165 +365,187 @@ function AdminStudents() {
   );
 }
 
-function AdminGroups({ role }) {
-  const [groups, setGroups] = useState(INIT_GROUPS);
-  const [adding, setAdding] = useState(false);
-  const [newName, setNewName] = useState('');
-
+function MyGroupsPanel() {
   return (
-    <div className="space-y-2">
-      {groups.map((g) => (
-        <div key={g.id} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
-          <div>
-            <span className="text-sm text-white font-medium">{g.name}</span>
-            <span className="text-xs text-gray-500 ml-2">{g.count} students</span>
-          </div>
-          <button onClick={() => setGroups((p) => p.filter((x) => x.id !== g.id))} className="text-gray-600 hover:text-red-400 text-xs transition-colors">Delete</button>
+    <div className="grid grid-cols-2 gap-2">
+      {TEACHER_GROUPS.map(g => (
+        <div key={g.name} className="rounded-xl border border-blue-500/20 bg-blue-500/[0.05] p-3">
+          <p className="text-xs text-white font-medium">{g.name}</p>
+          <p className="text-xs text-gray-500 mt-0.5">{g.count} students</p>
         </div>
       ))}
-      {adding ? (
-        <div className="flex gap-2 pt-1">
-          <input autoFocus value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Group name…" className={`flex-1 rounded-lg border border-white/15 bg-white/[0.05] px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${TH[role].ring}`} />
-          <PrimaryBtn role={role} onClick={() => { if (newName.trim()) { setGroups((p) => [...p, { id: Date.now(), name: newName.trim(), count: 0 }]); setNewName(''); setAdding(false); } }}>Add</PrimaryBtn>
-          <GhostBtn onClick={() => { setAdding(false); setNewName(''); }}>✕</GhostBtn>
-        </div>
-      ) : (
-        <DashedAddBtn onClick={() => setAdding(true)} label="+ Add Group" />
-      )}
     </div>
   );
 }
 
-function AdminSchedule({ role }) {
-  const [rows, setRows] = useState(FAKE_SCHEDULE.map((r, i) => ({ ...r, id: i })));
+// ─── Student panels ───────────────────────────────────────────────────────────
 
+function StudentSchedulePanel() {
+  return (
+    <table className="w-full text-xs">
+      <thead>
+        <tr className="text-gray-500">
+          <th className="text-left pb-2 font-medium">Day</th>
+          <th className="text-left pb-2 font-medium">Time</th>
+          <th className="text-left pb-2 font-medium">Subject</th>
+        </tr>
+      </thead>
+      <tbody>
+        {STUDENT_SCHEDULE.map((r, i) => (
+          <tr key={i} className="border-t border-white/[0.05]">
+            <td className="py-1.5 text-gray-400">{r.day}</td>
+            <td className="py-1.5 text-gray-300 font-mono">{r.time}</td>
+            <td className="py-1.5 text-white">{r.subject}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function StudentEventsPanel() {
   return (
     <div className="space-y-2">
-      <ScheduleTable rows={rows} onDelete={(id) => setRows((p) => p.filter((r) => r.id !== id))} />
-      <DashedAddBtn onClick={() => setRows((p) => [...p, { id: Date.now(), day: 'Monday', time: '—', subject: 'New Class' }])} label="+ Add Row" />
+      {INIT_EVENTS.map(ev => (
+        <div key={ev.id} className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
+          <p className="text-xs text-white font-medium">{ev.name}</p>
+          <p className="text-xs text-gray-500 mt-1">📅 {ev.date} · {ev.time}&nbsp;&nbsp;📍 {ev.place}</p>
+        </div>
+      ))}
     </div>
   );
 }
 
-function AdminEvents({ role }) {
-  const [events, setEvents] = useState(FAKE_EVENTS.map((e, i) => ({ ...e, id: i })));
-  const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ name: '', date: '', time: '', place: '' });
+function StudentLibraryPanel() {
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      {LIBRARY_CATS.map(c => (
+        <div key={c.label} className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.05] p-3">
+          <p className="text-lg mb-1">{c.icon}</p>
+          <p className="text-xs text-white font-medium">{c.label}</p>
+          <p className="text-xs text-gray-500 mt-0.5">{c.desc}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function StudentNotesPanel() {
+  const [notes, setNotes] = useState([
+    'Practice the G major scale daily',
+    'Bring a pick on Tuesday',
+  ]);
+  const [draft, setDraft] = useState('');
+
+  function add() { if (draft.trim()) { setNotes(ns => [...ns, draft.trim()]); setDraft(''); } }
 
   return (
     <div className="space-y-2">
-      {events.map((ev) => (
-        <div key={ev.id} className="flex items-start justify-between rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
-          <div>
-            <p className="text-sm text-white font-medium">{ev.name}</p>
-            <p className="text-xs text-gray-500 mt-0.5">{ev.date} · {ev.time} · {ev.place}</p>
+      <div className="space-y-1.5">
+        {notes.map((n, i) => (
+          <div key={i} className="flex items-start gap-2 rounded-xl border border-white/10 px-3 py-2">
+            <p className="flex-1 text-xs text-gray-300">{n}</p>
+            <button onClick={() => setNotes(ns => ns.filter((_, j) => j !== i))} className="text-gray-600 hover:text-red-400 text-xs flex-shrink-0">✕</button>
           </div>
-          <button onClick={() => setEvents((p) => p.filter((e) => e.id !== ev.id))} className="text-gray-600 hover:text-red-400 text-xs transition-colors ml-4 flex-shrink-0">Delete</button>
-        </div>
-      ))}
-      {adding ? (
-        <div className="rounded-xl border border-white/15 bg-white/[0.04] p-4 space-y-2">
-          {['name', 'date', 'time', 'place'].map((f) => (
-            <input key={f} value={form[f]} onChange={(e) => setForm((p) => ({ ...p, [f]: e.target.value }))} placeholder={f.charAt(0).toUpperCase() + f.slice(1)} className={`w-full rounded-lg border border-white/15 bg-white/[0.05] px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${TH[role].ring}`} />
+        ))}
+      </div>
+      <div className="flex gap-2">
+        <input
+          value={draft}
+          onChange={e => setDraft(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter') add(); }}
+          placeholder="Add a note…"
+          className={`${FIELD} py-1.5`}
+        />
+        <button onClick={add} className="rounded-xl bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 text-sm text-white transition-colors">+</button>
+      </div>
+    </div>
+  );
+}
+
+function StudentPracticeDiaryPanel() {
+  const [mood, setMood] = useState('😊');
+  const [what, setWhat] = useState('');
+  const [goal, setGoal] = useState('');
+  const [saved, setSaved] = useState(false);
+
+  function save() { if (what.trim()) { setSaved(true); setTimeout(() => setSaved(false), 3000); } }
+
+  return (
+    <div className="space-y-3">
+      <div>
+        <p className="text-xs text-gray-500 mb-1.5">Today's mood</p>
+        <div className="flex gap-2">
+          {MOODS.map(m => (
+            <button
+              key={m}
+              onClick={() => setMood(m)}
+              className={`text-xl p-1.5 rounded-lg transition-colors ${mood === m ? 'bg-white/15 ring-1 ring-white/20' : 'hover:bg-white/[0.05]'}`}
+            >{m}</button>
           ))}
-          <div className="flex gap-2 pt-1">
-            <PrimaryBtn role={role} onClick={() => { if (form.name.trim()) { setEvents((p) => [...p, { ...form, id: Date.now() }]); setForm({ name: '', date: '', time: '', place: '' }); setAdding(false); } }}>Add</PrimaryBtn>
-            <GhostBtn onClick={() => setAdding(false)}>Cancel</GhostBtn>
-          </div>
         </div>
-      ) : (
-        <DashedAddBtn onClick={() => setAdding(true)} label="+ Add Event" />
-      )}
+      </div>
+      <textarea rows={2} value={what} onChange={e => setWhat(e.target.value)}
+        placeholder="What did you practice today?" className={FIELD} />
+      <textarea rows={2} value={goal} onChange={e => setGoal(e.target.value)}
+        placeholder="Tomorrow's goal…" className={FIELD} />
+      {saved
+        ? <p className="text-emerald-400 text-sm">✅ Entry saved!</p>
+        : <button onClick={save} disabled={!what.trim()}
+            className="rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
+            Save Entry
+          </button>
+      }
     </div>
   );
 }
 
-function AdminBroadcast({ role }) {
-  const [msg, setMsg] = useState('');
-  const [sent, setSent] = useState(false);
+function StudentReportAbsencePanel() {
+  const [group, setGroup] = useState(STUDENT_GROUPS[0]);
+  const [reason, setReason] = useState('');
+  const [submitted, setSubmitted] = useState(false);
 
-  if (sent) return <ConfirmMsg role={role}>📢 Broadcast sent!</ConfirmMsg>;
+  function submit() { if (reason.trim()) { setSubmitted(true); setReason(''); setTimeout(() => setSubmitted(false), 3000); } }
 
   return (
     <div className="space-y-3">
-      <Textarea role={role} rows={4} value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="Message to all students…" />
-      <PrimaryBtn role={role} disabled={!msg.trim()} onClick={() => setSent(true)}>Send to Everyone</PrimaryBtn>
+      <select value={group} onChange={e => setGroup(e.target.value)} style={{ colorScheme: 'dark' }}
+        className={`${FIELD} cursor-pointer`}>
+        {STUDENT_GROUPS.map(g => <option key={g}>{g}</option>)}
+      </select>
+      <textarea rows={3} value={reason} onChange={e => setReason(e.target.value)}
+        placeholder="Reason for absence…" className={FIELD} />
+      {submitted
+        ? <p className="text-emerald-400 text-sm">✅ Absence reported!</p>
+        : <button onClick={submit} disabled={!reason.trim()}
+            className="rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
+            Report Absence
+          </button>
+      }
     </div>
   );
 }
 
-function AdminAnnounce({ role }) {
-  const [group, setGroup] = useState('');
-  const [msg, setMsg] = useState('');
-  const [announced, setAnnounced] = useState('');
-
-  if (announced) return <ConfirmMsg role={role}>✓ Announced to {announced}!</ConfirmMsg>;
-
-  return (
-    <div className="space-y-3">
-      <Select role={role} value={group} onChange={(e) => setGroup(e.target.value)}>
-        <option value="">Select group…</option>
-        {ALL_GROUP_NAMES.map((g) => <option key={g} value={g}>{g}</option>)}
-      </Select>
-      <Textarea role={role} value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="Your message…" />
-      <PrimaryBtn role={role} disabled={!group || !msg.trim()} onClick={() => setAnnounced(group)}>Send to Group</PrimaryBtn>
-    </div>
-  );
-}
-
-function AdminInvite({ role }) {
-  const [email, setEmail] = useState('');
-  const [sent, setSent] = useState('');
-
-  if (sent) return <ConfirmMsg role={role}>✉️ Invitation sent to {sent}!</ConfirmMsg>;
-
-  return (
-    <div className="space-y-3">
-      <Input role={role} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address…" />
-      <PrimaryBtn role={role} disabled={!email.trim()} onClick={() => setSent(email.trim())}>Send Invitation</PrimaryBtn>
-    </div>
-  );
-}
-
-// ─── Panel routing ────────────────────────────────────────────────────────────
-
-const PANEL_TITLES = {
-  schedule:        'Schedule',
-  events:          'Events',
-  library:         'Library',
-  notes:           'Notes',
-  'practice-diary':'Practice Diary',
-  'report-absence':'Report Absence',
-  'my-schedule':   'My Schedule',
-  'my-groups':     'My Groups',
-  announce:        'Announce',
-  students:        'Students',
-  groups:          'Groups',
-  'admin-schedule':'Schedule',
-  'admin-events':  'Events',
-  broadcast:       'Broadcast',
-  'admin-announce':'Announce',
-  invite:          'Invite',
-};
+// ─── Panel router ─────────────────────────────────────────────────────────────
 
 function panelContent(role, panel) {
   switch (panel) {
-    case 'schedule':        return <StudentSchedule />;
-    case 'events':          return <StudentEvents />;
-    case 'library':         return <StudentLibrary />;
-    case 'notes':           return <StudentNotes role={role} />;
-    case 'practice-diary':  return <StudentPracticeDiary role={role} />;
-    case 'report-absence':  return <StudentReportAbsence role={role} />;
-    case 'my-schedule':     return <StudentSchedule />;
-    case 'my-groups':       return <TeacherGroups />;
-    case 'announce':        return <TeacherAnnounce role={role} />;
-    case 'students':        return <AdminStudents />;
-    case 'groups':          return <AdminGroups role={role} />;
-    case 'admin-schedule':  return <AdminSchedule role={role} />;
-    case 'admin-events':    return <AdminEvents role={role} />;
-    case 'broadcast':       return <AdminBroadcast role={role} />;
-    case 'admin-announce':  return <AdminAnnounce role={role} />;
-    case 'invite':          return <AdminInvite role={role} />;
+    case 'groups':          return <GroupsPanel role={role} />;
+    case 'admin-schedule':  return <AdminSchedulePanel />;
+    case 'students':        return <StudentsPanel role={role} />;
+    case 'admin-events':    return <AdminEventsPanel />;
+    case 'broadcast':       return <BroadcastPanel />;
+    case 'admin-announce':
+    case 'announce':        return <AnnouncePanel role={role} />;
+    case 'invite':          return <InvitePanel role={role} />;
+    case 'my-schedule':     return <MySchedulePanel />;
+    case 'my-groups':       return <MyGroupsPanel />;
+    case 'schedule':        return <StudentSchedulePanel />;
+    case 'events':          return <StudentEventsPanel />;
+    case 'library':         return <StudentLibraryPanel />;
+    case 'notes':           return <StudentNotesPanel />;
+    case 'practice-diary':  return <StudentPracticeDiaryPanel />;
+    case 'report-absence':  return <StudentReportAbsencePanel />;
     default:                return null;
   }
 }
@@ -522,40 +553,47 @@ function panelContent(role, panel) {
 // ─── Exports ──────────────────────────────────────────────────────────────────
 
 export const ROLE_BUTTONS = {
-  student: [
-    { id: 'schedule',        label: 'Schedule'       },
-    { id: 'events',          label: 'Events'         },
-    { id: 'library',         label: 'Library'        },
-    { id: 'notes',           label: 'Notes'          },
-    { id: 'practice-diary',  label: 'Practice Diary' },
-    { id: 'report-absence',  label: 'Report Absence' },
+  admin: [
+    { id: 'groups',         label: 'Groups'    },
+    { id: 'admin-schedule', label: 'Schedule'  },
+    { id: 'students',       label: 'Students'  },
+    { id: 'admin-events',   label: 'Events'    },
+    { id: 'broadcast',      label: 'Broadcast' },
+    { id: 'admin-announce', label: 'Announce'  },
+    { id: 'invite',         label: 'Invite'    },
+  ],
+  assistant: [
+    { id: 'groups',   label: 'Groups'   },
+    { id: 'students', label: 'Students' },
+    { id: 'announce', label: 'Announce' },
+    { id: 'invite',   label: 'Invite'   },
   ],
   teacher: [
     { id: 'my-schedule', label: 'My Schedule' },
     { id: 'my-groups',   label: 'My Groups'   },
     { id: 'announce',    label: 'Announce'    },
   ],
-  admin: [
-    { id: 'students',        label: 'Students'  },
-    { id: 'groups',          label: 'Groups'    },
-    { id: 'admin-schedule',  label: 'Schedule'  },
-    { id: 'admin-events',    label: 'Events'    },
-    { id: 'broadcast',       label: 'Broadcast' },
-    { id: 'admin-announce',  label: 'Announce'  },
-    { id: 'invite',          label: 'Invite'    },
+  student: [
+    { id: 'schedule',       label: 'Schedule'       },
+    { id: 'events',         label: 'Events'         },
+    { id: 'library',        label: 'Library'        },
+    { id: 'notes',          label: 'Notes'          },
+    { id: 'practice-diary', label: 'Practice Diary' },
+    { id: 'report-absence', label: 'Report Absence' },
   ],
 };
 
 export const PANEL_ACTIVE_CLS = {
-  admin:   'bg-purple-600 text-white shadow-sm shadow-purple-900/60',
-  teacher: 'bg-blue-600 text-white shadow-sm shadow-blue-900/60',
-  student: 'bg-emerald-600 text-white shadow-sm shadow-emerald-900/60',
+  admin:     'bg-purple-600 text-white shadow-sm shadow-purple-900/60',
+  assistant: 'bg-orange-600 text-white shadow-sm shadow-orange-900/60',
+  teacher:   'bg-blue-600 text-white shadow-sm shadow-blue-900/60',
+  student:   'bg-emerald-600 text-white shadow-sm shadow-emerald-900/60',
 };
 
 export function RolePanel({ role, panel, onClose }) {
   const th = TH[role];
   return (
-    <div className={`rounded-2xl border ${th.border} bg-[#0d0d18] overflow-hidden flex flex-col max-h-[300px]`}>
+    <div className={`rounded-2xl border ${th.border} bg-[#0d0d18] overflow-hidden flex flex-col max-h-[350px]`}>
       <div className={`flex items-center justify-between px-4 py-2.5 border-b ${th.border} ${th.hdr} flex-shrink-0`}>
         <span className={`text-sm font-semibold ${th.accent}`}>{PANEL_TITLES[panel] ?? panel}</span>
         <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-sm leading-none">✕</button>

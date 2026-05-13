@@ -12,6 +12,13 @@ const THEMES = {
     ring:       'focus:ring-2 focus:ring-purple-500/40',
     glow:       'rgba(147,51,234,0.10)',
   },
+  assistant: {
+    avatar:     'bg-gradient-to-br from-orange-500 to-orange-700',
+    userBubble: 'bg-gradient-to-br from-orange-600 to-orange-800 text-white',
+    sendBtn:    'bg-orange-600 hover:bg-orange-500 shadow-lg shadow-orange-900/40',
+    ring:       'focus:ring-2 focus:ring-orange-500/40',
+    glow:       'rgba(234,88,12,0.10)',
+  },
   teacher: {
     avatar:     'bg-gradient-to-br from-blue-500 to-blue-700',
     userBubble: 'bg-gradient-to-br from-blue-600 to-blue-800 text-white',
@@ -29,15 +36,17 @@ const THEMES = {
 };
 
 const SYSTEM_PROMPTS = {
-  admin:   'You are Sherlock, an AI assistant for school admins. You help manage students, schedules, groups, events, invite codes, and broadcasts. Show what an admin can do: approve students, generate invite codes, set schedules, ban users, view audit logs, broadcast messages.',
-  teacher: 'You are Sherlock, an AI assistant for teachers. You help with schedules, group announcements, student attendance, lesson notes, and broadcasting to groups. Show what a teacher can do.',
-  student: 'You are Sherlock, an AI assistant for music school students. You help with schedules, upcoming events, practice notes, chord and scale library, and lesson reminders. Show what a student can do.',
+  admin:     'You are Sherlock, an AI assistant for school admins. You help manage students, schedules, groups, events, invite codes, and broadcasts. Show what an admin can do: approve students, generate invite codes, set schedules, ban users, view audit logs, broadcast messages.',
+  assistant: 'You are Sherlock, an AI assistant for school office assistants. You help with student management, group oversight, announcements, and sending invitations. Show what an assistant can do.',
+  teacher:   'You are Sherlock, an AI assistant for teachers. You help with schedules, group announcements, student attendance, lesson notes, and broadcasting to groups. Show what a teacher can do.',
+  student:   'You are Sherlock, an AI assistant for music school students. You help with schedules, upcoming events, practice notes, chord and scale library, and lesson reminders. Show what a student can do.',
 };
 
 const GREETINGS = {
-  admin:   "Hello! I'm Sherlock, your admin assistant. I can help you manage students, approve registrations, generate invite codes, set schedules, broadcast messages, and view audit logs. What would you like to do?",
-  teacher: "Hi! I'm Sherlock, your teaching assistant. I can help with group schedules, student attendance, lesson notes, and group announcements. How can I help today?",
-  student: "Hey! I'm Sherlock, your music school companion. Ask me about your schedule, upcoming events, practice tips, chords, or lesson reminders!",
+  admin:     "Hello! I'm Sherlock, your admin assistant. I can help you manage students, approve registrations, generate invite codes, set schedules, broadcast messages, and view audit logs. What would you like to do?",
+  assistant: "Hi! I'm Sherlock, your office assistant. I can help with student management, groups, announcements, and sending invitations. What do you need?",
+  teacher:   "Hi! I'm Sherlock, your teaching assistant. I can help with group schedules, student attendance, lesson notes, and group announcements. How can I help today?",
+  student:   "Hey! I'm Sherlock, your music school companion. Ask me about your schedule, upcoming events, practice tips, chords, or lesson reminders!",
 };
 
 const CHAT_STYLES = {
@@ -111,9 +120,10 @@ function MessageBubble({ message, theme, styleName }) {
 }
 
 const ROLE_SWITCHER = [
-  { id: 'admin',   label: 'Admin',   activeCls: 'bg-purple-600 text-white'  },
-  { id: 'teacher', label: 'Teacher', activeCls: 'bg-blue-600 text-white'    },
-  { id: 'student', label: 'Student', activeCls: 'bg-emerald-600 text-white' },
+  { id: 'admin',     label: 'Admin',     activeCls: 'bg-purple-600 text-white'  },
+  { id: 'assistant', label: 'Assistant', activeCls: 'bg-orange-600 text-white'  },
+  { id: 'teacher',   label: 'Teacher',   activeCls: 'bg-blue-600 text-white'    },
+  { id: 'student',   label: 'Student',   activeCls: 'bg-emerald-600 text-white' },
 ];
 
 export default function ChatWindow() {
