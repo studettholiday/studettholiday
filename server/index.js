@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const chatRouter = require('./routes/chat');
+const dbRouter = require('./routes/db');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -11,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/chat', chatRouter);
+app.use('/api', dbRouter);
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
 app.use(express.static(path.join(__dirname, 'public')));
