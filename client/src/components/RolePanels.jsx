@@ -117,10 +117,12 @@ const PANEL_TITLES = {
   'add-subject':     'Add Subject',
   'remove-subject':  'Remove Subject',
   'requests':        'Requests',
-  'subjects':        'Subjects',
-  'view-events':     'View Events',
-  'add-event':       'Add Event',
-  'delete-event':    'Delete Event',
+  'subjects':              'Subjects',
+  'view-events':           'View Events',
+  'add-event':             'Add Event',
+  'delete-event':          'Delete Event',
+  'report-event-absence':  'Report Event Absence',
+  'report-exam-absence':   'Report Exam Absence',
 };
 
 // ─── Admin / Assistant panels ─────────────────────────────────────────────────
@@ -669,10 +671,62 @@ function StudentReportAbsencePanel() {
       <textarea rows={3} value={reason} onChange={e => setReason(e.target.value)}
         placeholder="Reason for absence…" className={FIELD} />
       {submitted
-        ? <p className="text-emerald-400 text-sm">✅ Absence reported!</p>
+        ? <p className="text-emerald-400 text-sm">✅ Sent to your teacher</p>
         : <button onClick={submit} disabled={!reason.trim()}
             className="rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
             Report Absence
+          </button>
+      }
+    </div>
+  );
+}
+
+function StudentReportEventAbsencePanel() {
+  const [event, setEvent] = useState(INIT_EVENTS[0]?.name ?? '');
+  const [reason, setReason] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+
+  function submit() { if (reason.trim()) { setSubmitted(true); setReason(''); setTimeout(() => setSubmitted(false), 3000); } }
+
+  return (
+    <div className="space-y-3">
+      <select value={event} onChange={e => setEvent(e.target.value)} style={{ colorScheme: 'dark' }}
+        className={`${FIELD} cursor-pointer`}>
+        {INIT_EVENTS.map(ev => <option key={ev.id}>{ev.name}</option>)}
+      </select>
+      <textarea rows={3} value={reason} onChange={e => setReason(e.target.value)}
+        placeholder="Reason for absence…" className={FIELD} />
+      {submitted
+        ? <p className="text-emerald-400 text-sm">✅ Sent to assistant</p>
+        : <button onClick={submit} disabled={!reason.trim()}
+            className="rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
+            Submit Report
+          </button>
+      }
+    </div>
+  );
+}
+
+function StudentReportExamAbsencePanel() {
+  const [subject, setSubject] = useState(STUDENT_ENROLLED[0]);
+  const [reason, setReason] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+
+  function submit() { if (reason.trim()) { setSubmitted(true); setReason(''); setTimeout(() => setSubmitted(false), 3000); } }
+
+  return (
+    <div className="space-y-3">
+      <select value={subject} onChange={e => setSubject(e.target.value)} style={{ colorScheme: 'dark' }}
+        className={`${FIELD} cursor-pointer`}>
+        {STUDENT_ENROLLED.map(s => <option key={s}>{s}</option>)}
+      </select>
+      <textarea rows={3} value={reason} onChange={e => setReason(e.target.value)}
+        placeholder="Reason for absence…" className={FIELD} />
+      {submitted
+        ? <p className="text-emerald-400 text-sm">✅ Sent to assistant</p>
+        : <button onClick={submit} disabled={!reason.trim()}
+            className="rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
+            Submit Report
           </button>
       }
     </div>
@@ -801,7 +855,9 @@ function panelContent(role, panel) {
     case 'library':         return <StudentLibraryPanel />;
     case 'notes':           return <StudentNotesPanel />;
     case 'practice-diary':  return <StudentPracticeDiaryPanel />;
-    case 'report-absence':  return <StudentReportAbsencePanel />;
+    case 'report-absence':        return <StudentReportAbsencePanel />;
+    case 'report-event-absence':  return <StudentReportEventAbsencePanel />;
+    case 'report-exam-absence':   return <StudentReportExamAbsencePanel />;
     case 'change-group':    return <StudentChangeGroupPanel />;
     case 'add-subject':     return <StudentAddSubjectPanel />;
     case 'remove-subject':  return <StudentRemoveSubjectPanel />;
