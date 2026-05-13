@@ -21,6 +21,12 @@ const INIT_STUDENTS = [
   { id: 6, name: 'David Elisashvili',  group: 'Guitar Beginners', status: 'pending' },
 ];
 
+const INIT_TEACHERS = [
+  { id: 1, name: 'Nino Beridze',          subject: 'Guitar' },
+  { id: 2, name: 'Giorgi Kvaratskhelia',  subject: 'Vocals' },
+  { id: 3, name: 'Lasha Mikhelidze',      subject: 'Band'   },
+];
+
 const INIT_SCHEDULE = [
   { id: 1, group: 'Guitar Beginners', day: 'Monday',    time: '16:00', subject: 'Guitar Basics'      },
   { id: 2, group: 'Guitar Beginners', day: 'Wednesday', time: '16:00', subject: 'Guitar Basics'      },
@@ -117,6 +123,7 @@ const PANEL_TITLES = {
   'add-subject':     'Add Subject',
   'remove-subject':  'Remove Subject',
   'requests':        'Requests',
+  'teachers':        'Teachers',
   'subjects':              'Subjects',
   'view-events':           'View Events',
   'add-event':             'Add Event',
@@ -493,6 +500,54 @@ function AssistantRequestsPanel() {
       {requests.every(r => r.status !== 'pending') && (
         <p className="text-xs text-gray-500 text-center py-2">All requests resolved.</p>
       )}
+    </div>
+  );
+}
+
+function TeachersPanel({ role }) {
+  const th = TH[role];
+  const [teachers, setTeachers] = useState(INIT_TEACHERS);
+  const [name,    setName]    = useState('');
+  const [subject, setSubject] = useState('');
+  const [added,   setAdded]   = useState(false);
+
+  function add() {
+    if (!name.trim() || !subject.trim()) return;
+    setTeachers(ts => [...ts, { id: Date.now(), name: name.trim(), subject: subject.trim() }]);
+    setName(''); setSubject('');
+    setAdded(true);
+    setTimeout(() => setAdded(false), 3000);
+  }
+
+  return (
+    <div className="space-y-2">
+      {teachers.map(t => (
+        <div key={t.id} className={`flex items-center justify-between rounded-xl border ${th.border} px-3 py-2`}>
+          <div>
+            <p className="text-xs text-white font-medium">{t.name}</p>
+            <p className="text-xs text-gray-500">{t.subject}</p>
+          </div>
+          <button onClick={() => setTeachers(ts => ts.filter(x => x.id !== t.id))}
+            className="text-gray-600 hover:text-red-400 text-xs transition-colors">Remove</button>
+        </div>
+      ))}
+      <div className="pt-1 space-y-2 border-t border-white/[0.06]">
+        <div className="flex gap-2 pt-1">
+          <input value={name} onChange={e => setName(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') add(); }}
+            placeholder="Name" className={`${FIELD} py-1.5`} />
+          <input value={subject} onChange={e => setSubject(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') add(); }}
+            placeholder="Subject" className={`${FIELD} py-1.5`} />
+        </div>
+        {added
+          ? <p className={`text-sm ${th.conf}`}>✅ Teacher added!</p>
+          : <button onClick={add} disabled={!name.trim() || !subject.trim()}
+              className={`rounded-xl ${th.btn} disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors`}>
+              Add Teacher
+            </button>
+        }
+      </div>
     </div>
   );
 }
@@ -1066,6 +1121,7 @@ function panelContent(role, panel) {
     case 'add-subject':     return <StudentAddSubjectPanel />;
     case 'remove-subject':  return <StudentRemoveSubjectPanel />;
     case 'requests':        return <AssistantRequestsPanel />;
+    case 'teachers':        return <TeachersPanel role={role} />;
     case 'subjects':        return <SubjectsPanel role={role} />;
     case 'view-events':     return <AdminViewEventsPanel />;
     case 'add-event':       return <AdminAddEventPanel role={role} />;

@@ -128,25 +128,22 @@ const ROLE_SWITCHER = [
 
 const BUTTON_GROUPS = {
   admin: [
-    { id: 'people',    label: '👥 People',    children: [{ id: 'students', label: 'Students' }, { id: 'invite', label: 'Invite' }] },
+    { id: 'people',    label: '👥 People',    children: [{ id: 'students', label: 'Students' }, { id: 'teachers', label: 'Teachers' }, { id: 'invite', label: 'Invite' }] },
     { id: 'manage',    label: '📋 Manage',    children: [{ id: 'groups', label: 'Groups' }, { id: 'admin-schedule', label: 'Schedule' }, { id: 'subjects', label: 'Subjects' }] },
-    { id: 'broadcast', label: '📢 Notify', children: [{ id: 'broadcast', label: 'Notify' }, { id: 'admin-announce', label: 'Announce' }] },
+    { id: 'broadcast', label: '📢 Notify',    children: [{ id: 'broadcast', label: 'Notify' }, { id: 'admin-announce', label: 'Announce' }] },
     { id: 'events',    label: '🎪 Events',    children: [{ id: 'view-events', label: 'View Events' }, { id: 'add-event', label: 'Add Event' }, { id: 'delete-event', label: 'Delete Event' }] },
-    { id: 'knowledge-library', label: '📚 Library' },
   ],
   assistant: [
-    { id: 'people',   label: '👥 People',   children: [{ id: 'students', label: 'Students' }, { id: 'invite', label: 'Invite' }] },
+    { id: 'people',   label: '👥 People',   children: [{ id: 'students', label: 'Students' }, { id: 'teachers', label: 'Teachers' }, { id: 'invite', label: 'Invite' }] },
     { id: 'manage',   label: '📋 Manage',   children: [{ id: 'groups', label: 'Groups' }, { id: 'subjects', label: 'Subjects' }] },
     { id: 'events',   label: '🎪 Events',   children: [{ id: 'view-events', label: 'View Events' }, { id: 'add-event', label: 'Add Event' }, { id: 'delete-event', label: 'Delete Event' }] },
     { id: 'requests', label: '📬 Requests', children: [{ id: 'requests', label: 'Pending Requests' }] },
     { id: 'announce', label: '📢 Announce', children: [{ id: 'announce', label: 'Announce' }] },
-    { id: 'knowledge-library', label: '📚 Library' },
   ],
   teacher: [
-    { id: 'my-work',           label: '📅 My Work',     children: [{ id: 'my-schedule', label: 'My Schedule' }, { id: 'my-groups', label: 'My Groups' }] },
-    { id: 'announce',          label: '📢 Announce'    },
-    { id: 'share-files',       label: '📁 Share Files' },
-    { id: 'knowledge-library', label: '📚 Library'     },
+    { id: 'my-work',     label: '📅 My Work',     children: [{ id: 'my-schedule', label: 'My Schedule' }, { id: 'my-groups', label: 'My Groups' }] },
+    { id: 'announce',    label: '📢 Announce'    },
+    { id: 'share-files', label: '📁 Share Files' },
   ],
   student: [
     { id: 'schedule', label: 'Schedule' },
@@ -343,23 +340,28 @@ export default function ChatWindow() {
           <div className={`flex flex-col border-b ${s.headerBorder} flex-shrink-0`}>
             <div className="flex items-center gap-1.5 px-4 py-2 overflow-x-auto"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              {BUTTON_GROUPS[role].map(item =>
-                !item.children ? (
+              {BUTTON_GROUPS[role].map(item => {
+                const isMulti = item.children && item.children.length >= 2;
+                if (isMulti) {
+                  return (
+                    <button key={item.id}
+                      onClick={() => setOpenGroup(g => g === item.id ? null : item.id)}
+                      className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 transition-all duration-200 ${openGroup === item.id ? GROUP_OPEN_CLS[role] : inactiveGroupCls}`}>
+                      {item.label} {openGroup === item.id ? '▲' : '▼'}
+                    </button>
+                  );
+                }
+                const panelId = item.children?.length === 1 ? item.children[0].id : item.id;
+                return (
                   <button key={item.id}
-                    onClick={() => setActivePanel(activePanel === item.id ? null : item.id)}
-                    className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all duration-200 ${activePanel === item.id ? PANEL_ACTIVE_CLS[role] : inactiveCls}`}>
+                    onClick={() => setActivePanel(activePanel === panelId ? null : panelId)}
+                    className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all duration-200 ${activePanel === panelId ? PANEL_ACTIVE_CLS[role] : inactiveCls}`}>
                     {item.label}
                   </button>
-                ) : (
-                  <button key={item.id}
-                    onClick={() => setOpenGroup(g => g === item.id ? null : item.id)}
-                    className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 transition-all duration-200 ${openGroup === item.id ? GROUP_OPEN_CLS[role] : inactiveGroupCls}`}>
-                    {item.label} {openGroup === item.id ? '▲' : '▼'}
-                  </button>
-                )
-              )}
+                );
+              })}
             </div>
-            {openGroupDef?.children && (
+            {openGroupDef?.children && openGroupDef.children.length >= 2 && (
               <div className={`flex items-center gap-1.5 px-6 py-1.5 border-t ${s.headerBorder} overflow-x-auto`}
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {openGroupDef.children.map(child => (
@@ -400,6 +402,22 @@ export default function ChatWindow() {
           onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) sendMessage(e); }}
           className={`flex-1 resize-none rounded-xl px-3 py-2 text-sm focus:outline-none ${theme.ring} max-h-32 ${s.inputCls}`}
         />
+        {role !== 'student' && (
+          <button
+            type="button"
+            title="Knowledge Library"
+            onClick={() => setActivePanel(activePanel === 'knowledge-library' ? null : 'knowledge-library')}
+            className={`px-3 py-2 rounded-xl text-sm font-medium flex-shrink-0 transition-all duration-150 active:scale-95 ${
+              activePanel === 'knowledge-library'
+                ? PANEL_ACTIVE_CLS[role]
+                : s.colorScheme === 'light'
+                  ? 'border border-gray-300 text-gray-500 hover:text-gray-900 hover:border-gray-400'
+                  : 'border border-white/15 text-gray-400 hover:text-white hover:border-white/30'
+            }`}
+          >
+            📚
+          </button>
+        )}
         <button
           type="submit"
           disabled={loading || !input.trim()}
