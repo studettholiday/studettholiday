@@ -142,7 +142,7 @@ const BUTTON_GROUPS = {
   ],
   teacher: [
     { id: 'my-work',  label: '📅 My Work',  children: [{ id: 'my-schedule', label: 'My Schedule' }, { id: 'my-groups', label: 'My Groups' }] },
-    { id: 'announce', label: '📢 Announce', children: [{ id: 'announce', label: 'Announce' }] },
+    { id: 'announce', label: '📢 Announce' },
   ],
   student: [
     { id: 'schedule', label: 'Schedule' },
