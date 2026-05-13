@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 
-const API_URL = 'http://localhost:3001/api/chat';
+const API_URL = '/api/chat';
 
 function MessageBubble({ message }) {
   const isUser = message.role === 'user';
@@ -10,8 +10,8 @@ function MessageBubble({ message }) {
       <div
         className={`max-w-[75%] px-4 py-2 rounded-2xl text-sm leading-relaxed break-words ${
           isUser
-            ? 'bg-blue-600 text-white rounded-br-sm'
-            : 'bg-gray-100 text-gray-800 rounded-bl-sm'
+            ? 'bg-indigo-600 text-white rounded-br-sm'
+            : 'bg-white/[0.08] text-gray-100 rounded-bl-sm'
         }`}
       >
         {isUser ? message.content : <ReactMarkdown>{message.content}</ReactMarkdown>}
@@ -65,27 +65,26 @@ export default function ChatWindow() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-white max-w-2xl mx-auto">
+    <div className="flex flex-col h-screen bg-[#0d0d18] max-w-2xl mx-auto border-t border-white/[0.06]">
       {/* Header */}
-      <header className="flex items-center gap-3 px-4 py-3 border-b border-gray-200 bg-white shadow-sm">
-        <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-bold">
-          AI
+      <header className="flex items-center gap-3 px-4 py-3 border-b border-white/[0.08] bg-[#0d0d18]">
+        <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-sm font-bold">
+          S
         </div>
-        <h1 className="text-base font-semibold text-gray-800">AI Chat</h1>
+        <h1 className="text-base font-semibold text-white">Sherlock</h1>
         <select
           value={provider}
           onChange={(e) => setProvider(e.target.value)}
           disabled={loading}
-          className="ml-auto text-sm border border-gray-300 rounded-lg px-2 py-1 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-40"
+          style={{ colorScheme: 'dark' }}
+          className="ml-auto text-sm border border-white/15 rounded-lg px-2 py-1 bg-white/[0.05] text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 disabled:opacity-40"
         >
           <option value="anthropic">Claude</option>
           <option value="openai">GPT-4</option>
           <option value="gemini">Gemini</option>
         </select>
         {loading && (
-          <span className="text-xs text-gray-400 animate-pulse">
-            Thinking...
-          </span>
+          <span className="text-xs text-gray-500 animate-pulse">Thinking...</span>
         )}
       </header>
 
@@ -100,10 +99,10 @@ export default function ChatWindow() {
       {/* Input bar */}
       <form
         onSubmit={sendMessage}
-        className="flex items-end gap-2 px-4 py-3 border-t border-gray-200 bg-white"
+        className="flex items-end gap-2 px-4 py-3 border-t border-white/[0.08] bg-[#0d0d18]"
       >
         <textarea
-          className="flex-1 resize-none rounded-xl border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-32"
+          className="flex-1 resize-none rounded-xl border border-white/15 bg-white/[0.05] px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 max-h-32"
           rows={1}
           placeholder="Type a message..."
           value={input}
@@ -115,7 +114,7 @@ export default function ChatWindow() {
         <button
           type="submit"
           disabled={loading || !input.trim()}
-          className="px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-medium disabled:opacity-40 hover:bg-blue-700 transition-colors"
+          className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium disabled:opacity-40 hover:bg-indigo-500 transition-colors"
         >
           Send
         </button>

@@ -1,14 +1,126 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ChatWindow from './components/ChatWindow';
 
+const T = {
+  EN: {
+    sub1: 'AI-powered school management.',
+    sub2: 'No code required.',
+    getStarted: 'Get Started',
+    tryDemo: 'Try Demo',
+    featuresTitle: 'Everything your school needs',
+    joinWaitlist: 'Join Waitlist',
+    emailLabel: 'Email address',
+    schoolLabel: 'School name',
+    typeLabel: 'School type',
+    schoolTypes: ['Music School', 'Language School', 'University', 'Gym', 'Other'],
+    thankYou: "You're on the list! We'll be in touch soon.",
+  },
+  GEO: {
+    sub1: 'AI-ზე დაფუძნებული სკოლის მართვა.',
+    sub2: 'კოდი არ სჭირდება.',
+    getStarted: 'დაწყება',
+    tryDemo: 'სცადე',
+    featuresTitle: 'ყველაფერი რაც თქვენს სკოლას სჭირდება',
+    joinWaitlist: 'სიაში ჩაწერა',
+    emailLabel: 'ელ-ფოსტა',
+    schoolLabel: 'სკოლის სახელი',
+    typeLabel: 'სკოლის ტიპი',
+    schoolTypes: ['მუსიკალური სკოლა', 'ენის სკოლა', 'უნივერსიტეტი', 'სპორტ დარბაზი', 'სხვა'],
+    thankYou: 'თქვენ ჩაეწერეთ! მალე დაგიკავშირდებით.',
+  },
+};
+
 const FEATURES = [
-  { id: 'chat',    icon: '🤖', title: 'AI Chat',       desc: 'Ask anything, get instant answers' },
-  { id: 'schedule',icon: '📅', title: 'Schedule',      desc: 'Weekly timetable for every group' },
-  { id: 'events',  icon: '🎪', title: 'Events',        desc: 'Upcoming concerts and activities' },
-  { id: 'notes',   icon: '📒', title: 'Notes',         desc: 'Lesson notes and practice diary' },
-  { id: 'library', icon: '🎸', title: 'Music Library', desc: 'Chords, scales, diagrams' },
-  { id: 'reminders',icon:'🔔', title: 'Reminders',     desc: 'Automatic lesson reminders' },
+  { id: 'chat',     icon: '🤖', EN: { title: 'AI Chat',           desc: 'Ask anything, get instant answers' }, GEO: { title: 'AI ჩატი',               desc: 'ნებისმიერი კითხვა'         } },
+  { id: 'schedule', icon: '📅', EN: { title: 'Schedule',          desc: 'Weekly timetable for every group'  }, GEO: { title: 'განრიგი',                desc: 'კვირის განრიგი'             } },
+  { id: 'events',   icon: '🎪', EN: { title: 'Events',            desc: 'Upcoming concerts and activities'  }, GEO: { title: 'ღონისძიებები',           desc: 'მომავალი ღონისძიებები'     } },
+  { id: 'notes',    icon: '📒', EN: { title: 'Notes',             desc: 'Lesson notes and practice diary'   }, GEO: { title: 'ჩანაწერები',             desc: 'გაკვეთილის ჩანაწერები'     } },
+  { id: 'library',  icon: '🎸', EN: { title: 'Music Library',     desc: 'Chords, scales, diagrams'          }, GEO: { title: 'მუსიკალური ბიბლიოთეკა', desc: 'აკორდები, გამები'           } },
+  { id: 'reminders',icon: '🔔', EN: { title: 'Reminders',         desc: 'Automatic lesson reminders'        }, GEO: { title: 'შეხსენებები',            desc: 'ავტომატური შეხსენებები'    } },
 ];
+
+const FIELD_CLS =
+  'w-full rounded-xl border border-white/15 bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/30 transition-colors';
+
+function SignupModal({ lang, onClose }) {
+  const t = T[lang];
+  const [form, setForm] = useState({ email: '', school: '', type: '' });
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <div className="relative w-full max-w-md rounded-2xl border border-white/[0.08] bg-[#0f0f1a] p-8 shadow-2xl">
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-4 top-4 text-gray-500 hover:text-white transition-colors text-lg leading-none"
+        >
+          ✕
+        </button>
+
+        {done ? (
+          <div className="py-8 text-center">
+            <p className="text-3xl mb-4">🎉</p>
+            <p className="text-white font-medium">{t.thankYou}</p>
+          </div>
+        ) : (
+          <form
+            onSubmit={(e) => { e.preventDefault(); setDone(true); }}
+            className="flex flex-col gap-4"
+          >
+            <h2 className="text-lg font-bold text-white mb-1">{t.getStarted}</h2>
+
+            <input
+              required
+              type="email"
+              placeholder={t.emailLabel}
+              value={form.email}
+              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+              className={FIELD_CLS}
+            />
+            <input
+              required
+              type="text"
+              placeholder={t.schoolLabel}
+              value={form.school}
+              onChange={(e) => setForm((f) => ({ ...f, school: e.target.value }))}
+              className={FIELD_CLS}
+            />
+            <select
+              required
+              value={form.type}
+              onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))}
+              style={{ colorScheme: 'dark' }}
+              className={FIELD_CLS + ' cursor-pointer'}
+            >
+              <option value="" disabled>{t.typeLabel}</option>
+              {t.schoolTypes.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+
+            <button
+              type="submit"
+              className="mt-1 w-full rounded-xl bg-indigo-600 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500 active:scale-95 transition-all duration-150"
+            >
+              {t.joinWaitlist}
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
 
 function Toggle({ on, onToggle }) {
   return (
@@ -32,20 +144,32 @@ function Toggle({ on, onToggle }) {
 export default function App() {
   const [lang, setLang] = useState('EN');
   const [enabled, setEnabled] = useState(
-    () => Object.fromEntries(FEATURES.map(f => [f.id, true]))
+    () => Object.fromEntries(FEATURES.map((f) => [f.id, true]))
   );
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const t = T[lang];
+
+  useEffect(() => {
+    document.body.style.overflow = modalOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [modalOpen]);
 
   return (
     <div className="min-h-screen bg-[#08080f] text-white">
 
+      {modalOpen && (
+        <SignupModal lang={lang} onClose={() => setModalOpen(false)} />
+      )}
+
       {/* Nav */}
-      <nav className="sticky top-0 z-50 border-b border-white/[0.08] bg-[#08080f]/80 backdrop-blur-md">
+      <nav className="sticky top-0 z-40 border-b border-white/[0.08] bg-[#08080f]/80 backdrop-blur-md">
         <div className="mx-auto max-w-6xl px-6 flex items-center justify-between h-16">
           <span className="text-base font-bold tracking-tight">
             Sherlock Is Smart
           </span>
           <button
-            onClick={() => setLang(l => l === 'EN' ? 'GEO' : 'EN')}
+            onClick={() => setLang((l) => (l === 'EN' ? 'GEO' : 'EN'))}
             className="rounded-full border border-white/20 px-4 py-1.5 text-sm font-medium text-gray-400 hover:border-white/40 hover:text-white transition-colors duration-200"
           >
             {lang}
@@ -55,7 +179,6 @@ export default function App() {
 
       {/* Hero */}
       <section className="relative flex flex-col items-center justify-center px-6 pt-28 pb-32 text-center overflow-hidden">
-        {/* Ambient glow */}
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(99,102,241,0.12),transparent)]" />
 
         <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight bg-gradient-to-br from-white via-gray-100 to-gray-500 bg-clip-text text-transparent leading-tight">
@@ -63,16 +186,19 @@ export default function App() {
         </h1>
 
         <p className="mt-5 max-w-lg text-lg text-gray-400 leading-relaxed">
-          AI-powered school management.{' '}
-          <span className="text-gray-300">No code required.</span>
+          {t.sub1}{' '}
+          <span className="text-gray-300">{t.sub2}</span>
         </p>
 
         <div className="mt-10 flex flex-wrap gap-3 justify-center">
-          <button className="rounded-xl bg-indigo-600 px-7 py-3 text-sm font-semibold text-white hover:bg-indigo-500 active:scale-95 transition-all duration-150 shadow-lg shadow-indigo-900/40">
-            Get Started
+          <button
+            onClick={() => setModalOpen(true)}
+            className="rounded-xl bg-indigo-600 px-7 py-3 text-sm font-semibold text-white hover:bg-indigo-500 active:scale-95 transition-all duration-150 shadow-lg shadow-indigo-900/40"
+          >
+            {t.getStarted}
           </button>
           <button className="rounded-xl border border-white/15 px-7 py-3 text-sm font-semibold text-gray-300 hover:border-white/30 hover:text-white active:scale-95 transition-all duration-150">
-            Try Demo
+            {t.tryDemo}
           </button>
         </div>
       </section>
@@ -80,10 +206,10 @@ export default function App() {
       {/* Features */}
       <section className="mx-auto max-w-6xl px-6 pb-28">
         <h2 className="text-center text-3xl sm:text-4xl font-bold tracking-tight mb-12">
-          Everything your school needs
+          {t.featuresTitle}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {FEATURES.map(f => (
+          {FEATURES.map((f) => (
             <div
               key={f.id}
               className={`rounded-2xl border p-6 flex flex-col gap-4 transition-all duration-200 ${
@@ -96,19 +222,21 @@ export default function App() {
                 <span className="text-3xl leading-none">{f.icon}</span>
                 <Toggle
                   on={enabled[f.id]}
-                  onToggle={() => setEnabled(prev => ({ ...prev, [f.id]: !prev[f.id] }))}
+                  onToggle={() =>
+                    setEnabled((prev) => ({ ...prev, [f.id]: !prev[f.id] }))
+                  }
                 />
               </div>
               <div>
-                <p className="font-semibold text-white text-sm">{f.title}</p>
-                <p className="mt-1 text-sm text-gray-400 leading-relaxed">{f.desc}</p>
+                <p className="font-semibold text-white text-sm">{f[lang].title}</p>
+                <p className="mt-1 text-sm text-gray-400 leading-relaxed">{f[lang].desc}</p>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Chat — kept as-is */}
+      {/* Chat */}
       <ChatWindow />
 
     </div>
