@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { RolePanel, ROLE_BUTTONS, PANEL_ACTIVE_CLS } from './RolePanels';
 
 const API_URL = '/api/chat';
 
@@ -109,7 +110,15 @@ function MessageBubble({ message, theme, styleName }) {
   );
 }
 
-export default function ChatWindow({ role = 'student' }) {
+const ROLE_SWITCHER = [
+  { id: 'admin',   label: 'Admin',   activeCls: 'bg-purple-600 text-white'  },
+  { id: 'teacher', label: 'Teacher', activeCls: 'bg-blue-600 text-white'    },
+  { id: 'student', label: 'Student', activeCls: 'bg-emerald-600 text-white' },
+];
+
+export default function ChatWindow() {
+  const [role, setRole] = useState('student');
+  const [activePanel, setActivePanel] = useState(null);
   const theme = THEMES[role];
   const [messages, setMessages] = useState([
     { role: 'assistant', content: GREETINGS[role] },
@@ -123,11 +132,11 @@ export default function ChatWindow({ role = 'student' }) {
   const stylePanelRef = useRef(null);
   const s = CHAT_STYLES[styleName];
 
-  // Clear chat and show role greeting when role changes
   useEffect(() => {
     setMessages([{ role: 'assistant', content: GREETINGS[role] }]);
     setInput('');
     setLoading(false);
+    setActivePanel(null);
   }, [role]);
 
   useEffect(() => {
@@ -256,8 +265,54 @@ export default function ChatWindow({ role = 'student' }) {
         </div>
       </header>
 
-      {/* Messages */}
+      {/* Role switcher */}
+      <div className={`flex items-center gap-1 px-4 py-2 border-b ${s.headerBorder} flex-shrink-0`}>
+        {ROLE_SWITCHER.map((r) => (
+          <button
+            key={r.id}
+            onClick={() => setRole(r.id)}
+            className={`px-4 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
+              role === r.id
+                ? r.activeCls
+                : s.colorScheme === 'light'
+                  ? 'text-gray-500 hover:text-gray-900'
+                  : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            {r.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Handler buttons */}
+      <div
+        className={`flex items-center gap-1.5 px-4 py-2 border-b ${s.headerBorder} flex-shrink-0 overflow-x-auto`}
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {ROLE_BUTTONS[role].map((btn) => (
+          <button
+            key={btn.id}
+            onClick={() => setActivePanel(activePanel === btn.id ? null : btn.id)}
+            className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all duration-200 ${
+              activePanel === btn.id
+                ? PANEL_ACTIVE_CLS[role]
+                : s.colorScheme === 'light'
+                  ? 'border border-gray-300 text-gray-500 hover:text-gray-900 hover:border-gray-400'
+                  : 'border border-white/15 text-gray-400 hover:text-white hover:border-white/30'
+            }`}
+          >
+            {btn.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Messages + active panel */}
       <div className="flex-1 overflow-y-auto px-4 py-4">
+        {activePanel && (
+          <div className="mb-4">
+            <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)} />
+          </div>
+        )}
         {messages.map((msg, i) => (
           <MessageBubble key={i} message={msg} theme={theme} styleName={styleName} />
         ))}
