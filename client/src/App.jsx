@@ -13,6 +13,8 @@ const T = {
     schoolLabel: 'School name',
     typeLabel: 'School type',
     schoolTypes: ['Music School', 'Language School', 'University', 'Gym', 'Other'],
+    eventsTitle: 'Upcoming Events',
+    scheduleTitle: 'Schedule',
     chatTitle: 'Try Sherlock',
     chatSubtitle: 'Ask anything. See how it works.',
     thankYou: "You're on the list! We'll be in touch soon.",
@@ -28,11 +30,35 @@ const T = {
     schoolLabel: 'სკოლის სახელი',
     typeLabel: 'სკოლის ტიპი',
     schoolTypes: ['მუსიკალური სკოლა', 'ენის სკოლა', 'უნივერსიტეტი', 'სპორტ დარბაზი', 'სხვა'],
+    eventsTitle: 'მომავალი ღონისძიებები',
+    scheduleTitle: 'განრიგი',
     chatTitle: 'სცადე შერლოკი',
     chatSubtitle: 'ნებისმიერი კითხვა. ნახეთ როგორ მუშაობს.',
     thankYou: 'თქვენ ჩაეწერეთ! მალე დაგიკავშირდებით.',
   },
 };
+
+const DAY_NAMES = {
+  EN:  ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  GEO: ['ორშ', 'სამ', 'ოთხ', 'ხუთ', 'პარ', 'შაბ', 'კვი'],
+};
+
+function formatDate(iso) {
+  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
+
+function groupSchedule(rows) {
+  const map = {};
+  for (const row of rows) {
+    if (!map[row.group_name]) map[row.group_name] = new Map();
+    const key = `${row.day_of_week}-${row.lesson_time}`;
+    map[row.group_name].set(key, { day: row.day_of_week, time: row.lesson_time });
+  }
+  return Object.entries(map).map(([name, slots]) => ({
+    name,
+    slots: Array.from(slots.values()).sort((a, b) => a.day - b.day),
+  }));
+}
 
 const FEATURES = [
   { id: 'chat',     icon: '🤖', EN: { title: 'AI Chat',           desc: 'Ask anything, get instant answers' }, GEO: { title: 'AI ჩატი',               desc: 'ნებისმიერი კითხვა'         } },
@@ -151,9 +177,16 @@ export default function App() {
     () => Object.fromEntries(FEATURES.map((f) => [f.id, true]))
   );
   const [modalOpen, setModalOpen] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [schedule, setSchedule] = useState([]);
 
   const closeModal = useCallback(() => setModalOpen(false), []);
   const t = T[lang];
+
+  useEffect(() => {
+    fetch('/api/events').then(r => r.json()).then(setEvents).catch(() => {});
+    fetch('/api/schedule').then(r => r.json()).then(data => setSchedule(groupSchedule(data))).catch(() => {});
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = modalOpen ? 'hidden' : '';
@@ -243,6 +276,52 @@ export default function App() {
           ))}
         </div>
       </section>
+
+      {/* Events */}
+      {events.length > 0 && (
+        <section className="mx-auto max-w-6xl px-6 pb-24">
+          <h2 className="text-center text-3xl sm:text-4xl font-bold tracking-tight mb-10">
+            {t.eventsTitle}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {events.map((ev, i) => (
+              <div key={i} className="rounded-2xl border border-white/[0.08] bg-white/[0.04] p-6 flex flex-col gap-3">
+                <p className="font-semibold text-white">{ev.name}</p>
+                <div className="text-sm text-gray-400 space-y-1">
+                  <p>📅 {formatDate(ev.event_date)} · {ev.event_time}</p>
+                  <p>📍 {ev.place}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Schedule */}
+      {schedule.length > 0 && (
+        <section className="mx-auto max-w-6xl px-6 pb-24">
+          <h2 className="text-center text-3xl sm:text-4xl font-bold tracking-tight mb-10">
+            {t.scheduleTitle}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {schedule.map((group) => (
+              <div key={group.name} className="rounded-2xl border border-white/[0.08] bg-white/[0.04] p-6">
+                <p className="font-semibold text-white text-sm mb-4">
+                  {group.name.replace(/_/g, ' ')}
+                </p>
+                <div className="space-y-2">
+                  {group.slots.map((slot, i) => (
+                    <div key={i} className="flex justify-between text-sm border-b border-white/[0.05] pb-2 last:border-0 last:pb-0">
+                      <span className="text-gray-400">{DAY_NAMES[lang][slot.day]}</span>
+                      <span className="text-gray-300 font-medium tabular-nums">{slot.time}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Demo / Chat */}
       <section id="demo" className="pb-20">
