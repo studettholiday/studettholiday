@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import ChatWindow from './components/ChatWindow';
+import { RolePanel, ROLE_BUTTONS, PANEL_ACTIVE_CLS } from './components/RolePanels';
 
 const T = {
   EN: {
@@ -159,6 +160,7 @@ export default function App() {
   const [lang, setLang] = useState('EN');
   const [modalOpen, setModalOpen] = useState(false);
   const [role, setRole] = useState('student');
+  const [activePanel, setActivePanel] = useState(null);
 
   const closeModal = useCallback(() => setModalOpen(false), []);
   const t = T[lang];
@@ -319,7 +321,7 @@ export default function App() {
           ].map((r) => (
             <button
               key={r.id}
-              onClick={() => setRole(r.id)}
+              onClick={() => { setRole(r.id); setActivePanel(null); }}
               className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                 role === r.id
                   ? r.activeCls
@@ -330,6 +332,30 @@ export default function App() {
             </button>
           ))}
         </div>
+
+        {/* Role action buttons */}
+        <div className="flex justify-center flex-wrap gap-2 pb-4 px-4">
+          {ROLE_BUTTONS[role].map((btn) => (
+            <button
+              key={btn.id}
+              onClick={() => setActivePanel(activePanel === btn.id ? null : btn.id)}
+              className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
+                activePanel === btn.id
+                  ? PANEL_ACTIVE_CLS[role]
+                  : 'border border-white/15 text-gray-400 hover:text-white hover:border-white/30'
+              }`}
+            >
+              {btn.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Role panel */}
+        {activePanel && (
+          <div className="mx-auto max-w-2xl px-4 pb-6">
+            <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)} />
+          </div>
+        )}
 
         <ChatWindow role={role} />
       </section>
