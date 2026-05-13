@@ -128,7 +128,6 @@ export default function ChatWindow() {
   const [provider, setProvider] = useState('anthropic');
   const [styleName, setStyleName] = useState('default');
   const [styleOpen, setStyleOpen] = useState(false);
-  const bottomRef = useRef(null);
   const stylePanelRef = useRef(null);
   const s = CHAT_STYLES[styleName];
 
@@ -138,10 +137,6 @@ export default function ChatWindow() {
     setLoading(false);
     setActivePanel(null);
   }, [role]);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
 
   // Close stylize panel on outside click
   useEffect(() => {
@@ -316,7 +311,6 @@ export default function ChatWindow() {
         {messages.map((msg, i) => (
           <MessageBubble key={i} message={msg} theme={theme} styleName={styleName} />
         ))}
-        <div ref={bottomRef} />
       </div>
 
       {/* Input */}
