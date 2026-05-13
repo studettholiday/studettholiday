@@ -15,6 +15,7 @@ const T = {
     schoolTypes: ['Music School', 'Language School', 'University', 'Gym', 'Other'],
     eventsTitle: 'Upcoming Events',
     scheduleTitle: 'Schedule',
+    roleAdmin: 'Admin', roleTeacher: 'Teacher', roleStudent: 'Student',
     chatTitle: 'Try Sherlock',
     chatSubtitle: 'Ask anything. See how it works.',
     thankYou: "You're on the list! We'll be in touch soon.",
@@ -32,6 +33,7 @@ const T = {
     schoolTypes: ['მუსიკალური სკოლა', 'ენის სკოლა', 'უნივერსიტეტი', 'სპორტ დარბაზი', 'სხვა'],
     eventsTitle: 'მომავალი ღონისძიებები',
     scheduleTitle: 'განრიგი',
+    roleAdmin: 'ადმინი', roleTeacher: 'მასწავლებელი', roleStudent: 'მოსწავლე',
     chatTitle: 'სცადე შერლოკი',
     chatSubtitle: 'ნებისმიერი კითხვა. ნახეთ როგორ მუშაობს.',
     thankYou: 'თქვენ ჩაეწერეთ! მალე დაგიკავშირდებით.',
@@ -177,6 +179,7 @@ export default function App() {
     () => Object.fromEntries(FEATURES.map((f) => [f.id, true]))
   );
   const [modalOpen, setModalOpen] = useState(false);
+  const [role, setRole] = useState('student');
 
   const closeModal = useCallback(() => setModalOpen(false), []);
   const t = T[lang];
@@ -333,13 +336,35 @@ export default function App() {
 
       {/* Demo / Chat */}
       <section id="demo" className="pb-20">
-        <div className="mx-auto max-w-6xl px-6 pt-4 pb-10 text-center">
+        <div className="mx-auto max-w-6xl px-6 pt-4 pb-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
             {t.chatTitle}
           </h2>
           <p className="mt-3 text-gray-400">{t.chatSubtitle}</p>
         </div>
-        <ChatWindow />
+
+        {/* Role switcher */}
+        <div className="flex justify-center gap-2 pb-6">
+          {[
+            { id: 'admin',   label: t.roleAdmin,   activeCls: 'bg-purple-600 text-white shadow-lg shadow-purple-900/40'  },
+            { id: 'teacher', label: t.roleTeacher, activeCls: 'bg-blue-600 text-white shadow-lg shadow-blue-900/40'      },
+            { id: 'student', label: t.roleStudent, activeCls: 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/40' },
+          ].map((r) => (
+            <button
+              key={r.id}
+              onClick={() => setRole(r.id)}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                role === r.id
+                  ? r.activeCls
+                  : 'border border-white/15 text-gray-400 hover:text-white hover:border-white/30'
+              }`}
+            >
+              {r.label}
+            </button>
+          ))}
+        </div>
+
+        <ChatWindow role={role} />
       </section>
 
     </div>
