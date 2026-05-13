@@ -101,7 +101,7 @@ const PANEL_TITLES = {
   'admin-schedule':  'Schedule',
   'students':        'Students',
   'admin-events':    'Events',
-  'broadcast':       'Broadcast',
+  'broadcast':       'Notify',
   'admin-announce':  'Announce',
   'announce':        'Announce',
   'invite':          'Invite',
@@ -123,6 +123,7 @@ const PANEL_TITLES = {
   'delete-event':          'Delete Event',
   'report-event-absence':  'Report Event Absence',
   'report-exam-absence':   'Report Exam Absence',
+  'share-files':           'Share Files',
 };
 
 // ─── Admin / Assistant panels ─────────────────────────────────────────────────
@@ -299,9 +300,9 @@ function BroadcastPanel() {
   return (
     <div className="space-y-3">
       <textarea rows={4} value={msg} onChange={e => setMsg(e.target.value)}
-        placeholder="Write your broadcast message…" className={FIELD} />
+        placeholder="Write your notification message…" className={FIELD} />
       {sent
-        ? <p className="text-emerald-400 text-sm">✅ Broadcast sent!</p>
+        ? <p className="text-emerald-400 text-sm">✅ Notification sent to everyone!</p>
         : <button onClick={send} disabled={!msg.trim()}
             className="rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
             Send to Everyone
@@ -529,6 +530,53 @@ function MyGroupsPanel() {
           <p className="text-xs text-gray-500 mt-0.5">{g.count} students</p>
         </div>
       ))}
+    </div>
+  );
+}
+
+function TeacherShareFilesPanel() {
+  const [group, setGroup] = useState(TEACHER_GROUPS[0].name);
+  const [fileName, setFileName] = useState('');
+  const [note, setNote] = useState('');
+  const [sent, setSent] = useState('');
+
+  function handleFile(e) {
+    const file = e.target.files?.[0];
+    if (file) setFileName(file.name);
+  }
+
+  function send() {
+    setSent(group);
+    setFileName('');
+    setNote('');
+    setTimeout(() => setSent(''), 3000);
+  }
+
+  return (
+    <div className="space-y-3">
+      <select value={group} onChange={e => setGroup(e.target.value)} style={{ colorScheme: 'dark' }}
+        className={`${FIELD} cursor-pointer`}>
+        {TEACHER_GROUPS.map(g => <option key={g.name}>{g.name}</option>)}
+      </select>
+      <label className="flex items-center gap-3 rounded-xl border border-dashed border-white/20 bg-white/[0.03] px-4 py-3 cursor-pointer hover:border-white/40 transition-colors">
+        <span className="text-lg">📎</span>
+        <div className="flex-1 min-w-0">
+          {fileName
+            ? <p className="text-xs text-white truncate">{fileName}</p>
+            : <p className="text-xs text-gray-500">Choose file (.pdf, .jpg, .png, .mp4)</p>
+          }
+        </div>
+        <input type="file" accept=".pdf,.jpg,.jpeg,.png,.mp4" onChange={handleFile} className="hidden" />
+      </label>
+      <textarea rows={2} value={note} onChange={e => setNote(e.target.value)}
+        placeholder="Optional message…" className={FIELD} />
+      {sent
+        ? <p className="text-blue-400 text-sm">✅ Files shared with {sent}!</p>
+        : <button onClick={send} disabled={!fileName}
+            className="rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
+            Share Files
+          </button>
+      }
     </div>
   );
 }
@@ -850,6 +898,7 @@ function panelContent(role, panel) {
     case 'invite':          return <InvitePanel role={role} />;
     case 'my-schedule':     return <MySchedulePanel />;
     case 'my-groups':       return <MyGroupsPanel />;
+    case 'share-files':     return <TeacherShareFilesPanel />;
     case 'schedule':        return <StudentSchedulePanel />;
     case 'events':          return <StudentEventsPanel />;
     case 'library':         return <StudentLibraryPanel />;
