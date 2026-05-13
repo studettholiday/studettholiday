@@ -1,0 +1,24 @@
+[build]
+builder = "nixpacks"
+
+[[services]]
+name = "server"
+source = "server"
+
+[services.build]
+buildCommand = "npm install"
+
+[services.deploy]
+startCommand = "npm start"
+healthcheckPath = "/health"
+healthcheckTimeout = 30
+
+[[services]]
+name = "client"
+source = "client"
+
+[services.build]
+buildCommand = "npm install && npm run build"
+
+[services.deploy]
+startCommand = "npx serve dist -p $PORT"
