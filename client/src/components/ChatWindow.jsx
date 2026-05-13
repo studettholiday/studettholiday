@@ -126,9 +126,44 @@ const ROLE_SWITCHER = [
   { id: 'student',   label: 'Student',   activeCls: 'bg-emerald-600 text-white' },
 ];
 
+const STUDENT_BUTTON_GROUPS = [
+  { type: 'standalone', id: 'schedule', label: 'Schedule' },
+  { type: 'standalone', id: 'events',   label: 'Events'   },
+  { type: 'standalone', id: 'library',  label: 'Library'  },
+  {
+    type: 'group', id: 'plan', label: 'Plan',
+    children: [
+      { id: 'change-group',   label: 'Change Group'   },
+      { id: 'add-subject',    label: 'Add Subject'    },
+      { id: 'remove-subject', label: 'Remove Subject' },
+    ],
+  },
+  {
+    type: 'group', id: 'my-notes', label: 'My Notes',
+    children: [
+      { id: 'notes',          label: 'Notes'          },
+      { id: 'practice-diary', label: 'Practice Diary' },
+    ],
+  },
+  {
+    type: 'group', id: 'report', label: 'Report',
+    children: [
+      { id: 'report-absence', label: 'Report Absence' },
+    ],
+  },
+];
+
+const GROUP_OPEN_CLS = {
+  admin:     'bg-purple-600/20 text-purple-300 border border-purple-500/40',
+  assistant: 'bg-orange-600/20 text-orange-300 border border-orange-500/40',
+  teacher:   'bg-blue-600/20 text-blue-300 border border-blue-500/40',
+  student:   'bg-emerald-600/20 text-emerald-300 border border-emerald-500/40',
+};
+
 export default function ChatWindow() {
   const [role, setRole] = useState('student');
   const [activePanel, setActivePanel] = useState(null);
+  const [openGroups, setOpenGroups] = useState(new Set());
   const theme = THEMES[role];
   const [messages, setMessages] = useState([
     { role: 'assistant', content: GREETINGS[role] },
@@ -146,6 +181,7 @@ export default function ChatWindow() {
     setInput('');
     setLoading(false);
     setActivePanel(null);
+    setOpenGroups(new Set());
   }, [role]);
 
   // Close stylize panel on outside click
@@ -290,26 +326,88 @@ export default function ChatWindow() {
       </div>
 
       {/* Handler buttons */}
-      <div
-        className={`flex items-center gap-1.5 px-4 py-2 border-b ${s.headerBorder} flex-shrink-0 overflow-x-auto`}
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-      >
-        {ROLE_BUTTONS[role].map((btn) => (
-          <button
-            key={btn.id}
-            onClick={() => setActivePanel(activePanel === btn.id ? null : btn.id)}
-            className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all duration-200 ${
-              activePanel === btn.id
-                ? PANEL_ACTIVE_CLS[role]
-                : s.colorScheme === 'light'
-                  ? 'border border-gray-300 text-gray-500 hover:text-gray-900 hover:border-gray-400'
-                  : 'border border-white/15 text-gray-400 hover:text-white hover:border-white/30'
-            }`}
+      {role === 'student' ? (
+        <div className={`flex flex-col border-b ${s.headerBorder} flex-shrink-0`}>
+          {/* Main row: standalones + group headers */}
+          <div
+            className="flex items-center gap-1.5 px-4 py-2 overflow-x-auto"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {btn.label}
-          </button>
-        ))}
-      </div>
+            {STUDENT_BUTTON_GROUPS.map(item =>
+              item.type === 'standalone' ? (
+                <button
+                  key={item.id}
+                  onClick={() => setActivePanel(activePanel === item.id ? null : item.id)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all duration-200 ${
+                    activePanel === item.id
+                      ? PANEL_ACTIVE_CLS[role]
+                      : s.colorScheme === 'light'
+                        ? 'border border-gray-300 text-gray-500 hover:text-gray-900 hover:border-gray-400'
+                        : 'border border-white/15 text-gray-400 hover:text-white hover:border-white/30'
+                  }`}
+                >{item.label}</button>
+              ) : (
+                <button
+                  key={item.id}
+                  onClick={() => setOpenGroups(gs => {
+                    const next = new Set(gs);
+                    next.has(item.id) ? next.delete(item.id) : next.add(item.id);
+                    return next;
+                  })}
+                  className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 transition-all duration-200 ${
+                    openGroups.has(item.id)
+                      ? GROUP_OPEN_CLS[role]
+                      : s.colorScheme === 'light'
+                        ? 'border border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400'
+                        : 'border border-white/15 text-gray-400 hover:text-white hover:border-white/30'
+                  }`}
+                >{item.label} {openGroups.has(item.id) ? '▲' : '▼'}</button>
+              )
+            )}
+          </div>
+          {/* Sub-button rows for open groups */}
+          {STUDENT_BUTTON_GROUPS.filter(item => item.type === 'group' && openGroups.has(item.id)).map(group => (
+            <div
+              key={group.id}
+              className={`flex items-center gap-1.5 px-6 py-1.5 border-t ${s.headerBorder} overflow-x-auto`}
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {group.children.map(child => (
+                <button
+                  key={child.id}
+                  onClick={() => setActivePanel(activePanel === child.id ? null : child.id)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all duration-200 ${
+                    activePanel === child.id
+                      ? PANEL_ACTIVE_CLS[role]
+                      : s.colorScheme === 'light'
+                        ? 'border border-gray-300 text-gray-500 hover:text-gray-900 hover:border-gray-400'
+                        : 'border border-white/15 text-gray-400 hover:text-white hover:border-white/30'
+                  }`}
+                >{child.label}</button>
+              ))}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div
+          className={`flex items-center gap-1.5 px-4 py-2 border-b ${s.headerBorder} flex-shrink-0 overflow-x-auto`}
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {ROLE_BUTTONS[role].map((btn) => (
+            <button
+              key={btn.id}
+              onClick={() => setActivePanel(activePanel === btn.id ? null : btn.id)}
+              className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all duration-200 ${
+                activePanel === btn.id
+                  ? PANEL_ACTIVE_CLS[role]
+                  : s.colorScheme === 'light'
+                    ? 'border border-gray-300 text-gray-500 hover:text-gray-900 hover:border-gray-400'
+                    : 'border border-white/15 text-gray-400 hover:text-white hover:border-white/30'
+              }`}
+            >{btn.label}</button>
+          ))}
+        </div>
+      )}
 
       {/* Messages + active panel */}
       <div className="h-[400px] overflow-y-auto px-4 py-4">
