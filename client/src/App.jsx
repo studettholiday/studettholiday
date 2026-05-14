@@ -188,7 +188,7 @@ export default function App() {
       style={{
         backgroundImage: "linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('/sherlock-bg.jpg')",
         backgroundSize: 'cover',
-        backgroundPosition: 'center 60%',
+        backgroundPosition: 'center 80%',
         backgroundAttachment: 'scroll',
         backgroundColor: '#08080f',
       }}
