@@ -523,7 +523,7 @@ export default function App() {
                   ✕
                 </button>
                 <div style={{ flex: 1, padding: '56px 12px 16px' }}>
-                  <ChatWindow />
+                  <ChatWindow lang={lang} />
                 </div>
               </div>
             )}
@@ -537,7 +537,7 @@ export default function App() {
               <p className="mt-3 text-gray-400">{t.chatSubtitle}</p>
             </div>
             <div className="mx-auto max-w-2xl px-4">
-              <ChatWindow />
+              <ChatWindow lang={lang} />
             </div>
           </>
         )}

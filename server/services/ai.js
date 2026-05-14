@@ -1,5 +1,6 @@
 const Anthropic = require('@anthropic-ai/sdk');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const OpenAI = require('openai');
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -46,12 +47,32 @@ async function callGemini(messages) {
   return result.response.text();
 }
 
+async function callOpenAI(messages) {
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+  const formatted = messages.map(m => ({
+    role: m.role,
+    content: m.content
+  }));
+
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4o',
+    messages: [
+      { role: 'system', content: 'You are a helpful AI assistant. Be concise and clear.' },
+      ...formatted
+    ],
+    max_tokens: 2048
+  });
+
+  return response.choices[0].message.content ?? '';
+}
+
 async function routeToProvider(provider, messages) {
   switch (provider) {
     case 'anthropic':
       return callAnthropic(messages);
     case 'openai':
-      throw new Error('OpenAI provider not yet implemented');
+      return callOpenAI(messages);
     case 'gemini':
       return callGemini(messages);
     default:

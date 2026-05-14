@@ -175,7 +175,7 @@ const GROUP_OPEN_CLS = {
   student:   'bg-emerald-600/20 text-emerald-300 border border-emerald-500/40',
 };
 
-export default function ChatWindow() {
+export default function ChatWindow({ lang }) {
   const [role, setRole] = useState('admin');
   const [activePanel, setActivePanel] = useState(null);
   const [openGroup, setOpenGroup] = useState(null);
@@ -185,7 +185,11 @@ export default function ChatWindow() {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [provider, setProvider] = useState('anthropic');
+  const [provider, setProvider] = useState(lang === 'GEO' ? 'gemini' : 'anthropic');
+
+  useEffect(() => {
+    setProvider(lang === 'GEO' ? 'gemini' : 'anthropic');
+  }, [lang]);
   const [styleName, setStyleName] = useState('default');
   const [styleOpen, setStyleOpen] = useState(false);
   const stylePanelRef   = useRef(null);
