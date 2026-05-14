@@ -549,7 +549,7 @@ export default function App() {
           <div className="text-7xl leading-none text-purple-500/30 font-serif mb-6 select-none">&ldquo;</div>
           <p className="italic text-lg leading-loose text-gray-400">
             {lang === 'GEO'
-              ? 'ჩემი წარმოდგენით, ადამიანის ტვინი პატარა ცარიელ სხვენს ჰგავს, რომელიც თქვენი შეხედულებისამებრ შეგიძლიათ მოაწყოთ. ბრიყვი იქ, რაც ხელში მოხვდება, ყველანაირ ხარახურას შეზიდავს, და ბოლოს, სასარგებლო ნივთებისთვის ადგილი აღარ დარჩება ან, უკეთეს შემთხვევაში, ვეღარაფრით მიაგნებ. აი, გონიერი კაცი კი საფუძვლიანად არჩევს იმას, რაც მის ტვინის სხვენში ადგილს იმსახურებს.'
+              ? 'ჩემი წარმოდგენით, ადამიანის ტვინი პატარა ცარიელ სხვენს ჰგავს, რომელიც თქვენი შეხედულებისამებრ შეგიძლიათ მოაწყოთ. ბრიყვი იქ, რაც ხელში მოხვდება, ყველანაირ ხარახურას შეზიდავს, და ბოლოს, სასარგებლო ნივთებისთვის ადგილი აღარ დარჩება ან, უკეთეს შემთხვევაში, ვეღარაფრით მიაგნებს. აი, გონიერი კაცი კი საფუძვლიანად არჩევს იმას, რაც მის ტვინის სხვენში ადგილს იმსახურებს.'
               : <>I consider that a man&rsquo;s brain originally is like a little empty attic, and you have to stock it with such furniture as you choose. A fool takes in all the lumber of every sort that he comes across, so that the knowledge which might be useful to him gets crowded out, or at best is jumbled up with a lot of other things, so that he has a difficulty in laying his hands upon it. Now the skilful workman is very careful indeed as to what he takes into his brain-attic.</>}
           </p>
           <p className="mt-6 text-sm text-gray-600 not-italic tracking-wide">
