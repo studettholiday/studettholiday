@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:lang(ka), [lang="ka"] {
+  font-family: 'FiraGO', sans-serif;
+}
+
 html, body, #root {
   overflow-x: hidden;
   max-width: 100vw;
