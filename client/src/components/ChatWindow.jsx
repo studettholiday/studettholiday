@@ -210,7 +210,6 @@ export default function ChatWindow() {
     setOpenGroup(null);
     setUploadedContext(null);
     setUploadedFileName(null);
-    setLibraryFiles([]);
   }, [role]);
 
   // Close stylize panel on outside click
