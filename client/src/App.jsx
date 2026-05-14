@@ -186,7 +186,7 @@ export default function App() {
     <div
       className="min-h-screen text-white"
       style={{
-        backgroundImage: "linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('/sherlock-bg.jpg')",
+        backgroundImage: "linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('/sherlock-bg.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center top',
         backgroundAttachment: 'fixed',
