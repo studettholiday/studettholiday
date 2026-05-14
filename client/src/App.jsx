@@ -68,7 +68,7 @@ function groupSchedule(rows) {
 const FEATURES = [
   { id: 'chat',     icon: '🤖', EN: { title: 'AI Chat',           desc: 'Ask anything, get instant answers' }, GEO: { title: 'შერლოკის ჩატი',         desc: 'AI-ინტეგრირებული'          } },
   { id: 'schedule', icon: '📅', EN: { title: 'Schedule',          desc: 'Weekly timetable for every group'  }, GEO: { title: 'ცხრილი',                 desc: 'მართე მარტივად'             } },
-  { id: 'events',   icon: '🎪', EN: { title: 'Events',            desc: 'Upcoming concerts and activities'  }, GEO: { title: 'ღონისძიებები',           desc: 'დაგეგმე/გააზიარე'           } },
+  { id: 'events',   icon: '🎪', EN: { title: 'Events',            desc: 'Upcoming group and school activities'  }, GEO: { title: 'ღონისძიებები',           desc: 'დაგეგმე/გააზიარე'           } },
   { id: 'notes',    icon: '📒', EN: { title: 'Notes',             desc: 'Lesson notes and practice diary'   }, GEO: { title: 'ჩანაწერები',             desc: 'ჩაინიშნე საგასაღებო სიტყვები'} },
   { id: 'library',  icon: '📚', EN: { title: 'Library',           desc: 'Chords, scales, diagrams'          }, GEO: { title: 'ბიბლიოთეკა',            desc: 'ესაუბრე წიგნებს'            } },
   { id: 'reminders',icon: '🔔', EN: { title: 'Reminders',         desc: 'Automatic lesson reminders'        }, GEO: { title: 'შეხსენებები',            desc: 'არ გამოგრჩეს გაკვეთილი'     } },
