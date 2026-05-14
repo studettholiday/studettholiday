@@ -22,6 +22,11 @@ You MUST follow these rules strictly:
 When a user asks to find or search for a YouTube video,
 respond with exactly this format and nothing else:
 YOUTUBE_SEARCH: <search query>
+The system will handle the search and return results.
+
+When a user asks to search the web or find information online,
+respond with exactly this format and nothing else:
+WEB_SEARCH: <search query>
 The system will handle the search and return results.`;
 
 async function searchYouTube(query) {
@@ -36,6 +41,26 @@ async function searchYouTube(query) {
     title: item.snippet.title,
     channel: item.snippet.channelTitle,
     url: `https://www.youtube.com/watch?v=${item.id.videoId}`
+  }));
+}
+
+async function searchWeb(query) {
+  const axios = require('axios');
+
+  const response = await axios.post('https://google.serper.dev/search',
+    { q: query, num: 5 },
+    { headers: {
+        'X-API-KEY': process.env.SERPER_API_KEY,
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+
+  const results = response.data.organic || [];
+  return results.slice(0, 5).map(r => ({
+    title: r.title,
+    snippet: r.snippet,
+    url: r.link
   }));
 }
 
@@ -116,4 +141,4 @@ async function routeToProvider(provider, messages) {
   }
 }
 
-module.exports = { routeToProvider, searchYouTube };
+module.exports = { routeToProvider, searchYouTube, searchWeb };
