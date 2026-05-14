@@ -89,17 +89,24 @@ function FeatureCarousel({ lang }) {
       <div style={{
         display: 'grid',
         gridTemplateColumns: '1fr 1fr',
+        gridAutoRows: '1fr',
         gap: 12,
         padding: '4px 4px 12px',
       }}>
         {FEATURES.map(f => (
-          <div key={f.id}>
+          <div key={f.id} style={{ height: '100%' }}>
             <div style={{
               background: 'rgba(5, 5, 20, 0.76)',
               border: '1px solid rgba(99,102,241,0.35)',
               borderRadius: 16,
               padding: '20px 16px',
               textAlign: 'center',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              boxSizing: 'border-box',
             }}>
               <div style={{ fontSize: '2rem', lineHeight: 1 }}>{f.icon}</div>
               <p style={{ color: '#fff', fontWeight: 600, fontSize: '0.875rem', margin: '8px 0 0' }}>
