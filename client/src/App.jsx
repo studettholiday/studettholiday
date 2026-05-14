@@ -217,12 +217,38 @@ function SignupModal({ lang, onClose }) {
   const t = T[lang];
   const [form, setForm] = useState({ email: '', school: '', type: '' });
   const [done, setDone] = useState(false);
+  const [status, setStatus] = useState(null); // null | 'loading' | 'duplicate' | 'error'
 
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setStatus('loading');
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email, schoolName: form.school, schoolType: form.type }),
+      });
+      if (res.status === 409) {
+        setStatus('duplicate');
+        return;
+      }
+      if (!res.ok) {
+        setStatus('error');
+        return;
+      }
+      setStatus(null);
+      setDone(true);
+      setTimeout(onClose, 2000);
+    } catch {
+      setStatus('error');
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -246,7 +272,7 @@ function SignupModal({ lang, onClose }) {
           </div>
         ) : (
           <form
-            onSubmit={(e) => { e.preventDefault(); setDone(true); }}
+            onSubmit={handleSubmit}
             className="flex flex-col gap-4"
           >
             <h2 className="text-lg font-bold text-white mb-1">{t.getStarted}</h2>
@@ -280,11 +306,23 @@ function SignupModal({ lang, onClose }) {
               ))}
             </select>
 
+            {status === 'duplicate' && (
+              <p className="text-sm text-red-400">
+                {lang === 'GEO' ? 'ეს ელ-ფოსტა უკვე რეგისტრირებულია.' : 'This email is already registered.'}
+              </p>
+            )}
+            {status === 'error' && (
+              <p className="text-sm text-red-400">
+                {lang === 'GEO' ? 'შეცდომა. სცადეთ თავიდან.' : 'Something went wrong. Please try again.'}
+              </p>
+            )}
+
             <button
               type="submit"
-              className="mt-1 w-full rounded-xl bg-indigo-600 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500 active:scale-95 transition-all duration-150"
+              disabled={status === 'loading'}
+              className="mt-1 w-full rounded-xl bg-indigo-600 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500 active:scale-95 transition-all duration-150 disabled:opacity-50"
             >
-              {t.joinWaitlist}
+              {status === 'loading' ? '…' : t.joinWaitlist}
             </button>
           </form>
         )}
