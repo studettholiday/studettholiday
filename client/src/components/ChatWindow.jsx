@@ -120,6 +120,51 @@ function buildContext(libraryFiles, uploadedContext) {
 function MessageBubble({ message, theme, styleName }) {
   const s = CHAT_STYLES[styleName];
   const isUser = message.role === 'user';
+
+  if (message.type === 'searching') {
+    return (
+      <div className="flex justify-start mb-3">
+        <div className="px-4 py-2 text-sm text-gray-500 animate-pulse">{message.text}</div>
+      </div>
+    );
+  }
+
+  if (message.type === 'youtube_results') {
+    return (
+      <div className="flex justify-start mb-3">
+        <div className="max-w-[90%] w-full space-y-2">
+          <p className="text-xs text-gray-500 px-1">YouTube results for &ldquo;{message.query}&rdquo;</p>
+          {message.results.map((r, i) => (
+            <a key={i} href={r.url} target="_blank" rel="noopener noreferrer"
+              className="block bg-white/[0.06] hover:bg-white/[0.10] border border-white/10 rounded-xl px-4 py-3 transition-colors">
+              <p className="text-sm font-semibold text-white leading-snug">{r.title}</p>
+              <p className="text-xs text-gray-500 mt-0.5">{r.channel}</p>
+              <p className="text-xs text-purple-400 mt-1 truncate">{r.url}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (message.type === 'web_results') {
+    return (
+      <div className="flex justify-start mb-3">
+        <div className="max-w-[90%] w-full space-y-2">
+          <p className="text-xs text-gray-500 px-1">Web results for &ldquo;{message.query}&rdquo;</p>
+          {message.results.map((r, i) => (
+            <a key={i} href={r.url} target="_blank" rel="noopener noreferrer"
+              className="block bg-white/[0.06] hover:bg-white/[0.10] border border-white/10 rounded-xl px-4 py-3 transition-colors">
+              <p className="text-sm font-semibold text-white leading-snug">{r.title}</p>
+              <p className="text-xs text-gray-400 mt-1 leading-relaxed line-clamp-2">{r.snippet}</p>
+              <p className="text-xs text-purple-400 mt-1 truncate">{r.url}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-3`}>
       <div className={`max-w-[75%] px-4 py-2 rounded-2xl text-sm leading-relaxed break-words ${
@@ -305,8 +350,10 @@ export default function ChatWindow({ lang }) {
     setLoading(true);
 
     // Strip the leading assistant greeting so the API payload starts user→assistant→user→…
+    // Also exclude special result/searching messages — they are display-only.
     const firstUserIdx = newMessages.findIndex((m) => m.role === 'user');
-    const conversation = firstUserIdx >= 0 ? newMessages.slice(firstUserIdx) : newMessages;
+    const conversation = (firstUserIdx >= 0 ? newMessages.slice(firstUserIdx) : newMessages)
+      .filter((m) => !m.type);
 
     const apiMessages = [
       { role: 'user',      content: `[System context] ${SYSTEM_PROMPTS[role]}` },
@@ -321,10 +368,43 @@ export default function ChatWindow({ lang }) {
         body: JSON.stringify({ messages: apiMessages, provider, context: buildContext(libraryFiles, uploadedContext) }),
       });
       const data = await res.json();
-      setMessages((prev) => [
-        ...prev,
-        { role: 'assistant', content: data.message ?? 'No response.' },
-      ]);
+      const aiText = data.message ?? 'No response.';
+
+      if (aiText.startsWith('YOUTUBE_SEARCH:')) {
+        const query = aiText.replace('YOUTUBE_SEARCH:', '').trim();
+        setMessages((prev) => [...prev, { role: 'assistant', type: 'searching', text: `Searching YouTube for "${query}"…` }]);
+        try {
+          const ytRes = await fetch(`/api/youtube/search?q=${encodeURIComponent(query)}`);
+          const ytData = await ytRes.json();
+          setMessages((prev) => [
+            ...prev.filter((m) => m.type !== 'searching'),
+            { role: 'assistant', type: 'youtube_results', query, results: ytData.results ?? [] },
+          ]);
+        } catch {
+          setMessages((prev) => [
+            ...prev.filter((m) => m.type !== 'searching'),
+            { role: 'assistant', content: 'Sorry, YouTube search failed.' },
+          ]);
+        }
+      } else if (aiText.startsWith('WEB_SEARCH:')) {
+        const query = aiText.replace('WEB_SEARCH:', '').trim();
+        setMessages((prev) => [...prev, { role: 'assistant', type: 'searching', text: `Searching the web for "${query}"…` }]);
+        try {
+          const webRes = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+          const webData = await webRes.json();
+          setMessages((prev) => [
+            ...prev.filter((m) => m.type !== 'searching'),
+            { role: 'assistant', type: 'web_results', query, results: webData.results ?? [] },
+          ]);
+        } catch {
+          setMessages((prev) => [
+            ...prev.filter((m) => m.type !== 'searching'),
+            { role: 'assistant', content: 'Sorry, web search failed.' },
+          ]);
+        }
+      } else {
+        setMessages((prev) => [...prev, { role: 'assistant', content: aiText }]);
+      }
     } catch {
       setMessages((prev) => [
         ...prev,
