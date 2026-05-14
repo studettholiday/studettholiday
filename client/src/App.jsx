@@ -319,6 +319,10 @@ export default function App() {
   ]);
 
   useEffect(() => {
+    document.documentElement.lang = lang === 'GEO' ? 'ka' : 'en';
+  }, [lang]);
+
+  useEffect(() => {
     document.body.style.overflow = (modalOpen || chatExpanded) ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [modalOpen, chatExpanded]);

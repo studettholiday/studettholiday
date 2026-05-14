@@ -2,11 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;500;600;700&display=swap');
+html, body, * {
+  -webkit-font-smoothing: antialiased;
+}
 
-:lang(ka), [lang="ka"],
-.geo-text,
-[data-lang="ka"] {
+:lang(ka),
+:lang(ka) *,
+html[lang="ka"],
+html[lang="ka"] * {
   font-family: 'Noto Sans Georgian', sans-serif !important;
 }
 
