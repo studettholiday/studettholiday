@@ -301,8 +301,8 @@ export default function App() {
   const t = T[lang];
 
   const events = [
-    { name: 'End of Year Concert', event_date: '2025-06-20T00:00:00.000Z', event_time: '19:00', place: 'City Concert Hall' },
-    { name: 'Summer Workshop',     event_date: '2025-07-15T00:00:00.000Z', event_time: '11:00', place: 'Studio Main Hall' },
+    { name: 'წლის შემაჯამებელი კონცერტი', event_date: '2025-06-20T00:00:00.000Z', event_time: '19:00', place: 'თბილისი არტ-ჰოლი' },
+    { name: 'საზაფხულო ვორქშოფი',         event_date: '2025-07-15T00:00:00.000Z', event_time: '11:00', place: 'სახელმწიფო უნივერსიტეტი' },
   ];
 
   const schedule = groupSchedule([
