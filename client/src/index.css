@@ -2,8 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-:lang(ka), [lang="ka"] {
-  font-family: 'FiraGO', sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;500;600;700&display=swap');
+
+:lang(ka), [lang="ka"],
+.geo-text,
+[data-lang="ka"] {
+  font-family: 'Noto Sans Georgian', sans-serif !important;
 }
 
 html, body, #root {

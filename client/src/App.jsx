@@ -361,12 +361,12 @@ export default function App() {
         {/* Radial glow */}
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(99,102,241,0.12),transparent)]" />
 
-        <div className="relative">
+        <div className="relative w-full text-center">
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight bg-gradient-to-br from-white via-gray-100 to-gray-500 bg-clip-text text-transparent leading-tight">
             Sherlock Is Smart
           </h1>
 
-          <p className="mt-5 max-w-lg text-lg text-gray-400 leading-relaxed">
+          <p className="mt-5 max-w-xl mx-auto text-lg text-gray-400 leading-relaxed">
             {t.sub1}{' '}
             <span className="text-gray-300">{t.sub2}</span>
           </p>
