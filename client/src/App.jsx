@@ -304,8 +304,8 @@ export default function App() {
   const t = T[lang];
 
   const events = [
-    { name: 'End of Year Concert', name_ka: 'წლის შემაჯამებელი კონცერტი', event_date: '2025-06-20T00:00:00.000Z', event_time: '19:00', place: 'City Concert Hall',  place_ka: 'თბილისი არტ-ჰოლი' },
-    { name: 'Summer Workshop',     name_ka: 'საზაფხულო ვორქშოფი',         event_date: '2025-07-15T00:00:00.000Z', event_time: '11:00', place: 'Studio Main Hall', place_ka: 'სახელმწიფო უნივერსიტეტი' },
+    { name: 'Year-End Concert',  name_ka: 'წლის შემაჯამებელი კონცერტი', event_date: '2025-06-20T00:00:00.000Z', event_time: '19:00', date_ka: '20 ივნ · 19:00', place: 'Tbilisi Art Hall',  place_ka: 'თბილისი არტ-ჰოლი' },
+    { name: 'Summer Workshop',   name_ka: 'საზაფხულო ვორქშოფი',         event_date: '2025-07-15T00:00:00.000Z', event_time: '11:00', date_ka: '15 ივლ · 11:00', place: 'State University', place_ka: 'სახელმწიფო უნივერსიტეტი' },
   ];
 
   const schedule = groupSchedule([
@@ -407,7 +407,7 @@ export default function App() {
               <div key={i} className="rounded-2xl border border-white/[0.08] bg-white/[0.04] p-6 flex flex-col gap-3">
                 <p className="font-semibold text-white">{lang === 'GEO' ? ev.name_ka : ev.name}</p>
                 <div className="text-sm text-gray-400 space-y-1">
-                  <p>📅 {formatDate(ev.event_date)} · {ev.event_time}</p>
+                  <p>📅 {lang === 'GEO' ? ev.date_ka : `${formatDate(ev.event_date)} · ${ev.event_time}`}</p>
                   <p>📍 {lang === 'GEO' ? ev.place_ka : ev.place}</p>
                 </div>
               </div>
