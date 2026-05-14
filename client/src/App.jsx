@@ -99,7 +99,7 @@ function FeatureCarousel({ lang }) {
               background: 'rgba(5, 5, 20, 0.76)',
               border: '1px solid rgba(99,102,241,0.35)',
               borderRadius: 16,
-              padding: '20px 16px',
+              padding: '28px 16px',
               textAlign: 'center',
               height: '100%',
               display: 'flex',
