@@ -637,10 +637,9 @@ function TeacherShareFilesPanel() {
   );
 }
 
-function KnowledgeLibraryPanel({ role, onLibraryChange }) {
+function KnowledgeLibraryPanel({ role, libraryFiles = [], onAddFile, onRemoveFile }) {
   const th = TH[role];
   const [tab, setTab] = useState('upload');
-  const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [status, setStatus] = useState('');
@@ -648,16 +647,6 @@ function KnowledgeLibraryPanel({ role, onLibraryChange }) {
   const [previewMsgs,    setPreviewMsgs]    = useState([]);
   const [previewInput,   setPreviewInput]   = useState('');
   const [previewLoading, setPreviewLoading] = useState(false);
-
-  async function fetchLibrary() {
-    try {
-      const res = await fetch('/api/library');
-      const data = await res.json();
-      setFiles(Array.isArray(data) ? data : []);
-    } catch { /* ignore */ }
-  }
-
-  useEffect(() => { fetchLibrary(); }, []);
 
   async function loadPdfJs() {
     if (window.pdfjsLib) return window.pdfjsLib;
@@ -698,38 +687,16 @@ function KnowledgeLibraryPanel({ role, onLibraryChange }) {
         });
       }
       if (!text.trim()) {
-        throw new Error('No text could be extracted from this file. For PDFs, make sure the file contains selectable text (not a scanned image).');
+        throw new Error('No text could be extracted. For PDFs, make sure the file contains selectable text.');
       }
-      const res = await fetch('/api/library', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filename: file.name, content: text, uploaded_by: role }),
-      });
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error ?? `Server error ${res.status}`);
-      }
+      onAddFile?.(file.name, text);
       setStatus(`✅ "${file.name}" added to library`);
-      await fetchLibrary();
-      onLibraryChange?.();
       setTimeout(() => setStatus(''), 4000);
     } catch (err) {
-      setStatus('❌ Upload failed: ' + err.message);
+      setStatus('❌ ' + err.message);
     } finally {
       setUploading(false);
     }
-  }
-
-  async function deleteFile(id) {
-    try {
-      await fetch(`/api/library/${id}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ uploaded_by: role }),
-      });
-      await fetchLibrary();
-      onLibraryChange?.();
-    } catch { /* ignore */ }
   }
 
   function onDrop(e) {
@@ -747,6 +714,11 @@ function KnowledgeLibraryPanel({ role, onLibraryChange }) {
     setPreviewMsgs(history);
     setPreviewInput('');
     setPreviewLoading(true);
+
+    const libContext = libraryFiles.length > 0
+      ? `SCHOOL KNOWLEDGE LIBRARY:\n\n${libraryFiles.map(f => `=== ${f.filename} ===\n${f.content}`).join('\n\n').slice(0, 10000)}`
+      : null;
+
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
@@ -758,6 +730,7 @@ function KnowledgeLibraryPanel({ role, onLibraryChange }) {
             ...history,
           ],
           provider: 'anthropic',
+          context: libContext,
         }),
       });
       const data = await res.json();
@@ -767,10 +740,6 @@ function KnowledgeLibraryPanel({ role, onLibraryChange }) {
     } finally {
       setPreviewLoading(false);
     }
-  }
-
-  function formatDate(ts) {
-    return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   }
 
   return (
@@ -799,9 +768,9 @@ function KnowledgeLibraryPanel({ role, onLibraryChange }) {
               dragOver ? 'border-white/50 bg-white/[0.07]' : 'border-white/20 hover:border-white/40'
             } ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
             <span className="text-2xl mb-1.5">{uploading ? '⏳' : '📄'}</span>
-            <p className="text-sm text-white font-medium">{uploading ? 'Processing…' : 'Upload to knowledge library'}</p>
+            <p className="text-sm text-white font-medium">{uploading ? 'Processing…' : 'Upload to demo library'}</p>
             <p className="text-xs text-gray-500 mt-1 text-center leading-relaxed">
-              AI will use this content to answer all questions
+              Stored in memory · clears when you leave or switch role
             </p>
             <p className="text-xs text-gray-600 mt-2">Drop here or click · .pdf .txt .md</p>
             <input type="file" accept=".pdf,.txt,.md"
@@ -812,27 +781,15 @@ function KnowledgeLibraryPanel({ role, onLibraryChange }) {
             <p className={`text-xs ${status.startsWith('✅') ? 'text-emerald-400' : 'text-red-400'}`}>{status}</p>
           )}
           <div className="space-y-1.5">
-            {files.length === 0 && !uploading && (
-              <p className="text-xs text-gray-600 text-center py-2">No files in library yet.</p>
+            {libraryFiles.length === 0 && !uploading && (
+              <p className="text-xs text-gray-600 text-center py-2">No files loaded yet.</p>
             )}
-            {files.map(f => (
+            {libraryFiles.map(f => (
               <div key={f.id} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2">
                 <span className="text-sm flex-shrink-0">📄</span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-white truncate">{f.filename}</p>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <p className="text-xs text-gray-600">{formatDate(f.uploaded_at)}</p>
-                    <span className="text-xs text-gray-600">·</span>
-                    <span className="text-xs text-gray-500">
-                      uploaded by {f.uploaded_by ? f.uploaded_by.charAt(0).toUpperCase() + f.uploaded_by.slice(1) : 'Admin'}
-                    </span>
-                  </div>
-                </div>
-                {f.uploaded_by === role
-                  ? <button onClick={() => deleteFile(f.id)}
-                      className="text-gray-600 hover:text-red-400 text-sm flex-shrink-0 transition-colors leading-none">🗑</button>
-                  : <span className="text-gray-700 text-sm flex-shrink-0 leading-none" title="Only the uploader can delete this file">🔒</span>
-                }
+                <p className="text-xs text-white truncate flex-1 min-w-0">{f.filename}</p>
+                <button onClick={() => onRemoveFile?.(f.id)}
+                  className="text-gray-600 hover:text-red-400 text-sm flex-shrink-0 transition-colors leading-none">🗑</button>
               </div>
             ))}
           </div>
@@ -1184,7 +1141,7 @@ function StudentRemoveSubjectPanel() {
 
 // ─── Panel router ─────────────────────────────────────────────────────────────
 
-function panelContent(role, panel, onLibraryChange) {
+function panelContent(role, panel, libraryProps) {
   switch (panel) {
     case 'groups':          return <GroupsPanel role={role} />;
     case 'admin-schedule':  return <AdminSchedulePanel />;
@@ -1197,7 +1154,7 @@ function panelContent(role, panel, onLibraryChange) {
     case 'my-schedule':     return <MySchedulePanel />;
     case 'my-groups':       return <MyGroupsPanel />;
     case 'share-files':       return <TeacherShareFilesPanel />;
-    case 'knowledge-library': return <KnowledgeLibraryPanel role={role} onLibraryChange={onLibraryChange} />;
+    case 'knowledge-library': return <KnowledgeLibraryPanel role={role} {...(libraryProps ?? {})} />;
     case 'schedule':        return <StudentSchedulePanel />;
     case 'events':          return <StudentEventsPanel />;
     case 'library':         return <StudentLibraryPanel />;
@@ -1263,7 +1220,7 @@ export const PANEL_ACTIVE_CLS = {
   student:   'bg-emerald-600 text-white shadow-sm shadow-emerald-900/60',
 };
 
-export function RolePanel({ role, panel, onClose, onLibraryChange }) {
+export function RolePanel({ role, panel, onClose, libraryProps }) {
   const th = TH[role];
   return (
     <div className={`rounded-2xl border ${th.border} bg-[#0d0d18] overflow-hidden flex flex-col max-h-[350px]`}>
@@ -1272,7 +1229,7 @@ export function RolePanel({ role, panel, onClose, onLibraryChange }) {
         <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-sm leading-none">✕</button>
       </div>
       <div className="p-4 overflow-y-auto flex-1">
-        {panelContent(role, panel, onLibraryChange)}
+        {panelContent(role, panel, libraryProps)}
       </div>
     </div>
   );

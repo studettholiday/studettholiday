@@ -103,6 +103,18 @@ const STYLE_OPTIONS = [
   { id: 'glass',   label: 'Glass',   desc: 'Frosted blur'   },
 ];
 
+function buildContext(libraryFiles, uploadedContext) {
+  const parts = [];
+  if (libraryFiles.length > 0) {
+    const libText = libraryFiles.map(f => `=== ${f.filename} ===\n${f.content}`).join('\n\n');
+    parts.push(`SCHOOL KNOWLEDGE LIBRARY (use this to answer questions):\n\n${libText.slice(0, 10000)}`);
+  }
+  if (uploadedContext) {
+    parts.push(`The user has uploaded a document. Use this as context:\n\n${uploadedContext.slice(0, 8000)}`);
+  }
+  return parts.length > 0 ? parts.join('\n\n---\n\n') : null;
+}
+
 function MessageBubble({ message, theme, styleName }) {
   const s = CHAT_STYLES[styleName];
   const isUser = message.role === 'user';
@@ -178,18 +190,17 @@ export default function ChatWindow() {
   const fileInputRef    = useRef(null);
   const [uploadedContext,  setUploadedContext]  = useState(null);
   const [uploadedFileName, setUploadedFileName] = useState(null);
-  const [libraryActive, setLibraryActive] = useState(false);
+  // In-memory library: [{id, filename, content}] — cleared on role switch / new chat
+  const [libraryFiles, setLibraryFiles] = useState([]);
   const s = CHAT_STYLES[styleName];
 
-  async function checkLibrary() {
-    try {
-      const res = await fetch('/api/library');
-      const data = await res.json();
-      setLibraryActive(Array.isArray(data) && data.length > 0);
-    } catch { /* ignore */ }
+  function addLibraryFile(filename, content) {
+    setLibraryFiles(prev => [...prev, { id: Date.now(), filename, content }]);
   }
 
-  useEffect(() => { checkLibrary(); }, []);
+  function removeLibraryFile(id) {
+    setLibraryFiles(prev => prev.filter(f => f.id !== id));
+  }
 
   useEffect(() => {
     setMessages([{ role: 'assistant', content: GREETINGS[role] }]);
@@ -199,6 +210,7 @@ export default function ChatWindow() {
     setOpenGroup(null);
     setUploadedContext(null);
     setUploadedFileName(null);
+    setLibraryFiles([]);
   }, [role]);
 
   // Close stylize panel on outside click
@@ -221,6 +233,7 @@ export default function ChatWindow() {
     setOpenGroup(null);
     setUploadedContext(null);
     setUploadedFileName(null);
+    setLibraryFiles([]);
   }
 
   async function loadPdfJs() {
@@ -300,7 +313,7 @@ export default function ChatWindow() {
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages, provider, context: uploadedContext }),
+        body: JSON.stringify({ messages: apiMessages, provider, context: buildContext(libraryFiles, uploadedContext) }),
       });
       const data = await res.json();
       setMessages((prev) => [
@@ -332,9 +345,9 @@ export default function ChatWindow() {
           S
         </div>
         <h1 className={`text-base font-semibold ${s.titleColor}`}>Sherlock</h1>
-        {libraryActive && (
+        {libraryFiles.length > 0 && (
           <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex-shrink-0">
-            📚 Library active
+            📚 Demo library — clears when you leave
           </span>
         )}
 
@@ -474,7 +487,8 @@ export default function ChatWindow() {
       <div className="h-[400px] overflow-y-auto px-4 py-4">
         {activePanel && (
           <div className="mb-4">
-            <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)} onLibraryChange={checkLibrary} />
+            <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)}
+              libraryProps={{ libraryFiles, onAddFile: addLibraryFile, onRemoveFile: removeLibraryFile }} />
           </div>
         )}
         {messages.map((msg, i) => (
