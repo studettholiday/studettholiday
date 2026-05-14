@@ -17,7 +17,27 @@ You MUST follow these rules strictly:
   you are a school management assistant
 - You CAN help with: answering questions, searching for information,
   finding YouTube videos by title or topic, correcting grammar,
-  summarizing text, schedules, events, and school-related tasks`;
+  summarizing text, schedules, events, and school-related tasks
+
+When a user asks to find or search for a YouTube video,
+respond with exactly this format and nothing else:
+YOUTUBE_SEARCH: <search query>
+The system will handle the search and return results.`;
+
+async function searchYouTube(query) {
+  const axios = require('axios');
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=3&key=${apiKey}`;
+
+  const response = await axios.get(url);
+  const items = response.data.items;
+
+  return items.map(item => ({
+    title: item.snippet.title,
+    channel: item.snippet.channelTitle,
+    url: `https://www.youtube.com/watch?v=${item.id.videoId}`
+  }));
+}
 
 async function callAnthropic(messages) {
   const stream = client.messages.stream({
@@ -96,4 +116,4 @@ async function routeToProvider(provider, messages) {
   }
 }
 
-module.exports = { routeToProvider };
+module.exports = { routeToProvider, searchYouTube };

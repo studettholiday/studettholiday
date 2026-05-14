@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const chatRouter = require('./routes/chat');
 const dbRouter = require('./routes/db');
+const youtubeRoutes = require('./routes/youtube');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -13,6 +14,7 @@ app.use(express.json({ limit: '10mb' }));
 
 app.use('/api/chat', chatRouter);
 app.use('/api', dbRouter);
+app.use('/api/youtube', youtubeRoutes);
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
 app.use(express.static(path.join(__dirname, 'public')));
