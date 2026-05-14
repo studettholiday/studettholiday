@@ -21,10 +21,10 @@ const T = {
     thankYou: "You're on the list! We'll be in touch soon.",
   },
   GEO: {
-    sub1: 'AI-ზე დაფუძნებული სკოლის მართვა.',
-    sub2: 'კოდი არ სჭირდება.',
+    sub1: 'სასწავლებლის ოპერატიული სისტემა ჩაშენებული ხელოვნური ინტელექტით.',
+    sub2: '',
     getStarted: 'დაწყება',
-    tryDemo: 'სცადე',
+    tryDemo: 'სცადე დემო',
     featuresTitle: 'ყველაფერი რაც თქვენს სკოლას სჭირდება',
     joinWaitlist: 'სიაში ჩაწერა',
     emailLabel: 'ელ-ფოსტა',
