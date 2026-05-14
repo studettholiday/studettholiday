@@ -286,6 +286,8 @@ function SignupModal({ lang, onClose }) {
 export default function App() {
   const [lang, setLang] = useState('EN');
   const [modalOpen, setModalOpen] = useState(false);
+  const [chatExpanded, setChatExpanded] = useState(false);
+  const isMobile = useIsMobile();
 
   const closeModal = useCallback(() => setModalOpen(false), []);
   const t = T[lang];
@@ -306,9 +308,9 @@ export default function App() {
   ]);
 
   useEffect(() => {
-    document.body.style.overflow = modalOpen ? 'hidden' : '';
+    document.body.style.overflow = (modalOpen || chatExpanded) ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
-  }, [modalOpen]);
+  }, [modalOpen, chatExpanded]);
 
   return (
     <div
@@ -431,16 +433,99 @@ export default function App() {
 
       {/* Demo / Chat */}
       <section id="demo" className="pb-8">
-        <div className="mx-auto max-w-6xl px-6 pt-4 pb-6 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-            {t.chatTitle}
-          </h2>
-          <p className="mt-3 text-gray-400">{t.chatSubtitle}</p>
-        </div>
+        {isMobile ? (
+          <>
+            {/* Mobile compact preview card */}
+            {!chatExpanded && (
+              <div style={{ padding: '16px' }}>
+                <div style={{
+                  background: 'rgba(5,5,20,0.82)',
+                  border: '1px solid rgba(99,102,241,0.35)',
+                  borderRadius: 20,
+                  padding: '28px 20px',
+                  textAlign: 'center',
+                }}>
+                  <div style={{ fontSize: '3rem', lineHeight: 1, marginBottom: 12 }}>🤖</div>
+                  <p style={{ color: '#fff', fontWeight: 700, fontSize: '1.1rem', margin: '0 0 6px' }}>
+                    {t.chatTitle}
+                  </p>
+                  <p style={{ color: 'rgb(156,163,175)', fontSize: '0.85rem', margin: '0 0 20px' }}>
+                    {t.chatSubtitle}
+                  </p>
+                  <button
+                    onClick={() => setChatExpanded(true)}
+                    style={{
+                      background: '#4f46e5',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 12,
+                      padding: '10px 28px',
+                      fontSize: '0.9rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Open Chat
+                  </button>
+                </div>
+              </div>
+            )}
 
-        <div className="mx-auto max-w-2xl px-4">
-          <ChatWindow />
-        </div>
+            {/* Mobile fullscreen overlay */}
+            {chatExpanded && (
+              <div style={{
+                position: 'fixed',
+                inset: 0,
+                width: '100vw',
+                height: '100vh',
+                zIndex: 9999,
+                background: '#0d0d18',
+                overflowY: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+              }}>
+                <button
+                  onClick={() => setChatExpanded(false)}
+                  style={{
+                    position: 'absolute',
+                    top: 14,
+                    right: 16,
+                    background: 'rgba(255,255,255,0.08)',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    borderRadius: '50%',
+                    width: 36,
+                    height: 36,
+                    color: '#fff',
+                    fontSize: '1rem',
+                    cursor: 'pointer',
+                    zIndex: 10000,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  aria-label="Close chat"
+                >
+                  ✕
+                </button>
+                <div style={{ flex: 1, padding: '56px 12px 16px' }}>
+                  <ChatWindow />
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="mx-auto max-w-6xl px-6 pt-4 pb-6 text-center">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                {t.chatTitle}
+              </h2>
+              <p className="mt-3 text-gray-400">{t.chatSubtitle}</p>
+            </div>
+            <div className="mx-auto max-w-2xl px-4">
+              <ChatWindow />
+            </div>
+          </>
+        )}
       </section>
 
       {/* Quote */}
