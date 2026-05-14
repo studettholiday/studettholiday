@@ -6,6 +6,19 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const SYSTEM_PROMPT = 'You are a helpful AI assistant. Be concise and clear.';
 
+const RESTRICTED_SYSTEM_PROMPT = `You are Sherlock Is Smart,
+an AI assistant for school management. Be concise and clear.
+
+You MUST follow these rules strictly:
+- Do NOT generate, create, or describe images
+- Do NOT generate, create, or describe videos
+- Do NOT generate, create, or compose music or audio
+- If asked to do any of the above, politely decline and explain
+  you are a school management assistant
+- You CAN help with: answering questions, searching for information,
+  finding YouTube videos by title or topic, correcting grammar,
+  summarizing text, schedules, events, and school-related tasks`;
+
 async function callAnthropic(messages) {
   const stream = client.messages.stream({
     model: 'claude-opus-4-7',
@@ -27,7 +40,10 @@ async function callAnthropic(messages) {
 
 async function callGemini(messages) {
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-1.5-flash',
+    systemInstruction: RESTRICTED_SYSTEM_PROMPT
+  });
 
   // Convert messages to Gemini format
   // Gemini uses 'user' and 'model' roles (not 'assistant')
@@ -58,7 +74,7 @@ async function callOpenAI(messages) {
   const response = await openai.chat.completions.create({
     model: 'gpt-4o',
     messages: [
-      { role: 'system', content: 'You are a helpful AI assistant. Be concise and clear.' },
+      { role: 'system', content: RESTRICTED_SYSTEM_PROMPT },
       ...formatted
     ],
     max_tokens: 2048
