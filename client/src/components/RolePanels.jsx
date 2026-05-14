@@ -697,12 +697,18 @@ function KnowledgeLibraryPanel({ role, onLibraryChange }) {
           reader.readAsText(file);
         });
       }
+      if (!text.trim()) {
+        throw new Error('No text could be extracted from this file. For PDFs, make sure the file contains selectable text (not a scanned image).');
+      }
       const res = await fetch('/api/library', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ filename: file.name, content: text, uploaded_by: role }),
       });
-      if (!res.ok) throw new Error('Server error');
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error ?? `Server error ${res.status}`);
+      }
       setStatus(`✅ "${file.name}" added to library`);
       await fetchLibrary();
       onLibraryChange?.();
