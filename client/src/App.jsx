@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import ChatWindow from './components/ChatWindow';
 
 const T = {
@@ -70,6 +70,85 @@ const FEATURES = [
   { id: 'library',  icon: '📚', EN: { title: 'Library',           desc: 'Chords, scales, diagrams'          }, GEO: { title: 'ბიბლიოთეკა',            desc: 'აკორდები, გამები'           } },
   { id: 'reminders',icon: '🔔', EN: { title: 'Reminders',         desc: 'Automatic lesson reminders'        }, GEO: { title: 'შეხსენებები',            desc: 'ავტომატური შეხსენებები'    } },
 ];
+
+function FeatureCarousel({ lang }) {
+  const progressRef = useRef(0);
+  const lastTRef    = useRef(null);
+  const pausedRef   = useRef(false);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    let raf;
+    function animate(t) {
+      if (lastTRef.current !== null && !pausedRef.current) {
+        progressRef.current = (progressRef.current + (t - lastTRef.current) / 12000) % 1;
+        setTick(progressRef.current);
+      }
+      lastTRef.current = t;
+      raf = requestAnimationFrame(animate);
+    }
+    raf = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const N  = FEATURES.length;
+  const RX = 340;
+  const RY = 48;
+
+  const items = FEATURES.map((f, i) => {
+    const theta   = tick * 2 * Math.PI + (i / N) * 2 * Math.PI;
+    const x       = Math.sin(theta) * RX;
+    const z       = Math.cos(theta);
+    const y       = -z * RY;
+    const depth   = (z + 1) / 2;
+    const scale   = 0.55 + 0.45 * depth;
+    const opacity = 0.35 + 0.65 * depth;
+    return { ...f, x, y, scale, opacity, depth };
+  }).sort((a, b) => a.depth - b.depth);
+
+  return (
+    <div
+      style={{ position: 'relative', height: 440, overflow: 'visible' }}
+      onMouseEnter={() => { pausedRef.current = true;  }}
+      onMouseLeave={() => { pausedRef.current = false; }}
+    >
+      {items.map(item => (
+        <div
+          key={item.id}
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            width: 150,
+            transform: `translate(calc(-50% + ${item.x.toFixed(1)}px), calc(-50% + ${item.y.toFixed(1)}px)) scale(${item.scale.toFixed(4)})`,
+            opacity: item.opacity,
+            zIndex: Math.round(item.depth * 20) + 1,
+            transition: 'none',
+          }}
+        >
+          <div style={{
+            background:           'rgba(5, 5, 20, 0.76)',
+            backdropFilter:       'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            border:      `1px solid rgba(99,102,241,${(0.2 + 0.3 * item.depth).toFixed(2)})`,
+            borderRadius: 16,
+            padding:     '20px 16px',
+            textAlign:   'center',
+            boxShadow:   `0 8px 28px rgba(0,0,0,0.5), 0 0 ${Math.round(6 + item.depth * 22)}px rgba(99,102,241,${(0.06 + 0.2 * item.depth).toFixed(2)})`,
+          }}>
+            <div style={{ fontSize: '2rem', lineHeight: 1 }}>{item.icon}</div>
+            <p style={{ color: '#fff', fontWeight: 600, fontSize: '0.875rem', margin: '8px 0 0' }}>
+              {item[lang].title}
+            </p>
+            <p style={{ color: 'rgb(156,163,175)', fontSize: '0.72rem', margin: '4px 0 0', lineHeight: 1.45 }}>
+              {item[lang].desc}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 const FIELD_CLS =
   'w-full rounded-xl border border-white/15 bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/30 transition-colors';
@@ -245,25 +324,12 @@ export default function App() {
         </div>
       </section>
 
-      {/* Features */}
-      <section className="mx-auto max-w-6xl px-6 pb-28">
-        <h2 className="text-center text-3xl sm:text-4xl font-bold tracking-tight mb-12">
+      {/* Features — 3D carousel */}
+      <section className="mx-auto max-w-6xl px-6 pb-16 pt-4">
+        <h2 className="text-center text-3xl sm:text-4xl font-bold tracking-tight mb-8">
           {t.featuresTitle}
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {FEATURES.map((f) => (
-            <div
-              key={f.id}
-              className="rounded-2xl border border-white/[0.08] bg-white/[0.04] p-6 flex flex-col gap-4"
-            >
-              <span className="text-3xl leading-none">{f.icon}</span>
-              <div>
-                <p className="font-semibold text-white text-sm">{f[lang].title}</p>
-                <p className="mt-1 text-sm text-gray-400 leading-relaxed">{f[lang].desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <FeatureCarousel lang={lang} />
       </section>
 
       {/* Events */}
