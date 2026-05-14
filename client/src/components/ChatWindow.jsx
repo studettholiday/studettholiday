@@ -213,6 +213,16 @@ export default function ChatWindow() {
     return () => document.removeEventListener('mousedown', handler);
   }, [styleOpen]);
 
+  function clearChat() {
+    setMessages([{ role: 'assistant', content: GREETINGS[role] }]);
+    setInput('');
+    setLoading(false);
+    setActivePanel(null);
+    setOpenGroup(null);
+    setUploadedContext(null);
+    setUploadedFileName(null);
+  }
+
   async function loadPdfJs() {
     if (window.pdfjsLib) return window.pdfjsLib;
     return new Promise((resolve, reject) => {
@@ -397,6 +407,17 @@ export default function ChatWindow() {
             {r.label}
           </button>
         ))}
+        <button
+          onClick={clearChat}
+          title="Start a new conversation"
+          className={`ml-auto text-xs px-2 py-1 rounded-lg transition-colors ${
+            s.colorScheme === 'light'
+              ? 'text-gray-400 hover:text-gray-700'
+              : 'text-gray-600 hover:text-gray-400'
+          }`}
+        >
+          ↺ New
+        </button>
       </div>
 
       {/* Handler buttons */}
@@ -467,7 +488,7 @@ export default function ChatWindow() {
           <span className={`text-xs rounded-full px-3 py-1.5 flex items-center gap-2 max-w-full ${
             s.colorScheme === 'light' ? 'bg-gray-100 text-gray-700' : 'bg-white/[0.08] text-gray-300'
           }`}>
-            <span className="truncate">📄 {uploadedFileName} — loaded</span>
+            <span className="truncate">📄 {uploadedFileName} — active for this conversation only</span>
             <button
               type="button"
               onClick={() => { setUploadedContext(null); setUploadedFileName(null); }}
@@ -491,7 +512,7 @@ export default function ChatWindow() {
         />
         <button
           type="button"
-          title="Attach document (.pdf, .txt, .md)"
+          title="Attach document for this conversation only (.pdf, .txt, .md) — not saved to Library"
           onClick={() => fileInputRef.current?.click()}
           className={`px-3 py-2 rounded-xl text-sm flex-shrink-0 transition-all duration-150 active:scale-95 ${
             uploadedContext
