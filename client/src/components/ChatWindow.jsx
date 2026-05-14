@@ -162,7 +162,7 @@ const GROUP_OPEN_CLS = {
 };
 
 export default function ChatWindow() {
-  const [role, setRole] = useState('student');
+  const [role, setRole] = useState('admin');
   const [activePanel, setActivePanel] = useState(null);
   const [openGroup, setOpenGroup] = useState(null);
   const theme = THEMES[role];
