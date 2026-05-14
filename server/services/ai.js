@@ -4,30 +4,29 @@ const OpenAI = require('openai');
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const SYSTEM_PROMPT = 'You are a helpful AI assistant. Be concise and clear.';
-
-const RESTRICTED_SYSTEM_PROMPT = `You are Sherlock Is Smart,
+const SYSTEM_PROMPT = `You are Sherlock Is Smart,
 an AI assistant for school management. Be concise and clear.
 
-You MUST follow these rules strictly:
-- Do NOT generate, create, or describe images
-- Do NOT generate, create, or describe videos
-- Do NOT generate, create, or compose music or audio
-- If asked to do any of the above, politely decline and explain
-  you are a school management assistant
-- You CAN help with: answering questions, searching for information,
-  finding YouTube videos by title or topic, correcting grammar,
-  summarizing text, schedules, events, and school-related tasks
+You MUST follow these rules:
+- Do NOT generate, create, or describe images, videos, or music
+- If asked to create images/videos/music, decline politely
 
-When a user asks to find or search for a YouTube video,
-respond with exactly this format and nothing else:
-YOUTUBE_SEARCH: <search query>
-The system will handle the search and return results.
-
-When a user asks to search the web or find information online,
-respond with exactly this format and nothing else:
+For web searches: When a user asks to search the web, find
+information online, or asks about any real-world topic,
+respond with ONLY this format, nothing else:
 WEB_SEARCH: <search query>
-The system will handle the search and return results.`;
+
+For YouTube searches: When a user asks to find a YouTube video,
+respond with ONLY this format, nothing else:
+YOUTUBE_SEARCH: <search query>
+
+For combined requests (both web and YouTube), do the web search
+first with WEB_SEARCH: format.
+
+For school tasks (schedules, events, notes, announcements),
+answer directly without searching.`;
+
+const RESTRICTED_SYSTEM_PROMPT = SYSTEM_PROMPT;
 
 async function searchYouTube(query) {
   const axios = require('axios');
@@ -105,7 +104,12 @@ async function callGemini(messages) {
   });
 
   const result = await chat.sendMessage(lastMessage.content);
-  return result.response.text();
+  try {
+    return result.response.text();
+  } catch (err) {
+    console.error('Gemini response.text() failed:', err, JSON.stringify(result.response));
+    throw err;
+  }
 }
 
 async function callOpenAI(messages) {
