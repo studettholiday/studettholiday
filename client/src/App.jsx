@@ -51,13 +51,16 @@ function formatDate(iso) {
 
 function groupSchedule(rows) {
   const map = {};
+  const nameKaMap = {};
   for (const row of rows) {
     if (!map[row.group_name]) map[row.group_name] = new Map();
     const key = `${row.day_of_week}-${row.lesson_time}`;
     map[row.group_name].set(key, { day: row.day_of_week, time: row.lesson_time });
+    if (row.group_name_ka) nameKaMap[row.group_name] = row.group_name_ka;
   }
   return Object.entries(map).map(([name, slots]) => ({
     name,
+    name_ka: nameKaMap[name] || name,
     slots: Array.from(slots.values()).sort((a, b) => a.day - b.day),
   }));
 }
@@ -301,18 +304,18 @@ export default function App() {
   const t = T[lang];
 
   const events = [
-    { name: 'წლის შემაჯამებელი კონცერტი', event_date: '2025-06-20T00:00:00.000Z', event_time: '19:00', place: 'თბილისი არტ-ჰოლი' },
-    { name: 'საზაფხულო ვორქშოფი',         event_date: '2025-07-15T00:00:00.000Z', event_time: '11:00', place: 'სახელმწიფო უნივერსიტეტი' },
+    { name: 'End of Year Concert', name_ka: 'წლის შემაჯამებელი კონცერტი', event_date: '2025-06-20T00:00:00.000Z', event_time: '19:00', place: 'City Concert Hall',  place_ka: 'თბილისი არტ-ჰოლი' },
+    { name: 'Summer Workshop',     name_ka: 'საზაფხულო ვორქშოფი',         event_date: '2025-07-15T00:00:00.000Z', event_time: '11:00', place: 'Studio Main Hall', place_ka: 'სახელმწიფო უნივერსიტეტი' },
   ];
 
   const schedule = groupSchedule([
-    { group_name: 'გიტარა დამწყებთათვის', day_of_week: 0, lesson_time: '16:00' },
-    { group_name: 'გიტარა დამწყებთათვის', day_of_week: 2, lesson_time: '16:00' },
-    { group_name: 'გიტარა ადვანს დონე',   day_of_week: 1, lesson_time: '17:00' },
-    { group_name: 'გიტარა ადვანს დონე',   day_of_week: 3, lesson_time: '17:00' },
-    { group_name: 'ვოკალის ჯგუფი I',      day_of_week: 0, lesson_time: '18:00' },
-    { group_name: 'ვოკალის ჯგუფი I',      day_of_week: 4, lesson_time: '18:00' },
-    { group_name: 'ბენდის რეპეტიცია',     day_of_week: 5, lesson_time: '12:00' },
+    { group_name: 'Guitar Beginners', group_name_ka: 'გიტარა დამწყებთათვის', day_of_week: 0, lesson_time: '16:00' },
+    { group_name: 'Guitar Beginners', group_name_ka: 'გიტარა დამწყებთათვის', day_of_week: 2, lesson_time: '16:00' },
+    { group_name: 'Guitar Advanced',  group_name_ka: 'გიტარა ადვანს დონე',   day_of_week: 1, lesson_time: '17:00' },
+    { group_name: 'Guitar Advanced',  group_name_ka: 'გიტარა ადვანს დონე',   day_of_week: 3, lesson_time: '17:00' },
+    { group_name: 'Vocals Group I',   group_name_ka: 'ვოკალის ჯგუფი I',      day_of_week: 0, lesson_time: '18:00' },
+    { group_name: 'Vocals Group I',   group_name_ka: 'ვოკალის ჯგუფი I',      day_of_week: 4, lesson_time: '18:00' },
+    { group_name: 'Band Practice',    group_name_ka: 'ბენდის რეპეტიცია',     day_of_week: 5, lesson_time: '12:00' },
   ]);
 
   useEffect(() => {
@@ -402,10 +405,10 @@ export default function App() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {events.map((ev, i) => (
               <div key={i} className="rounded-2xl border border-white/[0.08] bg-white/[0.04] p-6 flex flex-col gap-3">
-                <p className="font-semibold text-white">{ev.name}</p>
+                <p className="font-semibold text-white">{lang === 'GEO' ? ev.name_ka : ev.name}</p>
                 <div className="text-sm text-gray-400 space-y-1">
                   <p>📅 {formatDate(ev.event_date)} · {ev.event_time}</p>
-                  <p>📍 {ev.place}</p>
+                  <p>📍 {lang === 'GEO' ? ev.place_ka : ev.place}</p>
                 </div>
               </div>
             ))}
@@ -423,7 +426,7 @@ export default function App() {
             {schedule.map((group) => (
               <div key={group.name} className="rounded-2xl border border-white/[0.08] bg-white/[0.04] p-6">
                 <p className="font-semibold text-white text-sm mb-4">
-                  {group.name.replace(/_/g, ' ')}
+                  {lang === 'GEO' ? group.name_ka : group.name.replace(/_/g, ' ')}
                 </p>
                 <div className="space-y-2">
                   {group.slots.map((slot, i) => (
