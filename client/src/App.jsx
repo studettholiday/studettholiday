@@ -445,7 +445,7 @@ export default function App() {
                   padding: '28px 20px',
                   textAlign: 'center',
                 }}>
-                  <div style={{ fontSize: '3rem', lineHeight: 1, marginBottom: 12 }}>🤖</div>
+                  <div style={{ fontSize: '3rem', lineHeight: 1, marginBottom: 12 }}>🕵️</div>
                   <p style={{ color: '#fff', fontWeight: 700, fontSize: '1.1rem', margin: '0 0 6px' }}>
                     {t.chatTitle}
                   </p>
