@@ -295,18 +295,18 @@ function SignupModal({ lang, onClose }) {
               required
               value={form.type}
               onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))}
-              style={{ colorScheme: 'dark' }}
+              style={{ colorScheme: 'dark', backgroundColor: '#1e1e2e', color: 'white', border: '1px solid rgba(255,255,255,0.2)' }}
               className={FIELD_CLS + ' cursor-pointer'}
             >
-              <option value="" disabled>{t.typeLabel}</option>
-              <option value="education">Education / Academic</option>
-              <option value="music_arts">Music &amp; Arts</option>
-              <option value="sports_fitness">Sports &amp; Fitness</option>
-              <option value="dance_performing">Dance &amp; Performing Arts</option>
-              <option value="language">Language School</option>
-              <option value="therapy_wellness">Therapy &amp; Wellness</option>
-              <option value="tutoring_coaching">Tutoring &amp; Coaching</option>
-              <option value="other">Other</option>
+              <option value="" disabled style={{ backgroundColor: '#1e1e2e', color: 'white' }}>{t.typeLabel}</option>
+              <option value="education" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>Education / Academic</option>
+              <option value="music_arts" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>Music &amp; Arts</option>
+              <option value="sports_fitness" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>Sports &amp; Fitness</option>
+              <option value="dance_performing" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>Dance &amp; Performing Arts</option>
+              <option value="language" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>Language School</option>
+              <option value="therapy_wellness" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>Therapy &amp; Wellness</option>
+              <option value="tutoring_coaching" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>Tutoring &amp; Coaching</option>
+              <option value="other" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>Other</option>
             </select>
 
             {status === 'duplicate' && (
