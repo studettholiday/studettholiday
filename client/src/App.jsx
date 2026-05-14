@@ -10,9 +10,8 @@ const T = {
     featuresTitle: 'Everything your school needs',
     joinWaitlist: 'Join Waitlist',
     emailLabel: 'Email address',
-    schoolLabel: 'School name',
-    typeLabel: 'School type',
-    schoolTypes: ['Music School', 'Language School', 'University', 'Gym', 'Other'],
+    schoolLabel: 'Organization name',
+    typeLabel: 'Industry',
     eventsTitle: 'Upcoming Events',
     scheduleTitle: 'Schedule',
     roleAdmin: 'Admin', roleTeacher: 'Teacher', roleStudent: 'Student',
@@ -28,9 +27,8 @@ const T = {
     featuresTitle: 'ყველაფერი რაც თქვენს სკოლას სჭირდება',
     joinWaitlist: 'სიაში ჩაწერა',
     emailLabel: 'ელ-ფოსტა',
-    schoolLabel: 'სკოლის სახელი',
-    typeLabel: 'სკოლის ტიპი',
-    schoolTypes: ['მუსიკალური სკოლა', 'ენის სკოლა', 'უნივერსიტეტი', 'სპორტ დარბაზი', 'სხვა'],
+    schoolLabel: 'ორგანიზაციის სახელი',
+    typeLabel: 'ინდუსტრია',
     eventsTitle: 'მომავალი ღონისძიებები',
     scheduleTitle: 'განრიგი',
     roleAdmin: 'ადმინი', roleTeacher: 'მასწავლებელი', roleStudent: 'მოსწავლე',
@@ -301,9 +299,14 @@ function SignupModal({ lang, onClose }) {
               className={FIELD_CLS + ' cursor-pointer'}
             >
               <option value="" disabled>{t.typeLabel}</option>
-              {t.schoolTypes.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
+              <option value="education">Education / Academic</option>
+              <option value="music_arts">Music &amp; Arts</option>
+              <option value="sports_fitness">Sports &amp; Fitness</option>
+              <option value="dance_performing">Dance &amp; Performing Arts</option>
+              <option value="language">Language School</option>
+              <option value="therapy_wellness">Therapy &amp; Wellness</option>
+              <option value="tutoring_coaching">Tutoring &amp; Coaching</option>
+              <option value="other">Other</option>
             </select>
 
             {status === 'duplicate' && (
