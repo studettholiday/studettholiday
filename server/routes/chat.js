@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
     return res.status(429).json({ error: 'Too many requests. Please try again later.' });
   }
 
-  const { messages, provider = 'anthropic' } = req.body;
+  const { messages, provider = 'anthropic', context } = req.body;
 
   if (!Array.isArray(messages) || messages.length === 0) {
     return res.status(400).json({ error: 'messages array is required' });
@@ -59,8 +59,17 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'At least one user message is required' });
   }
 
+  let processedMessages = trimmed;
+  if (context && typeof context === 'string' && context.trim()) {
+    const docContent = context.slice(0, 8000);
+    const contextNote = `The user has uploaded a document. Use this as your knowledge base to answer questions:\n\n${docContent}\n\nAnswer questions based on this document. If the question is not covered in the document, say so clearly.\n\n---\n\n`;
+    processedMessages = trimmed.map((msg, i) =>
+      i === 0 ? { ...msg, content: contextNote + msg.content } : msg
+    );
+  }
+
   try {
-    const reply = await routeToProvider(provider, trimmed);
+    const reply = await routeToProvider(provider, processedMessages);
     res.json({ message: reply });
   } catch (err) {
     console.error('AI error:', err.message);

@@ -174,7 +174,10 @@ export default function ChatWindow() {
   const [provider, setProvider] = useState('anthropic');
   const [styleName, setStyleName] = useState('default');
   const [styleOpen, setStyleOpen] = useState(false);
-  const stylePanelRef = useRef(null);
+  const stylePanelRef   = useRef(null);
+  const fileInputRef    = useRef(null);
+  const [uploadedContext,  setUploadedContext]  = useState(null);
+  const [uploadedFileName, setUploadedFileName] = useState(null);
   const s = CHAT_STYLES[styleName];
 
   useEffect(() => {
@@ -183,6 +186,8 @@ export default function ChatWindow() {
     setLoading(false);
     setActivePanel(null);
     setOpenGroup(null);
+    setUploadedContext(null);
+    setUploadedFileName(null);
   }, [role]);
 
   // Close stylize panel on outside click
@@ -196,6 +201,58 @@ export default function ChatWindow() {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [styleOpen]);
+
+  async function loadPdfJs() {
+    if (window.pdfjsLib) return window.pdfjsLib;
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      script.onload = () => {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        resolve(window.pdfjsLib);
+      };
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  async function handleFileSelect(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    let text = '';
+    try {
+      if (file.name.toLowerCase().endsWith('.pdf')) {
+        const pdfjs = await loadPdfJs();
+        const buf   = await file.arrayBuffer();
+        const pdf   = await pdfjs.getDocument({ data: buf }).promise;
+        for (let p = 1; p <= pdf.numPages; p++) {
+          const page    = await pdf.getPage(p);
+          const content = await page.getTextContent();
+          text += content.items.map(item => item.str).join(' ') + '\n';
+        }
+      } else {
+        text = await new Promise((res, rej) => {
+          const reader = new FileReader();
+          reader.onload = ev => res(ev.target.result);
+          reader.onerror = rej;
+          reader.readAsText(file);
+        });
+      }
+      setUploadedContext(text);
+      setUploadedFileName(file.name);
+      setMessages(prev => [
+        ...prev,
+        { role: 'assistant', content: "I've read your document. Ask me anything about it!" },
+      ]);
+    } catch {
+      setMessages(prev => [
+        ...prev,
+        { role: 'assistant', content: 'Sorry, I could not read that file.' },
+      ]);
+    }
+  }
 
   async function sendMessage(e) {
     e.preventDefault();
@@ -222,7 +279,7 @@ export default function ChatWindow() {
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages, provider }),
+        body: JSON.stringify({ messages: apiMessages, provider, context: uploadedContext }),
       });
       const data = await res.json();
       setMessages((prev) => [
@@ -388,11 +445,48 @@ export default function ChatWindow() {
         ))}
       </div>
 
+      {/* Uploaded file pill */}
+      {uploadedContext && (
+        <div className={`flex items-center gap-2 px-4 py-2 border-t ${s.footerBorder} flex-shrink-0`}>
+          <span className={`text-xs rounded-full px-3 py-1.5 flex items-center gap-2 max-w-full ${
+            s.colorScheme === 'light' ? 'bg-gray-100 text-gray-700' : 'bg-white/[0.08] text-gray-300'
+          }`}>
+            <span className="truncate">📄 {uploadedFileName} — loaded</span>
+            <button
+              type="button"
+              onClick={() => { setUploadedContext(null); setUploadedFileName(null); }}
+              className="text-gray-500 hover:text-white flex-shrink-0 leading-none transition-colors"
+            >✕</button>
+          </span>
+        </div>
+      )}
+
       {/* Input */}
       <form
         onSubmit={sendMessage}
         className={`flex items-end gap-2 px-4 py-3 border-t ${s.footerBorder} flex-shrink-0`}
       >
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf,.txt,.md"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+        <button
+          type="button"
+          title="Attach document (.pdf, .txt, .md)"
+          onClick={() => fileInputRef.current?.click()}
+          className={`px-3 py-2 rounded-xl text-sm flex-shrink-0 transition-all duration-150 active:scale-95 ${
+            uploadedContext
+              ? PANEL_ACTIVE_CLS[role]
+              : s.colorScheme === 'light'
+                ? 'border border-gray-300 text-gray-500 hover:text-gray-900 hover:border-gray-400'
+                : 'border border-white/15 text-gray-400 hover:text-white hover:border-white/30'
+          }`}
+        >
+          📎
+        </button>
         <textarea
           rows={1}
           placeholder="Type a message…"
