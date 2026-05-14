@@ -87,15 +87,13 @@ function FeatureCarousel({ lang }) {
   if (isMobile) {
     return (
       <div style={{
-        display: 'flex',
-        overflowX: 'auto',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
         gap: 12,
         padding: '4px 4px 12px',
-        scrollbarWidth: 'none',
-        msOverflowStyle: 'none',
       }}>
         {FEATURES.map(f => (
-          <div key={f.id} style={{ minWidth: 140, flexShrink: 0 }}>
+          <div key={f.id}>
             <div style={{
               background: 'rgba(5, 5, 20, 0.76)',
               border: '1px solid rgba(99,102,241,0.35)',
@@ -169,10 +167,12 @@ function FeatureCarousel3D({ lang }) {
             left: '50%',
             top: '50%',
             width: 150,
-            transform: `translate(calc(-50% + ${item.x.toFixed(1)}px), calc(-50% + ${item.y.toFixed(1)}px)) scale(${item.scale.toFixed(4)})`,
+            transform: `translate(calc(-50% + ${item.x.toFixed(1)}px), calc(-50% + ${item.y.toFixed(1)}px)) scale(${item.scale.toFixed(4)}) translateZ(0)`,
             opacity: item.opacity,
             zIndex: Math.round(item.depth * 20) + 1,
             transition: 'none',
+            willChange: 'transform',
+            backfaceVisibility: 'hidden',
           }}
         >
           <div style={{
@@ -319,6 +319,8 @@ export default function App() {
         backgroundPosition: 'center 80%',
         backgroundAttachment: 'scroll',
         backgroundColor: '#08080f',
+        overflowX: 'hidden',
+        maxWidth: '100vw',
       }}
     >
 
