@@ -15,8 +15,10 @@ pool.query(`
 ).catch(err => console.error('Library migration failed:', err.message));
 
 router.post('/library', async (req, res) => {
+  console.log('[library POST] body:', JSON.stringify({ filename: req.body?.filename, uploaded_by: req.body?.uploaded_by, contentLength: req.body?.content?.length ?? 0 }));
   const { filename, content, uploaded_by = 'admin' } = req.body;
   if (!filename || !content) {
+    console.log('[library POST] missing filename or content');
     return res.status(400).json({ error: 'filename and content are required' });
   }
   try {
@@ -24,9 +26,10 @@ router.post('/library', async (req, res) => {
       'INSERT INTO knowledge_library (filename, content, uploaded_by) VALUES ($1, $2, $3) RETURNING id, filename, uploaded_at, uploaded_by',
       [filename, content, uploaded_by]
     );
+    console.log('[library POST] inserted id:', result.rows[0].id);
     res.json(result.rows[0]);
   } catch (err) {
-    console.error('Library insert error:', err.message);
+    console.error('[library POST] insert error:', err.message, err.code, err.detail ?? '');
     res.status(500).json({ error: err.message });
   }
 });
