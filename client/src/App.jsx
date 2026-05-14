@@ -306,13 +306,13 @@ export default function App() {
   ];
 
   const schedule = groupSchedule([
-    { group_name: 'Guitar Beginners', day_of_week: 0, lesson_time: '16:00' },
-    { group_name: 'Guitar Beginners', day_of_week: 2, lesson_time: '16:00' },
-    { group_name: 'Guitar Advanced',  day_of_week: 1, lesson_time: '17:00' },
-    { group_name: 'Guitar Advanced',  day_of_week: 3, lesson_time: '17:00' },
-    { group_name: 'Vocals Group A',   day_of_week: 0, lesson_time: '18:00' },
-    { group_name: 'Vocals Group A',   day_of_week: 4, lesson_time: '18:00' },
-    { group_name: 'Band Practice',    day_of_week: 5, lesson_time: '12:00' },
+    { group_name: 'გიტარა დამწყებთათვის', day_of_week: 0, lesson_time: '16:00' },
+    { group_name: 'გიტარა დამწყებთათვის', day_of_week: 2, lesson_time: '16:00' },
+    { group_name: 'გიტარა ადვანს დონე',   day_of_week: 1, lesson_time: '17:00' },
+    { group_name: 'გიტარა ადვანს დონე',   day_of_week: 3, lesson_time: '17:00' },
+    { group_name: 'ვოკალის ჯგუფი I',      day_of_week: 0, lesson_time: '18:00' },
+    { group_name: 'ვოკალის ჯგუფი I',      day_of_week: 4, lesson_time: '18:00' },
+    { group_name: 'ბენდის რეპეტიცია',     day_of_week: 5, lesson_time: '12:00' },
   ]);
 
   useEffect(() => {
