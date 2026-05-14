@@ -178,7 +178,18 @@ export default function ChatWindow() {
   const fileInputRef    = useRef(null);
   const [uploadedContext,  setUploadedContext]  = useState(null);
   const [uploadedFileName, setUploadedFileName] = useState(null);
+  const [libraryActive, setLibraryActive] = useState(false);
   const s = CHAT_STYLES[styleName];
+
+  async function checkLibrary() {
+    try {
+      const res = await fetch('/api/library');
+      const data = await res.json();
+      setLibraryActive(Array.isArray(data) && data.length > 0);
+    } catch { /* ignore */ }
+  }
+
+  useEffect(() => { checkLibrary(); }, []);
 
   useEffect(() => {
     setMessages([{ role: 'assistant', content: GREETINGS[role] }]);
@@ -311,6 +322,11 @@ export default function ChatWindow() {
           S
         </div>
         <h1 className={`text-base font-semibold ${s.titleColor}`}>Sherlock</h1>
+        {libraryActive && (
+          <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex-shrink-0">
+            📚 Library active
+          </span>
+        )}
 
         <div className="ml-auto flex items-center gap-2">
           <select
@@ -437,7 +453,7 @@ export default function ChatWindow() {
       <div className="h-[400px] overflow-y-auto px-4 py-4">
         {activePanel && (
           <div className="mb-4">
-            <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)} />
+            <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)} onLibraryChange={checkLibrary} />
           </div>
         )}
         {messages.map((msg, i) => (

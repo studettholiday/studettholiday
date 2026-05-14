@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // ─── Fake data ────────────────────────────────────────────────────────────────
 
@@ -637,32 +637,95 @@ function TeacherShareFilesPanel() {
   );
 }
 
-function KnowledgeLibraryPanel({ role }) {
+function KnowledgeLibraryPanel({ role, onLibraryChange }) {
   const th = TH[role];
   const [tab, setTab] = useState('upload');
-  const [files, setFiles] = useState([
-    { id: 1, name: 'DoReMi Student Handbook.pdf',  when: '3 days ago'  },
-    { id: 2, name: 'Guitar Course Curriculum.pdf',  when: '1 week ago'  },
-    { id: 3, name: 'School Rules & Policy.txt',     when: '2 weeks ago' },
-  ]);
-  const [dragOver, setDragOver]   = useState(false);
-  const [justAdded, setJustAdded] = useState('');
+  const [files, setFiles] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const [status, setStatus] = useState('');
 
   const [previewMsgs,    setPreviewMsgs]    = useState([]);
   const [previewInput,   setPreviewInput]   = useState('');
   const [previewLoading, setPreviewLoading] = useState(false);
 
-  function addFile(file) {
+  async function fetchLibrary() {
+    try {
+      const res = await fetch('/api/library');
+      const data = await res.json();
+      setFiles(Array.isArray(data) ? data : []);
+    } catch { /* ignore */ }
+  }
+
+  useEffect(() => { fetchLibrary(); }, []);
+
+  async function loadPdfJs() {
+    if (window.pdfjsLib) return window.pdfjsLib;
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      script.onload = () => {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        resolve(window.pdfjsLib);
+      };
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  async function handleUpload(file) {
     if (!file) return;
-    setFiles(fs => [...fs, { id: Date.now(), name: file.name, when: 'just now' }]);
-    setJustAdded(file.name);
-    setTimeout(() => setJustAdded(''), 3000);
+    setUploading(true);
+    setStatus('');
+    try {
+      let text = '';
+      if (file.name.toLowerCase().endsWith('.pdf')) {
+        const pdfjs = await loadPdfJs();
+        const buf   = await file.arrayBuffer();
+        const pdf   = await pdfjs.getDocument({ data: buf }).promise;
+        for (let p = 1; p <= pdf.numPages; p++) {
+          const page    = await pdf.getPage(p);
+          const content = await page.getTextContent();
+          text += content.items.map(item => item.str).join(' ') + '\n';
+        }
+      } else {
+        text = await new Promise((res, rej) => {
+          const reader = new FileReader();
+          reader.onload = ev => res(ev.target.result);
+          reader.onerror = rej;
+          reader.readAsText(file);
+        });
+      }
+      const res = await fetch('/api/library', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, content: text }),
+      });
+      if (!res.ok) throw new Error('Server error');
+      setStatus(`✅ "${file.name}" added to library`);
+      await fetchLibrary();
+      onLibraryChange?.();
+      setTimeout(() => setStatus(''), 4000);
+    } catch (err) {
+      setStatus('❌ Upload failed: ' + err.message);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function deleteFile(id) {
+    try {
+      await fetch(`/api/library/${id}`, { method: 'DELETE' });
+      await fetchLibrary();
+      onLibraryChange?.();
+    } catch { /* ignore */ }
   }
 
   function onDrop(e) {
     e.preventDefault();
     setDragOver(false);
-    addFile(e.dataTransfer.files?.[0]);
+    handleUpload(e.dataTransfer.files?.[0]);
   }
 
   async function sendPreview(e) {
@@ -680,7 +743,7 @@ function KnowledgeLibraryPanel({ role }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: [
-            { role: 'user',      content: '[System context] You are a school knowledge assistant. Answer questions as if you have read the uploaded school documents. Be helpful and specific.' },
+            { role: 'user',      content: '[System context] You are a school knowledge assistant. Answer questions based on the school knowledge library.' },
             { role: 'assistant', content: 'Understood.' },
             ...history,
           ],
@@ -694,6 +757,10 @@ function KnowledgeLibraryPanel({ role }) {
     } finally {
       setPreviewLoading(false);
     }
+  }
+
+  function formatDate(ts) {
+    return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   }
 
   return (
@@ -719,30 +786,33 @@ function KnowledgeLibraryPanel({ role }) {
             onDragLeave={() => setDragOver(false)}
             onDrop={onDrop}
             className={`flex flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-5 cursor-pointer transition-colors ${
-              dragOver ? `border-white/50 bg-white/[0.07]` : 'border-white/20 hover:border-white/40'
-            }`}>
-            <span className="text-2xl mb-1.5">📄</span>
-            <p className="text-sm text-white font-medium">Upload your school knowledge</p>
+              dragOver ? 'border-white/50 bg-white/[0.07]' : 'border-white/20 hover:border-white/40'
+            } ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+            <span className="text-2xl mb-1.5">{uploading ? '⏳' : '📄'}</span>
+            <p className="text-sm text-white font-medium">{uploading ? 'Processing…' : 'Upload to knowledge library'}</p>
             <p className="text-xs text-gray-500 mt-1 text-center leading-relaxed">
-              Students can ask the AI questions based on this content
+              AI will use this content to answer all questions
             </p>
-            <p className="text-xs text-gray-600 mt-2">Drop files here or click · .pdf .txt .docx</p>
-            <input type="file" accept=".pdf,.txt,.docx"
-              onChange={e => addFile(e.target.files?.[0])}
-              className="hidden" />
+            <p className="text-xs text-gray-600 mt-2">Drop here or click · .pdf .txt .md</p>
+            <input type="file" accept=".pdf,.txt,.md"
+              onChange={e => { handleUpload(e.target.files?.[0]); e.target.value = ''; }}
+              className="hidden" disabled={uploading} />
           </label>
-          {justAdded && (
-            <p className="text-emerald-400 text-xs">✅ "{justAdded}" added to library</p>
+          {status && (
+            <p className={`text-xs ${status.startsWith('✅') ? 'text-emerald-400' : 'text-red-400'}`}>{status}</p>
           )}
           <div className="space-y-1.5">
+            {files.length === 0 && !uploading && (
+              <p className="text-xs text-gray-600 text-center py-2">No files in library yet.</p>
+            )}
             {files.map(f => (
               <div key={f.id} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2">
                 <span className="text-sm flex-shrink-0">📄</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-white truncate">{f.name}</p>
-                  <p className="text-xs text-gray-600">{f.when}</p>
+                  <p className="text-xs text-white truncate">{f.filename}</p>
+                  <p className="text-xs text-gray-600">{formatDate(f.uploaded_at)}</p>
                 </div>
-                <button onClick={() => setFiles(fs => fs.filter(x => x.id !== f.id))}
+                <button onClick={() => deleteFile(f.id)}
                   className="text-gray-600 hover:text-red-400 text-sm flex-shrink-0 transition-colors leading-none">🗑</button>
               </div>
             ))}
@@ -775,7 +845,7 @@ function KnowledgeLibraryPanel({ role }) {
               value={previewInput}
               onChange={e => setPreviewInput(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) sendPreview(e); }}
-              placeholder="Ask something from your uploaded content..."
+              placeholder="Ask something from your library..."
               disabled={previewLoading}
               className={`${FIELD} py-1.5 flex-1 text-xs`}
             />
@@ -1095,7 +1165,7 @@ function StudentRemoveSubjectPanel() {
 
 // ─── Panel router ─────────────────────────────────────────────────────────────
 
-function panelContent(role, panel) {
+function panelContent(role, panel, onLibraryChange) {
   switch (panel) {
     case 'groups':          return <GroupsPanel role={role} />;
     case 'admin-schedule':  return <AdminSchedulePanel />;
@@ -1108,7 +1178,7 @@ function panelContent(role, panel) {
     case 'my-schedule':     return <MySchedulePanel />;
     case 'my-groups':       return <MyGroupsPanel />;
     case 'share-files':       return <TeacherShareFilesPanel />;
-    case 'knowledge-library': return <KnowledgeLibraryPanel role={role} />;
+    case 'knowledge-library': return <KnowledgeLibraryPanel role={role} onLibraryChange={onLibraryChange} />;
     case 'schedule':        return <StudentSchedulePanel />;
     case 'events':          return <StudentEventsPanel />;
     case 'library':         return <StudentLibraryPanel />;
@@ -1174,7 +1244,7 @@ export const PANEL_ACTIVE_CLS = {
   student:   'bg-emerald-600 text-white shadow-sm shadow-emerald-900/60',
 };
 
-export function RolePanel({ role, panel, onClose }) {
+export function RolePanel({ role, panel, onClose, onLibraryChange }) {
   const th = TH[role];
   return (
     <div className={`rounded-2xl border ${th.border} bg-[#0d0d18] overflow-hidden flex flex-col max-h-[350px]`}>
@@ -1183,7 +1253,7 @@ export function RolePanel({ role, panel, onClose }) {
         <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-sm leading-none">✕</button>
       </div>
       <div className="p-4 overflow-y-auto flex-1">
-        {panelContent(role, panel)}
+        {panelContent(role, panel, onLibraryChange)}
       </div>
     </div>
   );

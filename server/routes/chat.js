@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { routeToProvider } = require('../services/ai');
+const pool = require('../services/db');
 
 const MAX_MESSAGES_PER_HOUR = 10;
 const MAX_MESSAGE_LENGTH = 500;
@@ -59,12 +60,33 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'At least one user message is required' });
   }
 
-  let processedMessages = trimmed;
+  // Build context prefix: library first, then any uploaded document
+  let contextPrefix = '';
+
+  try {
+    const libResult = await pool.query(
+      'SELECT filename, content FROM knowledge_library ORDER BY uploaded_at DESC'
+    );
+    if (libResult.rows.length > 0) {
+      let combined = libResult.rows
+        .map(r => `=== ${r.filename} ===\n${r.content}`)
+        .join('\n\n');
+      if (combined.length > 12000) combined = combined.slice(0, 12000);
+      contextPrefix += `SCHOOL KNOWLEDGE LIBRARY (always use this to answer questions):\n\n${combined}\n\n---\n\n`;
+    }
+  } catch (err) {
+    console.error('Library fetch error:', err.message);
+  }
+
   if (context && typeof context === 'string' && context.trim()) {
     const docContent = context.slice(0, 8000);
-    const contextNote = `The user has uploaded a document. Use this as your knowledge base to answer questions:\n\n${docContent}\n\nAnswer questions based on this document. If the question is not covered in the document, say so clearly.\n\n---\n\n`;
+    contextPrefix += `The user has uploaded a document. Use this as your knowledge base to answer questions:\n\n${docContent}\n\nAnswer questions based on this document. If the question is not covered in the document, say so clearly.\n\n---\n\n`;
+  }
+
+  let processedMessages = trimmed;
+  if (contextPrefix) {
     processedMessages = trimmed.map((msg, i) =>
-      i === 0 ? { ...msg, content: contextNote + msg.content } : msg
+      i === 0 ? { ...msg, content: contextPrefix + msg.content } : msg
     );
   }
 
