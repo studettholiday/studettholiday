@@ -394,7 +394,7 @@ export default function App() {
 
       {/* Features — 3D carousel */}
       <section className="mx-auto max-w-6xl px-6 pb-16 pt-4">
-        <h2 className="text-center text-3xl sm:text-4xl font-bold tracking-tight mb-8">
+        <h2 className="text-center text-3xl sm:text-4xl font-bold tracking-tight mb-8" style={{ fontFamily: "'Noto Sans Georgian', sans-serif" }}>
           {t.featuresTitle}
         </h2>
         <FeatureCarousel lang={lang} />
