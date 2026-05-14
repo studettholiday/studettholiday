@@ -183,7 +183,16 @@ export default function App() {
   }, [modalOpen]);
 
   return (
-    <div className="min-h-screen bg-[#08080f] text-white">
+    <div
+      className="min-h-screen text-white"
+      style={{
+        backgroundImage: "linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('/sherlock-bg.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center top',
+        backgroundAttachment: 'fixed',
+        backgroundColor: '#08080f',
+      }}
+    >
 
       {modalOpen && (
         <SignupModal lang={lang} onClose={closeModal} />
