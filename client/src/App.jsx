@@ -71,7 +71,56 @@ const FEATURES = [
   { id: 'reminders',icon: '🔔', EN: { title: 'Reminders',         desc: 'Automatic lesson reminders'        }, GEO: { title: 'შეხსენებები',            desc: 'ავტომატური შეხსენებები'    } },
 ];
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isMobile;
+}
+
 function FeatureCarousel({ lang }) {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <div style={{
+        display: 'flex',
+        overflowX: 'auto',
+        gap: 12,
+        padding: '4px 4px 12px',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+      }}>
+        {FEATURES.map(f => (
+          <div key={f.id} style={{ minWidth: 140, flexShrink: 0 }}>
+            <div style={{
+              background: 'rgba(5, 5, 20, 0.76)',
+              border: '1px solid rgba(99,102,241,0.35)',
+              borderRadius: 16,
+              padding: '20px 16px',
+              textAlign: 'center',
+            }}>
+              <div style={{ fontSize: '2rem', lineHeight: 1 }}>{f.icon}</div>
+              <p style={{ color: '#fff', fontWeight: 600, fontSize: '0.875rem', margin: '8px 0 0' }}>
+                {f[lang].title}
+              </p>
+              <p style={{ color: 'rgb(156,163,175)', fontSize: '0.72rem', margin: '4px 0 0', lineHeight: 1.45 }}>
+                {f[lang].desc}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return <FeatureCarousel3D lang={lang} />;
+}
+
+function FeatureCarousel3D({ lang }) {
   const progressRef = useRef(0);
   const lastTRef    = useRef(null);
   const pausedRef   = useRef(false);
