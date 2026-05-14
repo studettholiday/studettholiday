@@ -700,7 +700,7 @@ function KnowledgeLibraryPanel({ role, onLibraryChange }) {
       const res = await fetch('/api/library', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filename: file.name, content: text }),
+        body: JSON.stringify({ filename: file.name, content: text, uploaded_by: role }),
       });
       if (!res.ok) throw new Error('Server error');
       setStatus(`✅ "${file.name}" added to library`);
@@ -716,7 +716,11 @@ function KnowledgeLibraryPanel({ role, onLibraryChange }) {
 
   async function deleteFile(id) {
     try {
-      await fetch(`/api/library/${id}`, { method: 'DELETE' });
+      await fetch(`/api/library/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uploaded_by: role }),
+      });
       await fetchLibrary();
       onLibraryChange?.();
     } catch { /* ignore */ }
@@ -810,10 +814,19 @@ function KnowledgeLibraryPanel({ role, onLibraryChange }) {
                 <span className="text-sm flex-shrink-0">📄</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-white truncate">{f.filename}</p>
-                  <p className="text-xs text-gray-600">{formatDate(f.uploaded_at)}</p>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <p className="text-xs text-gray-600">{formatDate(f.uploaded_at)}</p>
+                    <span className="text-xs text-gray-600">·</span>
+                    <span className="text-xs text-gray-500">
+                      uploaded by {f.uploaded_by ? f.uploaded_by.charAt(0).toUpperCase() + f.uploaded_by.slice(1) : 'Admin'}
+                    </span>
+                  </div>
                 </div>
-                <button onClick={() => deleteFile(f.id)}
-                  className="text-gray-600 hover:text-red-400 text-sm flex-shrink-0 transition-colors leading-none">🗑</button>
+                {f.uploaded_by === role
+                  ? <button onClick={() => deleteFile(f.id)}
+                      className="text-gray-600 hover:text-red-400 text-sm flex-shrink-0 transition-colors leading-none">🗑</button>
+                  : <span className="text-gray-700 text-sm flex-shrink-0 leading-none" title="Only the uploader can delete this file">🔒</span>
+                }
               </div>
             ))}
           </div>
