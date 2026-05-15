@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { RolePanel, PANEL_ACTIVE_CLS } from './RolePanels';
 
@@ -292,7 +292,6 @@ export default function ChatWindow({ lang }) {
   const [styleOpen, setStyleOpen] = useState(false);
   const stylePanelRef   = useRef(null);
   const fileInputRef    = useRef(null);
-  const editSubmenuRef  = useRef(null);
   const [uploadedContext,  setUploadedContext]  = useState(null);
   const [uploadedFileName, setUploadedFileName] = useState(null);
   // In-memory library: [{id, filename, content}] — cleared on role switch / new chat
@@ -329,17 +328,6 @@ export default function ChatWindow({ lang }) {
     return () => document.removeEventListener('mousedown', handler);
   }, [styleOpen]);
 
-  // Close edit submenu on outside click
-  useEffect(() => {
-    if (!editSubmenuOpen) return;
-    const handler = (e) => {
-      if (editSubmenuRef.current && !editSubmenuRef.current.contains(e.target)) {
-        setEditSubmenuOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [editSubmenuOpen]);
 
   function getEffLabel(btnRole, id, baseLabel) {
     return customLabels[btnRole]?.[id] ?? baseLabel;
@@ -661,25 +649,25 @@ export default function ChatWindow({ lang }) {
                 {openGroupDef.children.map(child => {
                   if (child.id === 'edit') {
                     return (
-                      <div key={child.id} className="relative flex-shrink-0" ref={editSubmenuRef}>
+                      <React.Fragment key={child.id}>
                         <button
                           onClick={() => setEditSubmenuOpen(o => !o)}
-                          className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-200 ${editSubmenuOpen ? PANEL_ACTIVE_CLS[role] : inactiveCls}`}>
+                          className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all duration-200 ${editSubmenuOpen ? PANEL_ACTIVE_CLS[role] : inactiveCls}`}>
                           {getEffLabel(role, child.id, child.label)}
                         </button>
                         {editSubmenuOpen && (
-                          <div className="absolute top-full right-0 mt-1 w-56 rounded-xl border border-white/15 bg-[#0f0f1a] shadow-2xl z-50 overflow-hidden">
+                          <>
                             <button onClick={() => openEditor(role)}
-                              className="w-full text-left px-4 py-2.5 text-xs text-gray-300 hover:bg-white/[0.05] hover:text-white transition-colors">
+                              className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all duration-200 ${inactiveCls}`}>
                               {lang === 'GEO' ? 'ჩემი პროფილის რედაქტირება' : 'Edit my profile'}
                             </button>
                             <button onClick={() => openEditor('student')}
-                              className="w-full text-left px-4 py-2.5 text-xs text-gray-300 hover:bg-white/[0.05] hover:text-white transition-colors border-t border-white/[0.06]">
+                              className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all duration-200 ${inactiveCls}`}>
                               {lang === 'GEO' ? 'სტუდენტის პროფილის რედაქტირება' : 'Edit student profile'}
                             </button>
-                          </div>
+                          </>
                         )}
-                      </div>
+                      </React.Fragment>
                     );
                   }
                   return (
