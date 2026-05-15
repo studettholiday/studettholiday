@@ -668,7 +668,7 @@ export default function ChatWindow({ lang }) {
                           {getEffLabel(role, child.id, child.label)}
                         </button>
                         {editSubmenuOpen && (
-                          <div className="absolute top-0 left-full ml-1 w-56 rounded-xl border border-white/15 bg-[#0f0f1a] shadow-2xl z-50 overflow-hidden">
+                          <div className="absolute top-full right-0 mt-1 w-56 rounded-xl border border-white/15 bg-[#0f0f1a] shadow-2xl z-50 overflow-hidden">
                             <button onClick={() => openEditor(role)}
                               className="w-full text-left px-4 py-2.5 text-xs text-gray-300 hover:bg-white/[0.05] hover:text-white transition-colors">
                               {lang === 'GEO' ? 'ჩემი პროფილის რედაქტირება' : 'Edit my profile'}
