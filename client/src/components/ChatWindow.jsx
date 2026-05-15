@@ -200,13 +200,13 @@ const ROLE_SWITCHER = [
 const BUTTON_GROUPS = {
   admin: [
     { id: 'people',    label: '👥 People',    children: [{ id: 'students', label: 'Students' }, { id: 'teachers', label: 'Teachers' }, { id: 'invite', label: 'Invite' }] },
-    { id: 'manage',    label: '📋 Manage',    children: [{ id: 'groups', label: 'Groups' }, { id: 'admin-schedule', label: 'Schedule' }, { id: 'subjects', label: 'Subjects' }] },
+    { id: 'manage',    label: '📋 Manage',    children: [{ id: 'groups', label: 'Groups' }, { id: 'admin-schedule', label: 'Schedule' }, { id: 'subjects', label: 'Subjects' }, { id: 'edit', label: '✏️ Edit' }] },
     { id: 'broadcast', label: '📢 Notify',    children: [{ id: 'broadcast', label: 'Notify' }, { id: 'admin-announce', label: 'Announce' }] },
     { id: 'events',    label: '🎪 Events',    children: [{ id: 'view-events', label: 'View Events' }, { id: 'add-event', label: 'Add Event' }, { id: 'delete-event', label: 'Delete Event' }] },
   ],
   assistant: [
     { id: 'people',   label: '👥 People',   children: [{ id: 'students', label: 'Students' }, { id: 'teachers', label: 'Teachers' }, { id: 'invite', label: 'Invite' }] },
-    { id: 'manage',   label: '📋 Manage',   children: [{ id: 'groups', label: 'Groups' }, { id: 'subjects', label: 'Subjects' }] },
+    { id: 'manage',   label: '📋 Manage',   children: [{ id: 'groups', label: 'Groups' }, { id: 'subjects', label: 'Subjects' }, { id: 'edit', label: '✏️ Edit' }] },
     { id: 'events',   label: '🎪 Events',   children: [{ id: 'view-events', label: 'View Events' }, { id: 'add-event', label: 'Add Event' }, { id: 'delete-event', label: 'Delete Event' }] },
     { id: 'requests', label: '📬 Requests', children: [{ id: 'requests', label: 'Pending Requests' }] },
     { id: 'announce', label: '📢 Announce', children: [{ id: 'announce', label: 'Announce' }] },
@@ -230,13 +230,13 @@ const BUTTON_GROUPS = {
 const GEO_BUTTON_GROUPS = {
   admin: [
     { id: 'people',    label: '👥 ხალხი',        children: [{ id: 'students', label: 'სტუდენტები' }, { id: 'teachers', label: 'მასწავლებლები' }, { id: 'invite', label: 'მოწვევა' }] },
-    { id: 'manage',    label: '📋 მართვა',        children: [{ id: 'groups', label: 'ჯგუფები' }, { id: 'admin-schedule', label: 'განრიგი' }, { id: 'subjects', label: 'საგნები' }] },
+    { id: 'manage',    label: '📋 მართვა',        children: [{ id: 'groups', label: 'ჯგუფები' }, { id: 'admin-schedule', label: 'განრიგი' }, { id: 'subjects', label: 'საგნები' }, { id: 'edit', label: '✏️ რედაქტირება' }] },
     { id: 'broadcast', label: '📢 შეტყობინება',   children: [{ id: 'broadcast', label: 'შეტყობინება' }, { id: 'admin-announce', label: 'გამოცხადება' }] },
     { id: 'events',    label: '🎪 ღონისძიებები', children: [{ id: 'view-events', label: 'ნახვა' }, { id: 'add-event', label: 'დამატება' }, { id: 'delete-event', label: 'წაშლა' }] },
   ],
   assistant: [
     { id: 'people',   label: '👥 ხალხი',        children: [{ id: 'students', label: 'სტუდენტები' }, { id: 'teachers', label: 'მასწავლებლები' }, { id: 'invite', label: 'მოწვევა' }] },
-    { id: 'manage',   label: '📋 მართვა',        children: [{ id: 'groups', label: 'ჯგუფები' }, { id: 'subjects', label: 'საგნები' }] },
+    { id: 'manage',   label: '📋 მართვა',        children: [{ id: 'groups', label: 'ჯგუფები' }, { id: 'subjects', label: 'საგნები' }, { id: 'edit', label: '✏️ რედაქტირება' }] },
     { id: 'events',   label: '🎪 ღონისძიებები', children: [{ id: 'view-events', label: 'ნახვა' }, { id: 'add-event', label: 'დამატება' }, { id: 'delete-event', label: 'წაშლა' }] },
     { id: 'requests', label: '📬 მოთხოვნები',   children: [{ id: 'requests', label: 'მოლოდინი' }] },
     { id: 'announce', label: '📢 გამოცხადება',   children: [{ id: 'announce', label: 'გამოცხადება' }] },
@@ -647,32 +647,6 @@ export default function ChatWindow({ lang }) {
                 );
               })}
 
-              {/* Edit button — admin & assistant get a submenu, teacher goes direct */}
-              {(role === 'admin' || role === 'assistant') && (
-                <div className="relative flex-shrink-0 ml-1" ref={editSubmenuRef}>
-                  <button
-                    onClick={() => setEditSubmenuOpen(o => !o)}
-                    className={`px-2 py-1 rounded-lg text-xs border transition-colors whitespace-nowrap ${
-                      editSubmenuOpen
-                        ? 'border-white/30 text-white bg-white/10'
-                        : 'border-white/15 text-gray-400 hover:text-white hover:border-white/30'
-                    }`}>
-                    {lang === 'GEO' ? '✏️ რედაქტირება' : '✏️ Edit'}
-                  </button>
-                  {editSubmenuOpen && (
-                    <div className="absolute right-0 top-full mt-1 w-56 rounded-xl border border-white/15 bg-[#0f0f1a] shadow-2xl z-20 overflow-hidden">
-                      <button onClick={() => openEditor(role)}
-                        className="w-full text-left px-4 py-2.5 text-xs text-gray-300 hover:bg-white/[0.05] hover:text-white transition-colors">
-                        {lang === 'GEO' ? 'ჩემი პროფილის რედაქტირება' : 'Edit my profile'}
-                      </button>
-                      <button onClick={() => openEditor('student')}
-                        className="w-full text-left px-4 py-2.5 text-xs text-gray-300 hover:bg-white/[0.05] hover:text-white transition-colors border-t border-white/[0.06]">
-                        {lang === 'GEO' ? 'სტუდენტის პროფილის რედაქტირება' : 'Edit student profile'}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
               {role === 'teacher' && (
                 <button
                   onClick={() => openEditor('teacher')}
@@ -684,13 +658,38 @@ export default function ChatWindow({ lang }) {
             {openGroupDef?.children && openGroupDef.children.length >= 2 && (
               <div className={`flex items-center gap-1.5 px-6 py-1.5 border-t ${s.headerBorder} overflow-x-auto`}
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                {openGroupDef.children.map(child => (
-                  <button key={child.id}
-                    onClick={() => setActivePanel(activePanel === child.id ? null : child.id)}
-                    className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all duration-200 ${activePanel === child.id ? PANEL_ACTIVE_CLS[role] : inactiveCls}`}>
-                    {getEffLabel(role, child.id, child.label)}
-                  </button>
-                ))}
+                {openGroupDef.children.map(child => {
+                  if (child.id === 'edit') {
+                    return (
+                      <div key={child.id} className="relative flex-shrink-0" ref={editSubmenuRef}>
+                        <button
+                          onClick={() => setEditSubmenuOpen(o => !o)}
+                          className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-200 ${editSubmenuOpen ? PANEL_ACTIVE_CLS[role] : inactiveCls}`}>
+                          {getEffLabel(role, child.id, child.label)}
+                        </button>
+                        {editSubmenuOpen && (
+                          <div className="absolute left-0 top-full mt-1 w-56 rounded-xl border border-white/15 bg-[#0f0f1a] shadow-2xl z-20 overflow-hidden">
+                            <button onClick={() => openEditor(role)}
+                              className="w-full text-left px-4 py-2.5 text-xs text-gray-300 hover:bg-white/[0.05] hover:text-white transition-colors">
+                              {lang === 'GEO' ? 'ჩემი პროფილის რედაქტირება' : 'Edit my profile'}
+                            </button>
+                            <button onClick={() => openEditor('student')}
+                              className="w-full text-left px-4 py-2.5 text-xs text-gray-300 hover:bg-white/[0.05] hover:text-white transition-colors border-t border-white/[0.06]">
+                              {lang === 'GEO' ? 'სტუდენტის პროფილის რედაქტირება' : 'Edit student profile'}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+                  return (
+                    <button key={child.id}
+                      onClick={() => setActivePanel(activePanel === child.id ? null : child.id)}
+                      className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all duration-200 ${activePanel === child.id ? PANEL_ACTIVE_CLS[role] : inactiveCls}`}>
+                      {getEffLabel(role, child.id, child.label)}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
