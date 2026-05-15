@@ -217,11 +217,13 @@ const BUTTON_GROUPS = {
     { id: 'share-files', label: '📁 Share Files' },
   ],
   student: [
-    { id: 'schedule', label: 'Schedule' },
-    { id: 'events',   label: 'Events'   },
-    { id: 'plan',     label: '📋 Plan',     children: [{ id: 'change-group', label: 'Change Group' }, { id: 'add-subject', label: 'Add Subject' }, { id: 'remove-subject', label: 'Remove Subject' }] },
-    { id: 'my-notes', label: '📓 My Notes', children: [{ id: 'notes', label: 'Notes' }, { id: 'practice-diary', label: 'Practice Diary' }] },
-    { id: 'report',   label: '⚠️ Report',   children: [{ id: 'report-absence', label: 'Report Absence' }, { id: 'report-event-absence', label: 'Report Event Absence' }, { id: 'report-exam-absence', label: 'Report Exam Absence' }] },
+    { id: 'schedule',  label: 'Schedule'   },
+    { id: 'events',    label: 'Events'     },
+    { id: 'plan',      label: '📋 Plan',      children: [{ id: 'change-group', label: 'Change Group' }, { id: 'add-subject', label: 'Add Subject' }, { id: 'remove-subject', label: 'Remove Subject' }] },
+    { id: 'my-notes',  label: '📓 My Notes',  children: [{ id: 'notes', label: 'Notes' }, { id: 'practice-diary', label: 'Practice Diary' }] },
+    { id: 'report',    label: '⚠️ Report',    children: [{ id: 'report-absence', label: 'Report Absence' }, { id: 'report-event-absence', label: 'Report Event Absence' }, { id: 'report-exam-absence', label: 'Report Exam Absence' }] },
+    { id: 'notes-box', label: '📝 Notes Box' },
+    { id: 'search',    label: '🔍 Search'    },
   ],
 };
 
@@ -249,7 +251,9 @@ const GEO_BUTTON_GROUPS = {
     { id: 'events',   label: 'ღონისძიებები' },
     { id: 'plan',     label: '📋 გეგმა',            children: [{ id: 'change-group', label: 'ჯგუფის შეცვლა' }, { id: 'add-subject', label: 'საგნის დამატება' }, { id: 'remove-subject', label: 'საგნის წაშლა' }] },
     { id: 'my-notes', label: '📓 ჩემი ჩანაწერები',  children: [{ id: 'notes', label: 'ჩანაწერები' }, { id: 'practice-diary', label: 'სავარჯიშო დღიური' }] },
-    { id: 'report',   label: '⚠️ გაცდენა',           children: [{ id: 'report-absence', label: 'გამოუცხადებლობა' }, { id: 'report-event-absence', label: 'ღონისძიებაზე' }, { id: 'report-exam-absence', label: 'გამოცდაზე' }] },
+    { id: 'report',    label: '⚠️ გაცდენა',           children: [{ id: 'report-absence', label: 'გამოუცხადებლობა' }, { id: 'report-event-absence', label: 'ღონისძიებაზე' }, { id: 'report-exam-absence', label: 'გამოცდაზე' }] },
+    { id: 'notes-box', label: '📝 ჩანაწერების ყუთი' },
+    { id: 'search',    label: '🔍 ძებნა'             },
   ],
 };
 

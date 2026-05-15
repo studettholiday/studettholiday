@@ -86,6 +86,13 @@ const LIBRARY_CATS = [
 
 const MOODS = ['😤', '😐', '😊', '🔥'];
 
+const DEMO_NOTES = [
+  { id: 1, text: 'გიტარის აკორდები — C, Am, F, G', date: '12 მაი' },
+  { id: 2, text: 'პრაქტიკა: 30 წუთი სკალები',      date: '11 მაი' },
+  { id: 3, text: 'დავალება: ბარე აკორდები',          date: '10 მაი' },
+  { id: 4, text: 'გაკვეთილი: რიტმი და ტემპი',       date:  '9 მაი' },
+];
+
 // ─── Theme tokens ─────────────────────────────────────────────────────────────
 
 const TH = {
@@ -132,6 +139,8 @@ const PANEL_TITLES = {
   'report-exam-absence':   'Report Exam Absence',
   'share-files':           'Share Files',
   'knowledge-library':     'Knowledge Library',
+  'notes-box':             'Notes Box',
+  'search':                'Search',
 };
 
 const GEO_PANEL_TITLES = {
@@ -164,6 +173,8 @@ const GEO_PANEL_TITLES = {
   'report-exam-absence':   'გამოცდაზე გამოუცხადებლობა',
   'share-files':           'ფაილების გაზიარება',
   'knowledge-library':     'ცოდნის ბიბლიოთეკა',
+  'notes-box':             'ჩანაწერების ყუთი',
+  'search':                'ძებნა',
 };
 
 function getPanelTitle(panel, lang) {
@@ -1176,9 +1187,56 @@ function StudentRemoveSubjectPanel() {
   );
 }
 
+function StudentNotesBoxPanel() {
+  return (
+    <div className="space-y-2">
+      {DEMO_NOTES.map(n => (
+        <div key={n.id} className="flex items-start justify-between rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2.5 gap-3">
+          <p className="text-xs text-gray-200 leading-relaxed">{n.text}</p>
+          <span className="text-xs text-gray-500 flex-shrink-0">{n.date}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function StudentSearchPanel({ lang }) {
+  const [query, setQuery] = useState('');
+  const results = query.trim()
+    ? DEMO_NOTES.filter(n => n.text.toLowerCase().includes(query.toLowerCase()))
+    : [];
+
+  return (
+    <div className="space-y-3">
+      <input
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        placeholder={lang === 'GEO' ? 'ჩაწერეთ საძებო სიტყვა...' : 'Search notes...'}
+        className={FIELD}
+      />
+      {query.trim() && (
+        <div className="space-y-2">
+          {results.length === 0 ? (
+            <p className="text-xs text-gray-500 text-center py-3">
+              {lang === 'GEO' ? 'ვერაფერი მოიძებნა.' : 'No results found.'}
+            </p>
+          ) : (
+            results.map(n => (
+              <div key={n.id} className="flex items-start justify-between rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2.5 gap-3">
+                <p className="text-xs text-gray-200 leading-relaxed">{n.text}</p>
+                <span className="text-xs text-gray-500 flex-shrink-0">{n.date}</span>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Panel router ─────────────────────────────────────────────────────────────
 
-function panelContent(role, panel, libraryProps) {
+function panelContent(role, panel, libraryProps, lang) {
   switch (panel) {
     case 'groups':          return <GroupsPanel role={role} />;
     case 'admin-schedule':  return <AdminSchedulePanel />;
@@ -1209,6 +1267,8 @@ function panelContent(role, panel, libraryProps) {
     case 'view-events':     return <AdminViewEventsPanel />;
     case 'add-event':       return <AdminAddEventPanel role={role} />;
     case 'delete-event':    return <AdminDeleteEventPanel />;
+    case 'notes-box':       return <StudentNotesBoxPanel />;
+    case 'search':          return <StudentSearchPanel lang={lang} />;
     default:                return null;
   }
 }
@@ -1266,7 +1326,7 @@ export function RolePanel({ role, panel, onClose, libraryProps, lang = 'EN' }) {
         <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-sm leading-none">✕</button>
       </div>
       <div className="p-4 overflow-y-auto flex-1">
-        {panelContent(role, panel, libraryProps)}
+        {panelContent(role, panel, libraryProps, lang)}
       </div>
     </div>
   );
