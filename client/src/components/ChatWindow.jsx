@@ -468,11 +468,11 @@ export default function ChatWindow({ lang, mobile = false }) {
       />
 
       {/* Header */}
-      <header className={`flex items-center gap-3 px-4 py-3 border-b ${s.headerBorder} flex-shrink-0`}>
-        <div className={`w-8 h-8 rounded-full ${theme.avatar} flex items-center justify-center text-white text-sm font-bold shadow-md`}>
+      <header className={`flex items-center gap-2 ${mobile ? 'px-2 py-1.5' : 'px-4 py-3'} border-b ${s.headerBorder} flex-shrink-0`}>
+        <div className={`${mobile ? 'w-6 h-6 text-xs' : 'w-8 h-8 text-sm'} rounded-full ${theme.avatar} flex items-center justify-center text-white font-bold shadow-md flex-shrink-0`}>
           S
         </div>
-        <h1 className={`text-base font-semibold ${s.titleColor}`}>Sherlock</h1>
+        <h1 className={`${mobile ? 'text-sm' : 'text-base'} font-semibold ${s.titleColor}`}>Sherlock</h1>
         {libraryFiles.length > 0 && (
           <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex-shrink-0">
             📚 Demo library — clears when you leave
@@ -489,7 +489,7 @@ export default function ChatWindow({ lang, mobile = false }) {
                     ? 'border-white/30 text-white bg-white/10'
                     : 'border-white/15 text-gray-400 hover:text-white hover:border-white/30'
                 }`}>
-                {lang === 'GEO' ? '✏️ რედაქტირება' : '✏️ Edit'}
+                {mobile ? '✏️' : (lang === 'GEO' ? '✏️ რედაქტირება' : '✏️ Edit')}
               </button>
               {editSubmenuOpen && (
                 <div className="absolute right-0 top-full mt-1 w-56 rounded-xl border border-white/15 bg-[#0f0f1a] shadow-2xl z-50 overflow-hidden">
@@ -519,7 +519,7 @@ export default function ChatWindow({ lang, mobile = false }) {
             <option value="gemini">Gemini</option>
           </select>
 
-          <div className="flex items-center gap-1.5 flex-shrink-0">
+          {!mobile && <div className="flex items-center gap-1.5 flex-shrink-0">
             {['#7c3aed','#2563eb','#059669','#dc2626','#d97706','#db2777','#0891b2','#e2e8f0'].map(color => (
               <button
                 key={color}
@@ -527,7 +527,7 @@ export default function ChatWindow({ lang, mobile = false }) {
                 style={{ background: color, width: 18, height: 18, borderRadius: '50%', flexShrink: 0, border: accentColor === color ? '2px solid white' : '2px solid transparent', outline: accentColor === color ? '1px solid rgba(255,255,255,0.4)' : 'none', transition: 'all 0.15s', transform: accentColor === color ? 'scale(1.2)' : 'scale(1)', opacity: accentColor === color ? 1 : 0.65 }}
               />
             ))}
-          </div>
+          </div>}
 
           {loading && (
             <span className={`text-xs animate-pulse ${s.thinkingColor}`}>Thinking…</span>
@@ -536,7 +536,7 @@ export default function ChatWindow({ lang, mobile = false }) {
       </header>
 
       {/* Role switcher */}
-      <div className={`flex items-center gap-1 px-4 py-2 border-b ${s.headerBorder} flex-shrink-0`}>
+      <div className={`flex items-center gap-1 ${mobile ? 'px-2 py-1' : 'px-4 py-2'} border-b ${s.headerBorder} flex-shrink-0`}>
         {ROLE_SWITCHER.map((r) => (
           <button
             key={r.id}
@@ -576,7 +576,7 @@ export default function ChatWindow({ lang, mobile = false }) {
         const openGroupDef = openGroup ? getButtonGroups(lang)[role].find(g => g.id === openGroup) : null;
         return (
           <div className={`flex flex-col border-b ${s.headerBorder} flex-shrink-0`}>
-            <div className="flex items-center gap-1.5 px-4 py-2 overflow-x-auto"
+            <div className={`flex items-center gap-1.5 ${mobile ? 'px-2 py-1' : 'px-4 py-2'} overflow-x-auto`}
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               {getButtonGroups(lang)[role].map(item => {
                 const isMulti = item.children && item.children.length >= 2;
@@ -728,7 +728,7 @@ export default function ChatWindow({ lang, mobile = false }) {
       {/* Input */}
       <form
         onSubmit={sendMessage}
-        className={`flex items-end gap-2 px-4 py-3 border-t ${s.footerBorder} flex-shrink-0`}
+        className={`flex items-end gap-2 ${mobile ? 'px-2 py-2' : 'px-4 py-3'} border-t ${s.footerBorder} flex-shrink-0`}
       >
         <input
           ref={fileInputRef}
@@ -759,7 +759,7 @@ export default function ChatWindow({ lang, mobile = false }) {
           onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) sendMessage(e); }}
           className={`flex-1 resize-none rounded-xl px-3 py-2 text-sm focus:outline-none ${theme.ring} max-h-32 ${s.inputCls}`}
         />
-        {role !== 'student' && (
+        {!mobile && role !== 'student' && (
           <button
             type="button"
             title="Knowledge Library"
