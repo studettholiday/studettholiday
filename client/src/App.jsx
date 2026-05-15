@@ -565,6 +565,7 @@ export default function App() {
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'hidden',
+                paddingBottom: 'env(safe-area-inset-bottom)',
               }}>
                 <div style={{
                   flex: 1,
