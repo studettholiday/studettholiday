@@ -51,6 +51,18 @@ const GREETINGS = {
   student:   "Hey! I'm Sherlock, your school assistant. Ask me about your schedule, upcoming events, notes, or anything in the school library!",
 };
 
+const GEO_GREETINGS = {
+  admin:     "გამარჯობა! მე ვარ შერლოკი, თქვენი ადმინ-ასისტენტი. შემიძლია დაგეხმაროთ სტუდენტების მართვაში, რეგისტრაციების დამტკიცებაში, მოწვევის კოდების გენერირებაში, განრიგის დაყენებაში და აუდიტის ჟურნალის ნახვაში. რით შემიძლია დაგეხმაროთ?",
+  assistant: "გამარჯობა! მე ვარ შერლოკი, თქვენი ოფისის ასისტენტი. შემიძლია დაგეხმაროთ სტუდენტების მართვაში, ჯგუფებში, განცხადებებში და მოწვევების გაგზავნაში. რა გჭირდებათ?",
+  teacher:   "გამარჯობა! მე ვარ შერლოკი, თქვენი სასწავლო ასისტენტი. შემიძლია დაგეხმაროთ ჯგუფის განრიგში, სტუდენტის დასწრებაში, გაკვეთილის შენიშვნებში და ჯგუფის განცხადებებში. როგორ შემიძლია დაგეხმაროთ?",
+  student:   "გამარჯობა! მე ვარ შერლოკი, თქვენი სკოლის ასისტენტი. მკითხეთ თქვენი განრიგის, მოახლოებული ღონისძიებების, შენიშვნების ან სკოლის ბიბლიოთეკაში არსებული ნებისმიერი ინფორმაციის შესახებ!",
+};
+
+function getGreeting(role, lang) {
+  if (lang === 'GEO') return GEO_GREETINGS[role];
+  return GREETINGS[role];
+}
+
 const CHAT_STYLES = {
   default: {
     wrap:            'bg-[#0d0d18]',
@@ -226,7 +238,7 @@ export default function ChatWindow({ lang }) {
   const [openGroup, setOpenGroup] = useState(null);
   const theme = THEMES[role];
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: GREETINGS[role] },
+    { role: 'assistant', content: getGreeting(role, lang) },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -254,14 +266,14 @@ export default function ChatWindow({ lang }) {
   }
 
   useEffect(() => {
-    setMessages([{ role: 'assistant', content: GREETINGS[role] }]);
+    setMessages([{ role: 'assistant', content: getGreeting(role, lang) }]);
     setInput('');
     setLoading(false);
     setActivePanel(null);
     setOpenGroup(null);
     setUploadedContext(null);
     setUploadedFileName(null);
-  }, [role]);
+  }, [role, lang]);
 
   // Close stylize panel on outside click
   useEffect(() => {
@@ -276,7 +288,7 @@ export default function ChatWindow({ lang }) {
   }, [styleOpen]);
 
   function clearChat() {
-    setMessages([{ role: 'assistant', content: GREETINGS[role] }]);
+    setMessages([{ role: 'assistant', content: getGreeting(role, lang) }]);
     setInput('');
     setLoading(false);
     setActivePanel(null);
