@@ -225,6 +225,38 @@ const BUTTON_GROUPS = {
   ],
 };
 
+const GEO_BUTTON_GROUPS = {
+  admin: [
+    { id: 'people',    label: '👥 ხალხი',        children: [{ id: 'students', label: 'სტუდენტები' }, { id: 'teachers', label: 'მასწავლებლები' }, { id: 'invite', label: 'მოწვევა' }] },
+    { id: 'manage',    label: '📋 მართვა',        children: [{ id: 'groups', label: 'ჯგუფები' }, { id: 'admin-schedule', label: 'განრიგი' }, { id: 'subjects', label: 'საგნები' }] },
+    { id: 'broadcast', label: '📢 შეტყობინება',   children: [{ id: 'broadcast', label: 'შეტყობინება' }, { id: 'admin-announce', label: 'გამოცხადება' }] },
+    { id: 'events',    label: '🎪 ღონისძიებები', children: [{ id: 'view-events', label: 'ნახვა' }, { id: 'add-event', label: 'დამატება' }, { id: 'delete-event', label: 'წაშლა' }] },
+  ],
+  assistant: [
+    { id: 'people',   label: '👥 ხალხი',        children: [{ id: 'students', label: 'სტუდენტები' }, { id: 'teachers', label: 'მასწავლებლები' }, { id: 'invite', label: 'მოწვევა' }] },
+    { id: 'manage',   label: '📋 მართვა',        children: [{ id: 'groups', label: 'ჯგუფები' }, { id: 'subjects', label: 'საგნები' }] },
+    { id: 'events',   label: '🎪 ღონისძიებები', children: [{ id: 'view-events', label: 'ნახვა' }, { id: 'add-event', label: 'დამატება' }, { id: 'delete-event', label: 'წაშლა' }] },
+    { id: 'requests', label: '📬 მოთხოვნები',   children: [{ id: 'requests', label: 'მოლოდინი' }] },
+    { id: 'announce', label: '📢 გამოცხადება',   children: [{ id: 'announce', label: 'გამოცხადება' }] },
+  ],
+  teacher: [
+    { id: 'my-work',     label: '📅 ჩემი სამუშაო',       children: [{ id: 'my-schedule', label: 'ჩემი განრიგი' }, { id: 'my-groups', label: 'ჩემი ჯგუფები' }] },
+    { id: 'announce',    label: '📢 გამოცხადება' },
+    { id: 'share-files', label: '📁 ფაილების გაზიარება' },
+  ],
+  student: [
+    { id: 'schedule', label: 'განრიგი' },
+    { id: 'events',   label: 'ღონისძიებები' },
+    { id: 'plan',     label: '📋 გეგმა',            children: [{ id: 'change-group', label: 'ჯგუფის შეცვლა' }, { id: 'add-subject', label: 'საგნის დამატება' }, { id: 'remove-subject', label: 'საგნის წაშლა' }] },
+    { id: 'my-notes', label: '📓 ჩემი ჩანაწერები',  children: [{ id: 'notes', label: 'ჩანაწერები' }, { id: 'practice-diary', label: 'სავარჯიშო დღიური' }] },
+    { id: 'report',   label: '⚠️ მოხსენება',        children: [{ id: 'report-absence', label: 'გამოუცხადებლობა' }, { id: 'report-event-absence', label: 'ღონისძიებაზე' }, { id: 'report-exam-absence', label: 'გამოცდაზე' }] },
+  ],
+};
+
+function getButtonGroups(lang) {
+  return lang === 'GEO' ? GEO_BUTTON_GROUPS : BUTTON_GROUPS;
+}
+
 const GROUP_OPEN_CLS = {
   admin:     'bg-purple-600/20 text-purple-300 border border-purple-500/40',
   assistant: 'bg-orange-600/20 text-orange-300 border border-orange-500/40',
@@ -471,7 +503,7 @@ export default function ChatWindow({ lang }) {
                   : 'border-white/15 text-gray-400 hover:text-white hover:border-white/30'
               }`}
             >
-              Stylize
+              {lang === 'GEO' ? 'სტილი' : 'Stylize'}
             </button>
 
             {styleOpen && (
@@ -526,7 +558,7 @@ export default function ChatWindow({ lang }) {
               : 'text-gray-600 hover:text-gray-400'
           }`}
         >
-          ↺ New
+          {lang === 'GEO' ? '↺ ახალი' : '↺ New'}
         </button>
       </div>
 
@@ -538,12 +570,12 @@ export default function ChatWindow({ lang }) {
         const inactiveGroupCls = s.colorScheme === 'light'
           ? 'border border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400'
           : 'border border-white/15 text-gray-400 hover:text-white hover:border-white/30';
-        const openGroupDef = openGroup ? BUTTON_GROUPS[role].find(g => g.id === openGroup) : null;
+        const openGroupDef = openGroup ? getButtonGroups(lang)[role].find(g => g.id === openGroup) : null;
         return (
           <div className={`flex flex-col border-b ${s.headerBorder} flex-shrink-0`}>
             <div className="flex items-center gap-1.5 px-4 py-2 overflow-x-auto"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              {BUTTON_GROUPS[role].map(item => {
+              {getButtonGroups(lang)[role].map(item => {
                 const isMulti = item.children && item.children.length >= 2;
                 if (isMulti) {
                   return (
@@ -585,7 +617,7 @@ export default function ChatWindow({ lang }) {
         {activePanel && (
           <div className="mb-4">
             <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)}
-              libraryProps={{ libraryFiles, onAddFile: addLibraryFile, onRemoveFile: removeLibraryFile }} />
+              libraryProps={{ libraryFiles, onAddFile: addLibraryFile, onRemoveFile: removeLibraryFile }} lang={lang} />
           </div>
         )}
         {messages.map((msg, i) => (
@@ -637,7 +669,7 @@ export default function ChatWindow({ lang }) {
         </button>
         <textarea
           rows={1}
-          placeholder="Type a message…"
+          placeholder={lang === 'GEO' ? 'შეიყვანეთ შეტყობინება...' : 'Type a message…'}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) sendMessage(e); }}
@@ -664,7 +696,7 @@ export default function ChatWindow({ lang }) {
           disabled={loading || !input.trim()}
           className={`px-4 py-2 rounded-xl text-white text-sm font-medium disabled:opacity-40 active:scale-95 transition-all duration-150 ${theme.sendBtn}`}
         >
-          Send
+          {lang === 'GEO' ? 'გაგზავნა' : 'Send'}
         </button>
       </form>
     </div>

@@ -134,6 +134,43 @@ const PANEL_TITLES = {
   'knowledge-library':     'Knowledge Library',
 };
 
+const GEO_PANEL_TITLES = {
+  'groups':          'ჯგუფები',
+  'admin-schedule':  'განრიგი',
+  'students':        'სტუდენტები',
+  'admin-events':    'ღონისძიებები',
+  'broadcast':       'განცხადება',
+  'admin-announce':  'გამოცხადება',
+  'announce':        'გამოცხადება',
+  'invite':          'მოწვევა',
+  'my-schedule':     'ჩემი განრიგი',
+  'my-groups':       'ჩემი ჯგუფები',
+  'schedule':        'ჩემი განრიგი',
+  'events':          'ახლოს მოახლოებული ღონისძიებები',
+  'library':         'ბიბლიოთეკა',
+  'notes':           'ჩანაწერები',
+  'practice-diary':  'სავარჯიშო დღიური',
+  'report-absence':  'გამოუცხადებლობის მოხსენება',
+  'change-group':    'ჯგუფის შეცვლა',
+  'add-subject':     'საგნის დამატება',
+  'remove-subject':  'საგნის წაშლა',
+  'requests':        'მოთხოვნები',
+  'teachers':        'მასწავლებლები',
+  'subjects':              'საგნები',
+  'view-events':           'ღონისძიებების ნახვა',
+  'add-event':             'ღონისძიების დამატება',
+  'delete-event':          'ღონისძიების წაშლა',
+  'report-event-absence':  'ღონისძიებაზე გამოუცხადებლობა',
+  'report-exam-absence':   'გამოცდაზე გამოუცხადებლობა',
+  'share-files':           'ფაილების გაზიარება',
+  'knowledge-library':     'ცოდნის ბიბლიოთეკა',
+};
+
+function getPanelTitle(panel, lang) {
+  if (lang === 'GEO') return GEO_PANEL_TITLES[panel] ?? panel;
+  return PANEL_TITLES[panel] ?? panel;
+}
+
 // ─── Admin / Assistant panels ─────────────────────────────────────────────────
 
 function GroupsPanel({ role }) {
@@ -1220,12 +1257,12 @@ export const PANEL_ACTIVE_CLS = {
   student:   'bg-emerald-600 text-white shadow-sm shadow-emerald-900/60',
 };
 
-export function RolePanel({ role, panel, onClose, libraryProps }) {
+export function RolePanel({ role, panel, onClose, libraryProps, lang = 'EN' }) {
   const th = TH[role];
   return (
     <div className={`rounded-2xl border ${th.border} bg-[#0d0d18] overflow-hidden flex flex-col max-h-[350px]`}>
       <div className={`flex items-center justify-between px-4 py-2.5 border-b ${th.border} ${th.hdr} flex-shrink-0`}>
-        <span className={`text-sm font-semibold ${th.accent}`}>{PANEL_TITLES[panel] ?? panel}</span>
+        <span className={`text-sm font-semibold ${th.accent}`}>{getPanelTitle(panel, lang)}</span>
         <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-sm leading-none">✕</button>
       </div>
       <div className="p-4 overflow-y-auto flex-1">
