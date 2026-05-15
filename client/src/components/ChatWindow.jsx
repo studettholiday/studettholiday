@@ -494,8 +494,8 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
         {mobile && onClose && (
           <button
             onClick={onClose}
-            className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-white transition-colors"
-            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', fontSize: '0.75rem' }}
+            className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-gray-300 hover:text-white transition-colors"
+            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', fontSize: '0.85rem', marginLeft: '4px' }}
           >
             ✕
           </button>
@@ -844,7 +844,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
           onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) sendMessage(e); }}
           className={`flex-1 resize-none rounded-xl px-3 py-2 text-sm focus:outline-none ${theme.ring} max-h-32 ${s.inputCls}`}
         />
-        {!mobile && role !== 'student' && (
+        {role !== 'student' && (
           <button
             type="button"
             title="Knowledge Library"
