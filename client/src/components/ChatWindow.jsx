@@ -249,7 +249,7 @@ const GEO_BUTTON_GROUPS = {
     { id: 'events',   label: 'ღონისძიებები' },
     { id: 'plan',     label: '📋 გეგმა',            children: [{ id: 'change-group', label: 'ჯგუფის შეცვლა' }, { id: 'add-subject', label: 'საგნის დამატება' }, { id: 'remove-subject', label: 'საგნის წაშლა' }] },
     { id: 'my-notes', label: '📓 ჩემი ჩანაწერები',  children: [{ id: 'notes', label: 'ჩანაწერები' }, { id: 'practice-diary', label: 'სავარჯიშო დღიური' }] },
-    { id: 'report',   label: '⚠️ მოხსენება',        children: [{ id: 'report-absence', label: 'გამოუცხადებლობა' }, { id: 'report-event-absence', label: 'ღონისძიებაზე' }, { id: 'report-exam-absence', label: 'გამოცდაზე' }] },
+    { id: 'report',   label: '⚠️ გაცდენა',           children: [{ id: 'report-absence', label: 'გამოუცხადებლობა' }, { id: 'report-event-absence', label: 'ღონისძიებაზე' }, { id: 'report-exam-absence', label: 'გამოცდაზე' }] },
   ],
 };
 

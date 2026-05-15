@@ -150,7 +150,7 @@ const GEO_PANEL_TITLES = {
   'library':         'ბიბლიოთეკა',
   'notes':           'ჩანაწერები',
   'practice-diary':  'სავარჯიშო დღიური',
-  'report-absence':  'გამოუცხადებლობის მოხსენება',
+  'report-absence':  'გამოუცხადებლობის გაცდენა',
   'change-group':    'ჯგუფის შეცვლა',
   'add-subject':     'საგნის დამატება',
   'remove-subject':  'საგნის წაშლა',
