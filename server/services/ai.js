@@ -65,8 +65,8 @@ async function searchWeb(query) {
 
 async function callAnthropic(messages, language = 'en') {
   const langInstruction = language === 'ka'
-    ? 'You must respond in Georgian language (ქართული) only. All your responses must be in Georgian.'
-    : 'Respond in English.';
+    ? 'The user has set their language preference to Georgian. Respond in Georgian (ქართული) by default. If the user writes to you in English, you may respond in English. Match the language the user is writing in, but default to Georgian.'
+    : 'Respond in English by default. Match the language the user writes in.';
   const stream = client.messages.stream({
     model: 'claude-opus-4-7',
     max_tokens: 8192,
@@ -87,8 +87,8 @@ async function callAnthropic(messages, language = 'en') {
 
 async function callGemini(messages, language = 'en') {
   const langInstruction = language === 'ka'
-    ? 'You must respond in Georgian language (ქართული) only. All your responses must be in Georgian.'
-    : 'Respond in English.';
+    ? 'The user has set their language preference to Georgian. Respond in Georgian (ქართული) by default. If the user writes to you in English, you may respond in English. Match the language the user is writing in, but default to Georgian.'
+    : 'Respond in English by default. Match the language the user writes in.';
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   const model = genAI.getGenerativeModel({
     model: 'gemini-2.5-flash',
@@ -120,8 +120,8 @@ async function callGemini(messages, language = 'en') {
 
 async function callOpenAI(messages, language = 'en') {
   const langInstruction = language === 'ka'
-    ? 'You must respond in Georgian language (ქართული) only. All your responses must be in Georgian.'
-    : 'Respond in English.';
+    ? 'The user has set their language preference to Georgian. Respond in Georgian (ქართული) by default. If the user writes to you in English, you may respond in English. Match the language the user is writing in, but default to Georgian.'
+    : 'Respond in English by default. Match the language the user writes in.';
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const formatted = messages.map(m => ({
