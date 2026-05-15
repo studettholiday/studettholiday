@@ -626,7 +626,7 @@ export default function ChatWindow({ lang, mobile = false }) {
                   : 'text-gray-400 hover:text-white'
             }`}
           >
-            {customRoleNames[r.id] || (lang === 'GEO' ? { admin: 'ადმინი', assistant: 'ასისტენტი', teacher: 'მასწავლებელი', student: 'სტუდენტი' }[r.id] : r.label)}
+            {customRoleNames[r.id] || (lang === 'GEO' ? ({ admin: 'ადმინი', assistant: 'ასისტენტი', teacher: 'მასწავლებელი', student: 'სტუდენტი' })[r.id] : r.label)}
           </button>
         ))}
         <button
