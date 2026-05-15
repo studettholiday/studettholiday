@@ -142,15 +142,15 @@ const CHAT_STYLES = {
     colorScheme:     'dark',
   },
   einstein: {
-    wrap:            'bg-[#faf8f0]',
-    headerBorder:    'border-amber-900/20',
-    footerBorder:    'border-amber-900/20',
-    titleColor:      'text-amber-900',
-    assistantBubble: 'bg-amber-50 text-amber-950 border border-amber-200',
-    inputCls:        'bg-white border border-amber-300 text-amber-950 placeholder-amber-400',
-    selectCls:       'bg-white border border-amber-300 text-amber-900',
-    thinkingColor:   'text-amber-600',
-    colorScheme:     'light',
+    wrap:            'bg-[#1a2320]',
+    headerBorder:    'border-[#4a9a7a]/30',
+    footerBorder:    'border-[#4a9a7a]/30',
+    titleColor:      'text-[#e8f5e0]',
+    assistantBubble: 'bg-[#1f2e2a] text-[#d4edda] border border-[#4a9a7a]/25',
+    inputCls:        'bg-[#1f2e2a] border border-[#4a9a7a]/30 text-[#d4edda] placeholder-[#4a9a7a]',
+    selectCls:       'bg-[#1f2e2a] border border-[#4a9a7a]/30 text-[#a8d5b8]',
+    thinkingColor:   'text-[#4a9a7a]',
+    colorScheme:     'dark',
   },
   glass: {
     wrap:            'bg-white/[0.03] backdrop-blur-2xl',
@@ -580,6 +580,37 @@ export default function ChatWindow({ lang, mobile = false }) {
         className="pointer-events-none absolute inset-0 -z-10"
         style={{ background: `radial-gradient(ellipse 80% 35% at 50% 0%, ${theme.glow}, transparent)` }}
       />
+
+      {/* Theme pattern overlay */}
+      {styleName === 'chess' && (
+        <div className="pointer-events-none absolute inset-0 -z-10 opacity-[0.15]" style={{
+          backgroundImage: 'repeating-conic-gradient(#f0d9b5 0% 25%, #b58863 0% 50%) 0 0 / 32px 32px',
+          backgroundSize: '32px 32px',
+        }} />
+      )}
+      {styleName !== 'default' && styleName !== 'chess' && (
+        <div className="pointer-events-none absolute inset-0 -z-10 opacity-[0.06]" style={{
+          backgroundImage: styleName === 'nature'
+            ? `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='2' fill='%2334d399'/%3E%3Cpath d='M30 5 Q35 15 30 25 Q25 15 30 5' fill='%2334d399'/%3E%3Ccircle cx='50' cy='40' r='3' fill='%2334d399'/%3E%3Cpath d='M10 40 Q15 50 10 60 Q5 50 10 40' fill='%2334d399'/%3E%3C/svg%3E")`
+            : styleName === 'sea'
+            ? `url("data:image/svg+xml,%3Csvg width='80' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20 Q20 5 40 20 Q60 35 80 20' fill='none' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Cpath d='M0 30 Q20 15 40 30 Q60 45 80 30' fill='none' stroke='%2306b6d4' stroke-width='1'/%3E%3C/svg%3E")`
+            : styleName === 'army'
+            ? `url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='20' height='20' fill='%234a5240'/%3E%3Crect x='20' y='20' width='20' height='20' fill='%234a5240'/%3E%3Crect x='10' y='5' width='8' height='12' rx='2' fill='%236b7a5e'/%3E%3Crect x='30' y='25' width='8' height='12' rx='2' fill='%236b7a5e'/%3E%3C/svg%3E")`
+            : styleName === 'einstein'
+            ? `url("data:image/svg+xml,%3Csvg width='80' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='5' y='25' font-size='11' fill='%234a9a7a' font-family='monospace'%3EE=mc²%3C/text%3E%3Ctext x='40' y='55' font-size='10' fill='%234a9a7a' font-family='monospace'%3EΔx·Δp%3C/text%3E%3Ctext x='10' y='70' font-size='9' fill='%234a9a7a' font-family='monospace'%3EF=ma%3C/text%3E%3C/svg%3E")`
+            : styleName === 'neon'
+            ? `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='20' fill='none' stroke='%2306b6d4' stroke-width='0.5'/%3E%3Ccircle cx='30' cy='30' r='10' fill='none' stroke='%2306b6d4' stroke-width='0.5'/%3E%3Cline x1='0' y1='30' x2='60' y2='30' stroke='%2306b6d4' stroke-width='0.3'/%3E%3Cline x1='30' y1='0' x2='30' y2='60' stroke='%2306b6d4' stroke-width='0.3'/%3E%3C/svg%3E")`
+            : styleName === 'glass'
+            ? `url("data:image/svg+xml,%3Csvg width='50' height='50' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='white' stroke-width='0.4'/%3E%3Ccircle cx='25' cy='25' r='5' fill='none' stroke='white' stroke-width='0.4'/%3E%3C/svg%3E")`
+            : styleName === 'minimal'
+            ? `url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23999'/%3E%3C/svg%3E")`
+            : 'none',
+          backgroundSize: styleName === 'minimal' ? '20px 20px'
+            : styleName === 'army' ? '40px 40px'
+            : styleName === 'sea' ? '80px 40px'
+            : '80px 80px',
+        }} />
+      )}
 
       {/* Header */}
       <header className={`flex items-center gap-3 px-4 py-3 border-b ${s.headerBorder} flex-shrink-0`}>
