@@ -697,44 +697,68 @@ export default function ChatWindow({ lang }) {
       {/* Label editor modal */}
       {editOpen && editTarget && (
         <div className="absolute inset-0 z-30 bg-black/70 flex items-center justify-center p-4">
-          <div className="bg-[#0f0f1a] border border-white/15 rounded-2xl p-4 w-full max-w-xs max-h-[80%] flex flex-col gap-3 overflow-hidden">
-            <h3 className="text-sm font-semibold text-white flex-shrink-0">
-              {lang === 'GEO' ? 'ღილაკების სახელის შეცვლა' : 'Rename buttons'}
-              <span className="ml-2 text-xs font-normal text-gray-500">({editTarget})</span>
-            </h3>
-            <div className="space-y-1 flex-shrink-0">
-              <label className="text-xs text-gray-500">
-                {lang === 'GEO' ? 'როლის სახელი' : 'Role name'}
+          <div className="bg-[#0f0f1a] border border-white/15 rounded-2xl p-4 w-full max-w-sm max-h-[85%] flex flex-col gap-4 overflow-hidden">
+
+            {/* Title */}
+            <div className="flex-shrink-0">
+              <h3 className="text-sm font-semibold text-white">
+                {lang === 'GEO' ? 'პანელის რედაქტირება' : 'Customize panel'}
+              </h3>
+              <p className="text-xs text-gray-500 mt-0.5">
+                {editTarget === 'student'
+                  ? (lang === 'GEO' ? 'სტუდენტის ხედი' : 'Student view')
+                  : (lang === 'GEO' ? 'ჩემი ხედი' : 'My view')}
+              </p>
+            </div>
+
+            {/* Role name */}
+            <div className="flex-shrink-0 bg-white/[0.04] rounded-xl p-3 border border-white/[0.08]">
+              <label className="text-xs font-medium text-gray-400 uppercase tracking-wide">
+                {lang === 'GEO' ? '🏷️ როლის სახელი' : '🏷️ Role name'}
               </label>
               <input
                 value={editRoleName}
                 onChange={e => setEditRoleName(e.target.value)}
                 placeholder={editTarget}
-                className="w-full rounded-lg border border-white/15 bg-white/[0.05] px-3 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-white/30"
+                className="mt-2 w-full rounded-lg border border-white/15 bg-white/[0.05] px-3 py-1.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-white/30"
               />
             </div>
-            <div className="overflow-y-auto flex-1 space-y-2 pr-1">
+
+            {/* Buttons list */}
+            <div className="overflow-y-auto flex-1 space-y-3 pr-1">
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">
+                {lang === 'GEO' ? '🔘 ღილაკები' : '🔘 Buttons'}
+              </p>
               {getButtonGroups(lang)[editTarget]?.map(item => (
-                <div key={item.id} className="space-y-1.5">
-                  <input
-                    value={editDraft[item.id] ?? item.label}
-                    onChange={e => setEditDraft(d => ({ ...d, [item.id]: e.target.value }))}
-                    className="w-full rounded-lg border border-white/15 bg-white/[0.05] px-3 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-white/30"
-                  />
-                  {item.children?.map(c => (
-                    <input key={c.id}
-                      value={editDraft[c.id] ?? c.label}
-                      onChange={e => setEditDraft(d => ({ ...d, [c.id]: e.target.value }))}
-                      className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-xs text-gray-300 placeholder-gray-600 focus:outline-none focus:border-white/20 ml-2"
-                      style={{ width: 'calc(100% - 0.5rem)' }}
+                <div key={item.id} className="bg-white/[0.03] rounded-xl border border-white/[0.07] overflow-hidden">
+                  {/* Top-level button */}
+                  <div className="flex items-center gap-2 px-3 py-2 bg-white/[0.04]">
+                    <span className="text-xs text-gray-500 w-4">▶</span>
+                    <input
+                      value={editDraft[item.id] ?? item.label}
+                      onChange={e => setEditDraft(d => ({ ...d, [item.id]: e.target.value }))}
+                      className="flex-1 rounded-lg border border-white/15 bg-white/[0.06] px-2 py-1 text-xs text-white focus:outline-none focus:border-white/30"
                     />
+                  </div>
+                  {/* Sub-buttons */}
+                  {item.children?.map(c => (
+                    <div key={c.id} className="flex items-center gap-2 px-3 py-2 border-t border-white/[0.05]">
+                      <span className="text-xs text-gray-600 w-4 text-right">↳</span>
+                      <input
+                        value={editDraft[c.id] ?? c.label}
+                        onChange={e => setEditDraft(d => ({ ...d, [c.id]: e.target.value }))}
+                        className="flex-1 rounded-lg border border-white/[0.08] bg-transparent px-2 py-1 text-xs text-gray-300 focus:outline-none focus:border-white/20"
+                      />
+                    </div>
                   ))}
                 </div>
               ))}
             </div>
+
+            {/* Actions */}
             <div className="flex gap-2 flex-shrink-0">
               <button onClick={saveLabels}
-                className={`flex-1 rounded-xl ${THEMES[role === 'student' ? 'admin' : role]?.sendBtn ?? 'bg-purple-600 hover:bg-purple-500'} px-3 py-2 text-xs text-white font-medium transition-colors`}>
+                className={`flex-1 rounded-xl ${THEMES[editTarget === 'student' ? (role === 'student' ? 'admin' : role) : role]?.sendBtn ?? 'bg-purple-600 hover:bg-purple-500'} px-3 py-2 text-xs text-white font-medium transition-colors`}>
                 {lang === 'GEO' ? 'შენახვა' : 'Save'}
               </button>
               <button onClick={cancelEdit}
