@@ -571,7 +571,8 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
                 {mobile ? '✏️' : (lang === 'GEO' ? '✏️ რედაქტირება' : '✏️ Edit')}
               </button>
               {editSubmenuOpen && (
-                <div className="absolute right-0 top-full mt-1 w-56 rounded-xl border border-white/15 bg-[#0f0f1a] shadow-2xl z-50 overflow-hidden">
+                <div className={`${mobile ? 'fixed left-0 right-0 mx-4' : 'absolute right-0 w-56'} top-auto mt-1 rounded-xl border border-white/15 bg-[#0f0f1a] shadow-2xl z-50 overflow-hidden`}
+                  style={mobile ? { top: '56px' } : {}}>
                   <button onClick={() => openEditor(role)}
                     className="w-full text-left px-4 py-2.5 text-xs text-gray-300 hover:bg-white/[0.05] hover:text-white transition-colors">
                     {lang === 'GEO' ? 'ჩემი პროფილი' : 'My Profile'}
