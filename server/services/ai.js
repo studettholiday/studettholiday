@@ -63,14 +63,17 @@ async function searchWeb(query) {
   }));
 }
 
-async function callAnthropic(messages) {
+async function callAnthropic(messages, language = 'en') {
+  const langInstruction = language === 'ka'
+    ? 'You must respond in Georgian language (ქართული) only. All your responses must be in Georgian.'
+    : 'Respond in English.';
   const stream = client.messages.stream({
     model: 'claude-opus-4-7',
     max_tokens: 8192,
     system: [
       {
         type: 'text',
-        text: SYSTEM_PROMPT,
+        text: langInstruction + '\n\n' + SYSTEM_PROMPT,
         cache_control: { type: 'ephemeral' },
       },
     ],
@@ -82,11 +85,14 @@ async function callAnthropic(messages) {
   return textBlock?.text ?? '';
 }
 
-async function callGemini(messages) {
+async function callGemini(messages, language = 'en') {
+  const langInstruction = language === 'ka'
+    ? 'You must respond in Georgian language (ქართული) only. All your responses must be in Georgian.'
+    : 'Respond in English.';
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   const model = genAI.getGenerativeModel({
     model: 'gemini-2.5-flash',
-    systemInstruction: RESTRICTED_SYSTEM_PROMPT
+    systemInstruction: langInstruction + '\n\n' + RESTRICTED_SYSTEM_PROMPT
   });
 
   // Convert messages to Gemini format
@@ -112,7 +118,10 @@ async function callGemini(messages) {
   }
 }
 
-async function callOpenAI(messages) {
+async function callOpenAI(messages, language = 'en') {
+  const langInstruction = language === 'ka'
+    ? 'You must respond in Georgian language (ქართული) only. All your responses must be in Georgian.'
+    : 'Respond in English.';
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const formatted = messages.map(m => ({
@@ -123,7 +132,7 @@ async function callOpenAI(messages) {
   const response = await openai.chat.completions.create({
     model: 'gpt-4o',
     messages: [
-      { role: 'system', content: RESTRICTED_SYSTEM_PROMPT },
+      { role: 'system', content: langInstruction + '\n\n' + RESTRICTED_SYSTEM_PROMPT },
       ...formatted
     ],
     max_tokens: 2048
@@ -132,14 +141,14 @@ async function callOpenAI(messages) {
   return response.choices[0].message.content ?? '';
 }
 
-async function routeToProvider(provider, messages) {
+async function routeToProvider(provider, messages, language = 'en') {
   switch (provider) {
     case 'anthropic':
-      return callAnthropic(messages);
+      return callAnthropic(messages, language);
     case 'openai':
-      return callOpenAI(messages);
+      return callOpenAI(messages, language);
     case 'gemini':
-      return callGemini(messages);
+      return callGemini(messages, language);
     default:
       throw new Error(`Unknown provider: ${provider}`);
   }

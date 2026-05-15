@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
     return res.status(429).json({ error: 'Too many requests. Please try again later.' });
   }
 
-  const { messages, provider = 'anthropic', context } = req.body;
+  const { messages, provider = 'anthropic', context, language = 'en' } = req.body;
 
   if (!Array.isArray(messages) || messages.length === 0) {
     return res.status(400).json({ error: 'messages array is required' });
@@ -91,7 +91,7 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    const reply = await routeToProvider(provider, processedMessages);
+    const reply = await routeToProvider(provider, processedMessages, language);
     res.json({ message: reply });
   } catch (err) {
     console.error('AI error:', err.message);

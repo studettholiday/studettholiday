@@ -365,7 +365,7 @@ export default function ChatWindow({ lang }) {
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages, provider, context: buildContext(libraryFiles, uploadedContext) }),
+        body: JSON.stringify({ messages: apiMessages, provider, context: buildContext(libraryFiles, uploadedContext), language: lang === 'GEO' ? 'ka' : 'en' }),
       });
       const data = await res.json();
       const aiText = data.message ?? 'No response.';
