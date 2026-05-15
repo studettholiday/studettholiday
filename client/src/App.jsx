@@ -569,17 +569,17 @@ export default function App() {
                 <button
                   onClick={() => setChatExpanded(false)}
                   style={{
-                    position: 'absolute',
+                    position: 'fixed',
                     top: 10,
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    background: 'rgba(255,255,255,0.08)',
-                    border: '1px solid rgba(255,255,255,0.15)',
+                    background: 'rgba(255,255,255,0.10)',
+                    border: '1px solid rgba(255,255,255,0.20)',
                     borderRadius: '50%',
-                    width: 32,
-                    height: 32,
+                    width: 30,
+                    height: 30,
                     color: '#fff',
-                    fontSize: '0.9rem',
+                    fontSize: '0.85rem',
                     cursor: 'pointer',
                     zIndex: 10000,
                     display: 'flex',
@@ -595,7 +595,7 @@ export default function App() {
                   overflow: 'hidden',
                   display: 'flex',
                   flexDirection: 'column',
-                  padding: '44px 0 0',
+                  padding: '0',
                 }}>
                   <ChatWindow lang={lang} mobile={true} />
                 </div>

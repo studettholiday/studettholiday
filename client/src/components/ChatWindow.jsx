@@ -537,8 +537,8 @@ export default function ChatWindow({ lang, mobile = false }) {
             <option value="gemini">Gemini</option>
           </select>
 
-          {!mobile && (
-            <div className="relative flex-shrink-0" ref={stylePanelRef}>
+          {/* show on all devices */}
+          <div className="relative flex-shrink-0" ref={stylePanelRef}>
               <button
                 onClick={() => setStyleOpen(o => !o)}
                 className={`text-xs px-3 py-1.5 rounded-lg border transition-colors duration-150 ${
@@ -604,7 +604,6 @@ export default function ChatWindow({ lang, mobile = false }) {
                 </div>
               )}
             </div>
-          )}
 
           {loading && (
             <span className={`text-xs animate-pulse ${s.thinkingColor}`}>Thinking…</span>
