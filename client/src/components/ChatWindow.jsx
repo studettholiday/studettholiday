@@ -117,14 +117,15 @@ const STYLE_OPTIONS = [
   { id: 'glass',   label: 'Glass',   desc: 'Frosted blur'   },
 ];
 
-function buildContext(libraryFiles, uploadedContext) {
+function buildContext(libraryFiles, attachedFiles) {
   const parts = [];
   if (libraryFiles.length > 0) {
     const libText = libraryFiles.map(f => `=== ${f.filename} ===\n${f.content}`).join('\n\n');
-    parts.push(`SCHOOL KNOWLEDGE LIBRARY (use this to answer questions):\n\n${libText.slice(0, 10000)}`);
+    parts.push(`SCHOOL KNOWLEDGE LIBRARY:\n\n${libText.slice(0, 10000)}`);
   }
-  if (uploadedContext) {
-    parts.push(`The user has uploaded a document. Use this as context:\n\n${uploadedContext.slice(0, 8000)}`);
+  if (attachedFiles.length > 0) {
+    const attachText = attachedFiles.map(f => `=== ${f.name} ===\n${f.content}`).join('\n\n');
+    parts.push(`ATTACHED FILES (use as context):\n\n${attachText.slice(0, 12000)}`);
   }
   return parts.length > 0 ? parts.join('\n\n---\n\n') : null;
 }
@@ -291,8 +292,7 @@ export default function ChatWindow({ lang }) {
   const stylePanelRef   = useRef(null);
   const fileInputRef    = useRef(null);
   const editBtnRef      = useRef(null);
-  const [uploadedContext,  setUploadedContext]  = useState(null);
-  const [uploadedFileName, setUploadedFileName] = useState(null);
+  const [attachedFiles, setAttachedFiles] = useState([]);
   // In-memory library: [{id, filename, content}] — cleared on role switch / new chat
   const [libraryFiles, setLibraryFiles] = useState([]);
   const s = CHAT_STYLES[styleName];
@@ -311,8 +311,7 @@ export default function ChatWindow({ lang }) {
     setLoading(false);
     setActivePanel(null);
     setOpenGroup(null);
-    setUploadedContext(null);
-    setUploadedFileName(null);
+    setAttachedFiles([]);
   }, [role, lang]);
 
   // Close stylize panel on outside click
@@ -382,8 +381,7 @@ export default function ChatWindow({ lang }) {
     setLoading(false);
     setActivePanel(null);
     setOpenGroup(null);
-    setUploadedContext(null);
-    setUploadedFileName(null);
+    setAttachedFiles([]);
     setLibraryFiles([]);
   }
 
@@ -406,14 +404,18 @@ export default function ChatWindow({ lang }) {
     const file = e.target.files?.[0];
     if (!file) return;
     e.target.value = '';
+    if (attachedFiles.length >= 3) {
+      setMessages(prev => [...prev, { role: 'assistant', content: lang === 'GEO' ? 'მაქსიმუმ 3 ფაილი შეგიძლიათ მიამაგროთ.' : 'Maximum 3 files per session.' }]);
+      return;
+    }
     let text = '';
     try {
       if (file.name.toLowerCase().endsWith('.pdf')) {
         const pdfjs = await loadPdfJs();
-        const buf   = await file.arrayBuffer();
-        const pdf   = await pdfjs.getDocument({ data: buf }).promise;
+        const buf = await file.arrayBuffer();
+        const pdf = await pdfjs.getDocument({ data: buf }).promise;
         for (let p = 1; p <= pdf.numPages; p++) {
-          const page    = await pdf.getPage(p);
+          const page = await pdf.getPage(p);
           const content = await page.getTextContent();
           text += content.items.map(item => item.str).join(' ') + '\n';
         }
@@ -425,17 +427,11 @@ export default function ChatWindow({ lang }) {
           reader.readAsText(file);
         });
       }
-      setUploadedContext(text);
-      setUploadedFileName(file.name);
-      setMessages(prev => [
-        ...prev,
-        { role: 'assistant', content: "I've read your document. Ask me anything about it!" },
-      ]);
+      const newFile = { id: Date.now(), name: file.name, content: text };
+      setAttachedFiles(prev => [...prev, newFile]);
+      setMessages(prev => [...prev, { role: 'assistant', content: `📄 "${file.name}" ${lang === 'GEO' ? 'წაკითხულია. შეგიძლიათ კითხვები დასვათ.' : 'loaded. Ask me anything about it!'}` }]);
     } catch {
-      setMessages(prev => [
-        ...prev,
-        { role: 'assistant', content: 'Sorry, I could not read that file.' },
-      ]);
+      setMessages(prev => [...prev, { role: 'assistant', content: lang === 'GEO' ? 'ფაილი ვერ წავიკითხე.' : 'Sorry, I could not read that file.' }]);
     }
   }
 
@@ -466,7 +462,7 @@ export default function ChatWindow({ lang }) {
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages, provider, context: buildContext(libraryFiles, uploadedContext), language: lang === 'GEO' ? 'ka' : 'en' }),
+        body: JSON.stringify({ messages: apiMessages, provider, context: buildContext(libraryFiles, attachedFiles), language: lang === 'GEO' ? 'ka' : 'en' }),
       });
       const data = await res.json();
       const aiText = data.message ?? 'No response.';
@@ -763,19 +759,22 @@ export default function ChatWindow({ lang }) {
         ))}
       </div>
 
-      {/* Uploaded file pill */}
-      {uploadedContext && (
-        <div className={`flex items-center gap-2 px-4 py-2 border-t ${s.footerBorder} flex-shrink-0`}>
-          <span className={`text-xs rounded-full px-3 py-1.5 flex items-center gap-2 max-w-full ${
-            s.colorScheme === 'light' ? 'bg-gray-100 text-gray-700' : 'bg-white/[0.08] text-gray-300'
-          }`}>
-            <span className="truncate">📄 {uploadedFileName} — active for this conversation only</span>
-            <button
-              type="button"
-              onClick={() => { setUploadedContext(null); setUploadedFileName(null); }}
-              className="text-gray-500 hover:text-white flex-shrink-0 leading-none transition-colors"
-            >✕</button>
-          </span>
+      {/* Attached file pills */}
+      {attachedFiles.length > 0 && (
+        <div className={`flex items-center gap-2 px-4 py-2 border-t ${s.footerBorder} flex-shrink-0 flex-wrap`}>
+          {attachedFiles.map(f => (
+            <span key={f.id} className={`text-xs rounded-full px-3 py-1.5 flex items-center gap-2 ${
+              s.colorScheme === 'light' ? 'bg-gray-100 text-gray-700' : 'bg-white/[0.08] text-gray-300'
+            }`}>
+              <span className="truncate max-w-[120px]">📄 {f.name}</span>
+              <button
+                type="button"
+                onClick={() => setAttachedFiles(prev => prev.filter(x => x.id !== f.id))}
+                className="text-gray-500 hover:text-white flex-shrink-0 leading-none transition-colors"
+              >✕</button>
+            </span>
+          ))}
+          <span className="text-xs text-gray-600">{attachedFiles.length}/3</span>
         </div>
       )}
 
@@ -796,7 +795,7 @@ export default function ChatWindow({ lang }) {
           title="Attach document for this conversation only (.pdf, .txt, .md) — not saved to Library"
           onClick={() => fileInputRef.current?.click()}
           className={`px-3 py-2 rounded-xl text-sm flex-shrink-0 transition-all duration-150 active:scale-95 ${
-            uploadedContext
+            attachedFiles.length > 0
               ? PANEL_ACTIVE_CLS[role]
               : s.colorScheme === 'light'
                 ? 'border border-gray-300 text-gray-500 hover:text-gray-900 hover:border-gray-400'
