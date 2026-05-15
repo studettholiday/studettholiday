@@ -674,12 +674,12 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
       </header>
 
       {/* Role switcher */}
-      <div className={`flex items-center gap-1 ${mobile ? 'px-2 py-1' : 'px-4 py-2'} border-b ${s.headerBorder} flex-shrink-0`}>
+      <div className={`flex items-center gap-1 ${mobile ? 'px-2 py-1 overflow-x-auto' : 'px-4 py-2'} border-b ${s.headerBorder} flex-shrink-0`} style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {ROLE_SWITCHER.map((r) => (
           <button
             key={r.id}
             onClick={() => setRole(r.id)}
-            className={`px-4 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
+            className={`px-4 py-1 rounded-full text-xs font-medium transition-all duration-200 flex-shrink-0 ${
               role === r.id
                 ? r.activeCls
                 : s.colorScheme === 'light'
