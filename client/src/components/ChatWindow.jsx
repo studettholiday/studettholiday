@@ -655,7 +655,7 @@ export default function ChatWindow({ lang, mobile = false }) {
                     }`}
                   >
                     <span className="text-sm font-medium">{lang === 'GEO' ? { glass: 'შუშა', default: 'ბნელი', neon: 'ნეონი', chess: 'ჭადრაკი', einstein: 'აინშტაინი' }[opt.id] : opt.label}</span>
-                    <span className="text-xs text-gray-500">{lang === 'GEO' ? { glass: 'დაბურული მინა', default: 'სუფთა', neon: 'კიბერპანკი', chess: 'კლასიკა', einstein: 'დაფა' }[opt.id] : opt.desc}</span>
+                    <span className="text-xs text-gray-500">{lang === 'GEO' ? { glass: 'დაბურული მინა', default: 'მინიმალისტური', neon: 'კიბერპანკი', chess: 'კლასიკა', einstein: 'დაფა' }[opt.id] : opt.desc}</span>
                   </button>
                 ))}
               </div>
