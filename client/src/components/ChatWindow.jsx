@@ -644,8 +644,7 @@ export default function ChatWindow({ lang }) {
               )}
             </div>
             {openGroupDef?.children && openGroupDef.children.length >= 2 && (
-              <div className={`flex items-center gap-1.5 px-6 py-1.5 border-t ${s.headerBorder} overflow-x-auto`}
-                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              <div className={`flex items-center gap-1.5 px-6 py-1.5 border-t ${s.headerBorder} flex-wrap`}>
                 {openGroupDef.children.map(child => {
                   if (child.id === 'edit') {
                     return (
