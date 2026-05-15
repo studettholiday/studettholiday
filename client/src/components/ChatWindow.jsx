@@ -275,7 +275,6 @@ export default function ChatWindow({ lang }) {
   const [customLabels, setCustomLabels] = useState({ admin: {}, assistant: {}, teacher: {}, student: {} });
   const [editOpen, setEditOpen] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
-  const [editSubmenuOpen, setEditSubmenuOpen] = useState(false);
   const [editDraft, setEditDraft] = useState({});
   const theme = THEMES[role];
   const [messages, setMessages] = useState([
@@ -292,7 +291,6 @@ export default function ChatWindow({ lang }) {
   const [styleOpen, setStyleOpen] = useState(false);
   const stylePanelRef   = useRef(null);
   const fileInputRef    = useRef(null);
-  const editBtnRef      = useRef(null);
   const [uploadedContext,  setUploadedContext]  = useState(null);
   const [uploadedFileName, setUploadedFileName] = useState(null);
   // In-memory library: [{id, filename, content}] — cleared on role switch / new chat
@@ -329,17 +327,6 @@ export default function ChatWindow({ lang }) {
     return () => document.removeEventListener('mousedown', handler);
   }, [styleOpen]);
 
-  // Close edit submenu on outside click
-  useEffect(() => {
-    if (!editSubmenuOpen) return;
-    const handler = (e) => {
-      if (editBtnRef.current && !editBtnRef.current.contains(e.target)) {
-        setEditSubmenuOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [editSubmenuOpen]);
 
 
   function getEffLabel(btnRole, id, baseLabel) {
@@ -356,7 +343,6 @@ export default function ChatWindow({ lang }) {
     setEditDraft(draft);
     setEditTarget(targetRole);
     setEditOpen(true);
-    setEditSubmenuOpen(false);
   }
 
   function saveLabels() {
@@ -534,31 +520,11 @@ export default function ChatWindow({ lang }) {
 
         <div className="ml-auto flex items-center gap-2">
           {role !== 'student' && (
-            <div className="relative flex-shrink-0" ref={editBtnRef}>
-              <button
-                onClick={() => setEditSubmenuOpen(o => !o)}
-                className={`text-xs px-3 py-1.5 rounded-lg border transition-colors duration-150 ${
-                  editSubmenuOpen
-                    ? 'border-white/30 text-white bg-white/10'
-                    : 'border-white/15 text-gray-400 hover:text-white hover:border-white/30'
-                }`}>
-                {lang === 'GEO' ? '✏️ რედაქტირება' : '✏️ Edit'}
-              </button>
-              {editSubmenuOpen && (
-                <div className="absolute right-0 top-full mt-1 w-56 rounded-xl border border-white/15 bg-[#0f0f1a] shadow-2xl z-50 overflow-hidden">
-                  <button onClick={() => openEditor(role)}
-                    className="w-full text-left px-4 py-2.5 text-xs text-gray-300 hover:bg-white/[0.05] hover:text-white transition-colors">
-                    {lang === 'GEO' ? 'ჩემი პროფილის რედაქტირება' : 'Edit my profile'}
-                  </button>
-                  {role !== 'teacher' && (
-                    <button onClick={() => openEditor('student')}
-                      className="w-full text-left px-4 py-2.5 text-xs text-gray-300 hover:bg-white/[0.05] hover:text-white transition-colors border-t border-white/[0.06]">
-                      {lang === 'GEO' ? 'სტუდენტის პროფილის რედაქტირება' : 'Edit student profile'}
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
+            <button
+              onClick={() => openEditor(role)}
+              className="text-xs px-3 py-1.5 rounded-lg border border-white/15 text-gray-400 hover:text-white hover:border-white/30 transition-colors duration-150 whitespace-nowrap">
+              {lang === 'GEO' ? '✏️ რედაქტირება' : '✏️ Edit'}
+            </button>
           )}
           <select
             value={provider}
