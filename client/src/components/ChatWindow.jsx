@@ -582,31 +582,84 @@ export default function ChatWindow({ lang, mobile = false }) {
       />
 
       {/* Theme pattern overlay */}
-      {(() => {
-        const patterns = {
-          chess:    { image: 'repeating-conic-gradient(#f0d9b5 0% 25%, #b58863 0% 50%)', size: '32px 32px', opacity: 0.12 },
-          nature:   { image: `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5 Q38 18 30 30 Q22 18 30 5' fill='%2334d399'/%3E%3Cpath d='M10 35 Q18 48 10 60 Q2 48 10 35' fill='%2334d399'/%3E%3Cpath d='M50 25 Q58 38 50 50 Q42 38 50 25' fill='%2334d399'/%3E%3Ccircle cx='10' cy='10' r='2' fill='%2334d399'/%3E%3Ccircle cx='50' cy='15' r='1.5' fill='%2334d399'/%3E%3C/svg%3E")`, size: '60px 60px', opacity: 0.08 },
-          sea:      { image: `url("data:image/svg+xml,%3Csvg width='80' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20 Q10 10 20 20 Q30 30 40 20 Q50 10 60 20 Q70 30 80 20' fill='none' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Cpath d='M0 32 Q10 22 20 32 Q30 42 40 32 Q50 22 60 32 Q70 42 80 32' fill='none' stroke='%2306b6d4' stroke-width='1'/%3E%3C/svg%3E")`, size: '80px 40px', opacity: 0.1 },
-          army:     { image: `url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='20' height='20' fill='%234a5240'/%3E%3Crect x='20' y='20' width='20' height='20' fill='%234a5240'/%3E%3Cellipse cx='10' cy='10' rx='6' ry='4' fill='%236b7a5e'/%3E%3Cellipse cx='30' cy='30' rx='6' ry='4' fill='%236b7a5e'/%3E%3C/svg%3E")`, size: '40px 40px', opacity: 0.15 },
-          einstein: { image: `url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='5' y='20' font-size='12' fill='%234a9a7a' font-family='monospace'%3EE%3Dmc%C2%B2%3C/text%3E%3Ctext x='50' y='50' font-size='11' fill='%234a9a7a' font-family='monospace'%3E%CE%94x%C2%B7%CE%94p%3C/text%3E%3Ctext x='10' y='80' font-size='10' fill='%234a9a7a' font-family='monospace'%3EF%3Dma%3C/text%3E%3Ctext x='55' y='95' font-size='9' fill='%234a9a7a' font-family='monospace'%3E%CF%80r%C2%B2%3C/text%3E%3C/svg%3E")`, size: '100px 100px', opacity: 0.12 },
-          neon:     { image: `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='25' fill='none' stroke='%2306b6d4' stroke-width='0.5'/%3E%3Ccircle cx='30' cy='30' r='12' fill='none' stroke='%2306b6d4' stroke-width='0.5'/%3E%3Cline x1='0' y1='30' x2='60' y2='30' stroke='%2306b6d4' stroke-width='0.3'/%3E%3Cline x1='30' y1='0' x2='30' y2='60' stroke='%2306b6d4' stroke-width='0.3'/%3E%3C/svg%3E")`, size: '60px 60px', opacity: 0.08 },
-          glass:    { image: `url("data:image/svg+xml,%3Csvg width='50' height='50' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='25' cy='25' r='22' fill='none' stroke='white' stroke-width='0.4'/%3E%3Ccircle cx='25' cy='25' r='8' fill='none' stroke='white' stroke-width='0.4'/%3E%3C/svg%3E")`, size: '50px 50px', opacity: 0.06 },
-          minimal:  { image: `url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23888'/%3E%3C/svg%3E")`, size: '20px 20px', opacity: 0.15 },
-        };
-        const p = patterns[styleName];
-        if (!p) return null;
-        return (
-          <div
-            className="pointer-events-none absolute inset-0 -z-10"
-            style={{
-              backgroundImage: p.image,
-              backgroundSize: p.size,
-              backgroundRepeat: 'repeat',
-              opacity: p.opacity,
-            }}
-          />
-        );
-      })()}
+      {styleName === 'chess' && (
+        <svg className="pointer-events-none absolute inset-0 w-full h-full -z-10" xmlns="http://www.w3.org/2000/svg" style={{opacity:0.13}}>
+          <defs><pattern id="chess" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse"><rect x="0" y="0" width="20" height="20" fill="#f0d9b5"/><rect x="20" y="20" width="20" height="20" fill="#f0d9b5"/></pattern></defs>
+          <rect width="100%" height="100%" fill="url(#chess)"/>
+        </svg>
+      )}
+      {styleName === 'nature' && (
+        <svg className="pointer-events-none absolute inset-0 w-full h-full -z-10" xmlns="http://www.w3.org/2000/svg" style={{opacity:0.10}}>
+          <defs><pattern id="nature" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+            <path d="M20 60 Q20 40 20 25 Q14 35 8 30 Q14 25 20 25 Q26 35 32 30 Q26 25 20 25" fill="#34d399"/>
+            <path d="M55 55 Q55 38 55 25 Q49 33 44 29 Q49 24 55 25 Q61 33 66 29 Q61 24 55 25" fill="#34d399"/>
+            <circle cx="20" cy="65" r="3" fill="#34d399"/>
+            <circle cx="55" cy="60" r="2.5" fill="#34d399"/>
+            <path d="M5 75 Q10 65 15 75" fill="none" stroke="#34d399" strokeWidth="1.5"/>
+            <path d="M60 72 Q65 62 70 72" fill="none" stroke="#34d399" strokeWidth="1.5"/>
+          </pattern></defs>
+          <rect width="100%" height="100%" fill="url(#nature)"/>
+        </svg>
+      )}
+      {styleName === 'sea' && (
+        <svg className="pointer-events-none absolute inset-0 w-full h-full -z-10" xmlns="http://www.w3.org/2000/svg" style={{opacity:0.12}}>
+          <defs><pattern id="sea" x="0" y="0" width="120" height="60" patternUnits="userSpaceOnUse">
+            <path d="M0 20 Q15 8 30 20 Q45 32 60 20 Q75 8 90 20 Q105 32 120 20" fill="none" stroke="#06b6d4" strokeWidth="2"/>
+            <path d="M0 38 Q15 26 30 38 Q45 50 60 38 Q75 26 90 38 Q105 50 120 38" fill="none" stroke="#06b6d4" strokeWidth="1.5"/>
+            <path d="M0 54 Q15 42 30 54 Q45 66 60 54 Q75 42 90 54 Q105 66 120 54" fill="none" stroke="#0e7490" strokeWidth="1"/>
+            <circle cx="25" cy="12" r="2" fill="#67e8f9"/>
+            <circle cx="80" cy="30" r="1.5" fill="#67e8f9"/>
+          </pattern></defs>
+          <rect width="100%" height="100%" fill="url(#sea)"/>
+        </svg>
+      )}
+      {styleName === 'army' && (
+        <svg className="pointer-events-none absolute inset-0 w-full h-full -z-10" xmlns="http://www.w3.org/2000/svg" style={{opacity:0.18}}>
+          <defs><pattern id="army" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+            <ellipse cx="15" cy="15" rx="10" ry="7" fill="#4a5240"/>
+            <ellipse cx="42" cy="38" rx="12" ry="8" fill="#3d4535"/>
+            <ellipse cx="50" cy="12" rx="7" ry="5" fill="#5a6350"/>
+            <ellipse cx="8" cy="45" rx="8" ry="5" fill="#4a5240"/>
+            <ellipse cx="30" cy="55" rx="6" ry="4" fill="#3d4535"/>
+          </pattern></defs>
+          <rect width="100%" height="100%" fill="url(#army)"/>
+        </svg>
+      )}
+      {styleName === 'einstein' && (
+        <svg className="pointer-events-none absolute inset-0 w-full h-full -z-10" xmlns="http://www.w3.org/2000/svg" style={{opacity:0.13}}>
+          <defs><pattern id="einstein" x="0" y="0" width="160" height="120" patternUnits="userSpaceOnUse">
+            <text x="5" y="22" fontSize="14" fill="#4a9a7a" fontFamily="monospace" fontWeight="bold">E=mc²</text>
+            <text x="90" y="22" fontSize="11" fill="#4a9a7a" fontFamily="monospace">F=ma</text>
+            <text x="5" y="50" fontSize="11" fill="#4a9a7a" fontFamily="monospace">Δx·Δp≥ℏ/2</text>
+            <text x="90" y="50" fontSize="12" fill="#4a9a7a" fontFamily="monospace">πr²</text>
+            <text x="5" y="78" fontSize="10" fill="#4a9a7a" fontFamily="monospace">∑F=0</text>
+            <text x="60" y="78" fontSize="11" fill="#4a9a7a" fontFamily="monospace">λ=h/mv</text>
+            <text x="5" y="105" fontSize="11" fill="#4a9a7a" fontFamily="monospace">∫∞=-1/12</text>
+            <text x="95" y="105" fontSize="10" fill="#4a9a7a" fontFamily="monospace">c=3×10⁸</text>
+          </pattern></defs>
+          <rect width="100%" height="100%" fill="url(#einstein)"/>
+        </svg>
+      )}
+      {styleName === 'neon' && (
+        <svg className="pointer-events-none absolute inset-0 w-full h-full -z-10" xmlns="http://www.w3.org/2000/svg" style={{opacity:0.07}}>
+          <defs><pattern id="neon" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+            <circle cx="40" cy="40" r="35" fill="none" stroke="#06b6d4" strokeWidth="0.6"/>
+            <circle cx="40" cy="40" r="18" fill="none" stroke="#06b6d4" strokeWidth="0.6"/>
+            <line x1="0" y1="40" x2="80" y2="40" stroke="#06b6d4" strokeWidth="0.4"/>
+            <line x1="40" y1="0" x2="40" y2="80" stroke="#06b6d4" strokeWidth="0.4"/>
+          </pattern></defs>
+          <rect width="100%" height="100%" fill="url(#neon)"/>
+        </svg>
+      )}
+      {styleName === 'glass' && (
+        <svg className="pointer-events-none absolute inset-0 w-full h-full -z-10" xmlns="http://www.w3.org/2000/svg" style={{opacity:0.05}}>
+          <defs><pattern id="glass" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
+            <circle cx="25" cy="25" r="22" fill="none" stroke="white" strokeWidth="0.5"/>
+            <circle cx="25" cy="25" r="8" fill="none" stroke="white" strokeWidth="0.5"/>
+          </pattern></defs>
+          <rect width="100%" height="100%" fill="url(#glass)"/>
+        </svg>
+      )}
 
       {/* Header */}
       <header className={`flex items-center gap-3 px-4 py-3 border-b ${s.headerBorder} flex-shrink-0`}>
