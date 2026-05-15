@@ -269,9 +269,12 @@ export default function ChatWindow({ lang }) {
   const [activePanel, setActivePanel] = useState(null);
   const [openGroup, setOpenGroup] = useState(null);
   const [customLabels, setCustomLabels] = useState({ admin: {}, assistant: {}, teacher: {}, student: {} });
+  const [customRoleNames, setCustomRoleNames] = useState({ admin: '', assistant: '', teacher: '', student: '' });
   const [editOpen, setEditOpen] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const [editDraft, setEditDraft] = useState({});
+  const [editRoleName, setEditRoleName] = useState('');
+  const [editSubmenuOpen, setEditSubmenuOpen] = useState(false);
   const theme = THEMES[role];
   const [messages, setMessages] = useState([
     { role: 'assistant', content: getGreeting(role, lang) },
@@ -287,6 +290,7 @@ export default function ChatWindow({ lang }) {
   const [styleOpen, setStyleOpen] = useState(false);
   const stylePanelRef   = useRef(null);
   const fileInputRef    = useRef(null);
+  const editBtnRef      = useRef(null);
   const [uploadedContext,  setUploadedContext]  = useState(null);
   const [uploadedFileName, setUploadedFileName] = useState(null);
   // In-memory library: [{id, filename, content}] — cleared on role switch / new chat
@@ -323,6 +327,18 @@ export default function ChatWindow({ lang }) {
     return () => document.removeEventListener('mousedown', handler);
   }, [styleOpen]);
 
+  // Close edit submenu on outside click
+  useEffect(() => {
+    if (!editSubmenuOpen) return;
+    const handler = (e) => {
+      if (editBtnRef.current && !editBtnRef.current.contains(e.target)) {
+        setEditSubmenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [editSubmenuOpen]);
+
 
 
   function getEffLabel(btnRole, id, baseLabel) {
@@ -338,19 +354,26 @@ export default function ChatWindow({ lang }) {
     });
     setEditDraft(draft);
     setEditTarget(targetRole);
+    setEditRoleName(customRoleNames[targetRole] ?? '');
     setEditOpen(true);
+    setEditSubmenuOpen(false);
   }
 
   function saveLabels() {
     setCustomLabels(prev => ({ ...prev, [editTarget]: editDraft }));
+    if (editRoleName.trim()) {
+      setCustomRoleNames(prev => ({ ...prev, [editTarget]: editRoleName.trim() }));
+    }
     setEditOpen(false);
     setEditTarget(null);
+    setEditRoleName('');
   }
 
   function cancelEdit() {
     setEditOpen(false);
     setEditTarget(null);
     setEditDraft({});
+    setEditRoleName('');
   }
 
   function clearChat() {
@@ -516,11 +539,31 @@ export default function ChatWindow({ lang }) {
 
         <div className="ml-auto flex items-center gap-2">
           {role !== 'student' && (
-            <button
-              onClick={() => openEditor(role)}
-              className="text-xs px-3 py-1.5 rounded-lg border border-white/15 text-gray-400 hover:text-white hover:border-white/30 transition-colors duration-150 whitespace-nowrap">
-              {lang === 'GEO' ? '✏️ რედაქტირება' : '✏️ Edit'}
-            </button>
+            <div className="relative flex-shrink-0" ref={editBtnRef}>
+              <button
+                onClick={() => setEditSubmenuOpen(o => !o)}
+                className={`text-xs px-3 py-1.5 rounded-lg border transition-colors duration-150 ${
+                  editSubmenuOpen
+                    ? 'border-white/30 text-white bg-white/10'
+                    : 'border-white/15 text-gray-400 hover:text-white hover:border-white/30'
+                }`}>
+                {lang === 'GEO' ? '✏️ რედაქტირება' : '✏️ Edit'}
+              </button>
+              {editSubmenuOpen && (
+                <div className="absolute right-0 top-full mt-1 w-56 rounded-xl border border-white/15 bg-[#0f0f1a] shadow-2xl z-50 overflow-hidden">
+                  <button onClick={() => openEditor(role)}
+                    className="w-full text-left px-4 py-2.5 text-xs text-gray-300 hover:bg-white/[0.05] hover:text-white transition-colors">
+                    {lang === 'GEO' ? 'ჩემი პროფილი' : 'My Profile'}
+                  </button>
+                  {(role === 'admin' || role === 'assistant') && (
+                    <button onClick={() => openEditor('student')}
+                      className="w-full text-left px-4 py-2.5 text-xs text-gray-300 hover:bg-white/[0.05] hover:text-white transition-colors border-t border-white/[0.06]">
+                      {lang === 'GEO' ? 'სტუდენტის პროფილი' : 'Student Profile'}
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           )}
           <select
             value={provider}
@@ -587,7 +630,7 @@ export default function ChatWindow({ lang }) {
                   : 'text-gray-400 hover:text-white'
             }`}
           >
-            {r.label}
+            {customRoleNames[r.id] || r.label}
           </button>
         ))}
         <button
@@ -663,6 +706,17 @@ export default function ChatWindow({ lang }) {
               {lang === 'GEO' ? 'ღილაკების სახელის შეცვლა' : 'Rename buttons'}
               <span className="ml-2 text-xs font-normal text-gray-500">({editTarget})</span>
             </h3>
+            <div className="space-y-1 flex-shrink-0">
+              <label className="text-xs text-gray-500">
+                {lang === 'GEO' ? 'როლის სახელი' : 'Role name'}
+              </label>
+              <input
+                value={editRoleName}
+                onChange={e => setEditRoleName(e.target.value)}
+                placeholder={editTarget}
+                className="w-full rounded-lg border border-white/15 bg-white/[0.05] px-3 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-white/30"
+              />
+            </div>
             <div className="overflow-y-auto flex-1 space-y-2 pr-1">
               {getButtonGroups(lang)[editTarget]?.map(item => (
                 <div key={item.id} className="space-y-1.5">
