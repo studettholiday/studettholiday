@@ -248,6 +248,8 @@ export default function ChatWindow({ lang, mobile = false }) {
     setProvider(lang === 'GEO' ? 'gemini' : 'anthropic');
   }, [lang]);
   const [accentColor, setAccentColor] = useState('#7c3aed');
+  const [styleOpen, setStyleOpen] = useState(false);
+  const stylePanelRef   = useRef(null);
   const fileInputRef    = useRef(null);
   const editBtnRef      = useRef(null);
   const [attachedFiles, setAttachedFiles] = useState([]);
@@ -271,6 +273,17 @@ export default function ChatWindow({ lang, mobile = false }) {
     setOpenGroup(null);
     setAttachedFiles([]);
   }, [role, lang]);
+
+  useEffect(() => {
+    if (!styleOpen) return;
+    const handler = (e) => {
+      if (stylePanelRef.current && !stylePanelRef.current.contains(e.target)) {
+        setStyleOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [styleOpen]);
 
   // Close edit submenu on outside click
   useEffect(() => {
@@ -519,15 +532,64 @@ export default function ChatWindow({ lang, mobile = false }) {
             <option value="gemini">Gemini</option>
           </select>
 
-          {!mobile && <div className="flex items-center gap-1.5 flex-shrink-0">
-            {['#7c3aed','#2563eb','#059669','#dc2626','#d97706','#db2777','#0891b2','#e2e8f0'].map(color => (
+          {!mobile && (
+            <div className="relative flex-shrink-0" ref={stylePanelRef}>
               <button
-                key={color}
-                onClick={() => setAccentColor(color)}
-                style={{ background: color, width: 18, height: 18, borderRadius: '50%', flexShrink: 0, border: accentColor === color ? '2px solid white' : '2px solid transparent', outline: accentColor === color ? '1px solid rgba(255,255,255,0.4)' : 'none', transition: 'all 0.15s', transform: accentColor === color ? 'scale(1.2)' : 'scale(1)', opacity: accentColor === color ? 1 : 0.65 }}
-              />
-            ))}
-          </div>}
+                onClick={() => setStyleOpen(o => !o)}
+                className={`text-xs px-3 py-1.5 rounded-lg border transition-colors duration-150 ${
+                  styleOpen
+                    ? 'border-white/30 text-white bg-white/10'
+                    : 'border-white/15 text-gray-400 hover:text-white hover:border-white/30'
+                }`}
+                style={{ borderColor: accentColor + '60' }}
+              >
+                <span className="flex items-center gap-2">
+                  <span style={{ background: accentColor, width: 10, height: 10, borderRadius: '50%', display: 'inline-block' }} />
+                  {lang === 'GEO' ? 'სტილი' : 'Stylize'}
+                </span>
+              </button>
+              {styleOpen && (
+                <div className="absolute right-0 top-full mt-2 rounded-2xl border border-white/15 bg-[#0f0f1a]/95 backdrop-blur-xl shadow-2xl z-50 p-4 flex flex-col gap-3" style={{ width: 220 }}>
+                  <p className="text-xs text-gray-400 font-medium">{lang === 'GEO' ? 'ფერის არჩევა' : 'Choose color'}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {['#7c3aed','#2563eb','#059669','#dc2626','#d97706','#db2777','#0891b2','#f97316','#84cc16','#06b6d4','#8b5cf6','#ffffff'].map(color => (
+                      <button
+                        key={color}
+                        onClick={() => setAccentColor(color)}
+                        style={{
+                          background: color,
+                          width: 24,
+                          height: 24,
+                          borderRadius: '50%',
+                          border: accentColor === color ? '2px solid white' : '2px solid transparent',
+                          outline: accentColor === color ? '2px solid ' + color : 'none',
+                          outlineOffset: 1,
+                          transition: 'all 0.15s',
+                          transform: accentColor === color ? 'scale(1.15)' : 'scale(1)',
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <input
+                      type="color"
+                      value={accentColor}
+                      onChange={e => setAccentColor(e.target.value)}
+                      className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent p-0"
+                      style={{ padding: 0 }}
+                    />
+                    <input
+                      type="text"
+                      value={accentColor}
+                      onChange={e => { if (/^#[0-9a-fA-F]{0,6}$/.test(e.target.value)) setAccentColor(e.target.value); }}
+                      className="flex-1 rounded-lg border border-white/15 bg-white/[0.05] px-2 py-1 text-xs text-white font-mono focus:outline-none focus:border-white/30"
+                      placeholder="#7c3aed"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {loading && (
             <span className={`text-xs animate-pulse ${s.thinkingColor}`}>Thinking…</span>
