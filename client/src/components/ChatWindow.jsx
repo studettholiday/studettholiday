@@ -472,6 +472,11 @@ export default function ChatWindow({ lang, mobile = false }) {
   }
 
   return (
+    <>
+    <style>{`
+      input[type=range].rainbow-slider::-webkit-slider-thumb { width: 22px; height: 22px; border-radius: 50%; background: white; border: 2px solid rgba(0,0,0,0.3); box-shadow: 0 1px 4px rgba(0,0,0,0.4); appearance: none; cursor: pointer; }
+      input[type=range].rainbow-slider::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: white; border: 2px solid rgba(0,0,0,0.3); cursor: pointer; }
+    `}</style>
     <div className={`relative flex flex-col ${mobile ? 'w-full h-full rounded-none border-0' : 'max-w-2xl mx-auto border rounded-2xl'} overflow-hidden ${s.wrap}`} style={mobile ? undefined : { borderColor: accentColor + '40' }}>
 
       {/* Per-role ambient glow */}
@@ -550,41 +555,51 @@ export default function ChatWindow({ lang, mobile = false }) {
               </button>
               {styleOpen && (
                 <div className="absolute right-0 top-full mt-2 rounded-2xl border border-white/15 bg-[#0f0f1a]/95 backdrop-blur-xl shadow-2xl z-50 p-4 flex flex-col gap-3" style={{ width: 220 }}>
-                  <p className="text-xs text-gray-400 font-medium">{lang === 'GEO' ? 'ფერის არჩევა' : 'Choose color'}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {['#7c3aed','#2563eb','#059669','#dc2626','#d97706','#db2777','#0891b2','#f97316','#84cc16','#06b6d4','#8b5cf6','#ffffff'].map(color => (
-                      <button
-                        key={color}
-                        onClick={() => setAccentColor(color)}
-                        style={{
-                          background: color,
-                          width: 24,
-                          height: 24,
-                          borderRadius: '50%',
-                          border: accentColor === color ? '2px solid white' : '2px solid transparent',
-                          outline: accentColor === color ? '2px solid ' + color : 'none',
-                          outlineOffset: 1,
-                          transition: 'all 0.15s',
-                          transform: accentColor === color ? 'scale(1.15)' : 'scale(1)',
-                        }}
-                      />
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-2 mt-1">
+                  <p className="text-xs text-gray-400 font-medium">
+                    {lang === 'GEO' ? 'ფერი' : 'Color'}
+                  </p>
+                  <div className="flex flex-col gap-2">
                     <input
-                      type="color"
-                      value={accentColor}
-                      onChange={e => setAccentColor(e.target.value)}
-                      className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent p-0"
-                      style={{ padding: 0 }}
+                      type="range"
+                      min="0"
+                      max="360"
+                      value={(() => {
+                        const hex = accentColor.replace('#','');
+                        const r = parseInt(hex.slice(0,2),16)/255;
+                        const g = parseInt(hex.slice(2,4),16)/255;
+                        const b = parseInt(hex.slice(4,6),16)/255;
+                        const max = Math.max(r,g,b), min = Math.min(r,g,b);
+                        if (max === min) return 0;
+                        let h = max === r ? (g-b)/(max-min) : max === g ? 2+(b-r)/(max-min) : 4+(r-g)/(max-min);
+                        h = ((h*60)+360)%360;
+                        return Math.round(h);
+                      })()}
+                      onChange={e => {
+                        const h = e.target.value;
+                        const f = (n) => {
+                          const k = (n + h/60) % 6;
+                          return Math.round((1 - Math.max(0, Math.min(k, 4-k, 1))) * 200 + 55);
+                        };
+                        const r = f(5).toString(16).padStart(2,'0');
+                        const g = f(3).toString(16).padStart(2,'0');
+                        const b = f(1).toString(16).padStart(2,'0');
+                        setAccentColor('#'+r+g+b);
+                      }}
+                      className="w-full cursor-pointer rainbow-slider"
+                      style={{
+                        height: 20,
+                        borderRadius: 10,
+                        border: 'none',
+                        outline: 'none',
+                        appearance: 'none',
+                        WebkitAppearance: 'none',
+                        background: 'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)',
+                      }}
                     />
-                    <input
-                      type="text"
-                      value={accentColor}
-                      onChange={e => { if (/^#[0-9a-fA-F]{0,6}$/.test(e.target.value)) setAccentColor(e.target.value); }}
-                      className="flex-1 rounded-lg border border-white/15 bg-white/[0.05] px-2 py-1 text-xs text-white font-mono focus:outline-none focus:border-white/30"
-                      placeholder="#7c3aed"
-                    />
+                    <div className="flex items-center gap-2 mt-1">
+                      <div style={{ width: 32, height: 32, borderRadius: 8, background: accentColor, boxShadow: `0 0 12px ${accentColor}88`, flexShrink: 0 }} />
+                      <span className="text-xs text-gray-400">{lang === 'GEO' ? 'არჩეული ფერი' : 'Selected color'}</span>
+                    </div>
                   </div>
                 </div>
               )}
@@ -846,5 +861,6 @@ export default function ChatWindow({ lang, mobile = false }) {
         </button>
       </form>
     </div>
+    </>
   );
 }
