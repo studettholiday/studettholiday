@@ -299,14 +299,14 @@ function SignupModal({ lang, onClose }) {
               className={FIELD_CLS + ' cursor-pointer'}
             >
               <option value="" disabled style={{ backgroundColor: '#1e1e2e', color: 'white' }}>{t.typeLabel}</option>
-              <option value="education" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>Education / Academic</option>
-              <option value="music_arts" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>Music &amp; Arts</option>
-              <option value="sports_fitness" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>Sports &amp; Fitness</option>
-              <option value="dance_performing" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>Dance &amp; Performing Arts</option>
-              <option value="language" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>Language School</option>
-              <option value="therapy_wellness" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>Therapy &amp; Wellness</option>
-              <option value="tutoring_coaching" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>Tutoring &amp; Coaching</option>
-              <option value="other" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>Other</option>
+              <option value="education" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>{lang === 'GEO' ? 'განათლება / აკადემიური' : 'Education / Academic'}</option>
+              <option value="music_arts" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>{lang === 'GEO' ? 'მუსიკა და ხელოვნება' : 'Music & Arts'}</option>
+              <option value="sports_fitness" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>{lang === 'GEO' ? 'სპორტი და ფიტნესი' : 'Sports & Fitness'}</option>
+              <option value="dance_performing" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>{lang === 'GEO' ? 'ცეკვა და სასცენო ხელოვნება' : 'Dance & Performing Arts'}</option>
+              <option value="language" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>{lang === 'GEO' ? 'ენების სკოლა' : 'Language School'}</option>
+              <option value="therapy_wellness" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>{lang === 'GEO' ? 'თერაპია და ჯანმრთელობა' : 'Therapy & Wellness'}</option>
+              <option value="tutoring_coaching" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>{lang === 'GEO' ? 'რეპეტიტორი ან ქოუჩი' : 'Tutoring & Coaching'}</option>
+              <option value="other" style={{ backgroundColor: '#1e1e2e', color: 'white' }}>{lang === 'GEO' ? 'სხვა' : 'Other'}</option>
             </select>
 
             {status === 'duplicate' && (
