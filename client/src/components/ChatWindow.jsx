@@ -562,7 +562,7 @@ export default function ChatWindow({ lang, mobile = false }) {
                     <input
                       type="range"
                       min="0"
-                      max="360"
+                      max="359"
                       value={(() => {
                         const hex = accentColor.replace('#','');
                         const r = parseInt(hex.slice(0,2),16)/255;
@@ -575,7 +575,7 @@ export default function ChatWindow({ lang, mobile = false }) {
                         return Math.round(h);
                       })()}
                       onChange={e => {
-                        const h = e.target.value;
+                        const h = Math.min(359, parseInt(e.target.value));
                         const f = (n) => {
                           const k = (n + h/60) % 6;
                           return Math.round((1 - Math.max(0, Math.min(k, 4-k, 1))) * 200 + 55);
@@ -593,7 +593,7 @@ export default function ChatWindow({ lang, mobile = false }) {
                         outline: 'none',
                         appearance: 'none',
                         WebkitAppearance: 'none',
-                        background: 'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)',
+                        background: 'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff2200)',
                       }}
                     />
                     <div className="flex items-center gap-2 mt-1">
