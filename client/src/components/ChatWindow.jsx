@@ -225,7 +225,7 @@ const GROUP_OPEN_CLS = {
   student:   'bg-emerald-600/20 text-emerald-300 border border-emerald-500/40',
 };
 
-export default function ChatWindow({ lang, mobile = false }) {
+export default function ChatWindow({ lang, mobile = false, onClose = null }) {
   const [role, setRole] = useState('admin');
   const [activePanel, setActivePanel] = useState(null);
   const [openGroup, setOpenGroup] = useState(null);
@@ -491,6 +491,15 @@ export default function ChatWindow({ lang, mobile = false }) {
           S
         </div>
         <h1 className={`${mobile ? 'text-sm' : 'text-base'} font-semibold ${s.titleColor}`}>Sherlock</h1>
+        {mobile && onClose && (
+          <button
+            onClick={onClose}
+            className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', fontSize: '0.75rem' }}
+          >
+            ✕
+          </button>
+        )}
         {libraryFiles.length > 0 && (
           <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex-shrink-0">
             📚 Demo library — clears when you leave

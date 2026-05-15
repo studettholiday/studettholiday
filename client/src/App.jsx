@@ -566,30 +566,6 @@ export default function App() {
                 flexDirection: 'column',
                 overflow: 'hidden',
               }}>
-                <button
-                  onClick={() => setChatExpanded(false)}
-                  style={{
-                    position: 'fixed',
-                    top: 10,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    background: 'rgba(255,255,255,0.10)',
-                    border: '1px solid rgba(255,255,255,0.20)',
-                    borderRadius: '50%',
-                    width: 30,
-                    height: 30,
-                    color: '#fff',
-                    fontSize: '0.85rem',
-                    cursor: 'pointer',
-                    zIndex: 10000,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                  aria-label="Close chat"
-                >
-                  ✕
-                </button>
                 <div style={{
                   flex: 1,
                   overflow: 'hidden',
@@ -597,7 +573,7 @@ export default function App() {
                   flexDirection: 'column',
                   padding: '0',
                 }}>
-                  <ChatWindow lang={lang} mobile={true} />
+                  <ChatWindow lang={lang} mobile={true} onClose={() => setChatExpanded(false)} />
                 </div>
               </div>
             )}
