@@ -166,15 +166,11 @@ const CHAT_STYLES = {
 };
 
 const STYLE_OPTIONS = [
-  { id: 'default', label: 'Default', desc: 'Dark & clean'   },
-  { id: 'neon',    label: 'Neon',    desc: 'Cyberpunk glow' },
-  { id: 'minimal', label: 'Minimal', desc: 'Light & simple' },
-  { id: 'glass',   label: 'Glass',   desc: 'Frosted blur'   },
-  { id: 'chess',    label: 'Chess',    desc: 'Classic board'   },
-  { id: 'nature',   label: 'Nature',   desc: 'Forest & garden' },
-  { id: 'sea',      label: 'Sea',      desc: 'Ocean & fishing' },
-  { id: 'army',     label: 'Army',     desc: 'Camo & tactical' },
-  { id: 'einstein', label: 'Einstein', desc: 'Chalk & formulas'},
+  { id: 'glass',    label: 'Glass',    desc: 'Frosted blur'   },
+  { id: 'default',  label: 'Dark',     desc: 'Clean & minimal'},
+  { id: 'neon',     label: 'Neon',     desc: 'Cyberpunk glow' },
+  { id: 'chess',    label: 'Chess',    desc: 'Classic board'  },
+  { id: 'einstein', label: 'Einstein', desc: 'Chalkboard'     },
 ];
 
 function buildContext(libraryFiles, attachedFiles) {
@@ -347,7 +343,7 @@ export default function ChatWindow({ lang, mobile = false }) {
   useEffect(() => {
     setProvider(lang === 'GEO' ? 'gemini' : 'anthropic');
   }, [lang]);
-  const [styleName, setStyleName] = useState('default');
+  const [styleName, setStyleName] = useState('glass');
   const [styleOpen, setStyleOpen] = useState(false);
   const stylePanelRef   = useRef(null);
   const fileInputRef    = useRef(null);
@@ -580,86 +576,6 @@ export default function ChatWindow({ lang, mobile = false }) {
         className="pointer-events-none absolute inset-0 -z-10"
         style={{ background: `radial-gradient(ellipse 80% 35% at 50% 0%, ${theme.glow}, transparent)` }}
       />
-
-      {/* Theme pattern overlay */}
-      {styleName === 'chess' && (
-        <svg className="pointer-events-none absolute inset-0 w-full h-full -z-10" xmlns="http://www.w3.org/2000/svg" style={{opacity:0.13}}>
-          <defs><pattern id="chess" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse"><rect x="0" y="0" width="20" height="20" fill="#f0d9b5"/><rect x="20" y="20" width="20" height="20" fill="#f0d9b5"/></pattern></defs>
-          <rect width="100%" height="100%" fill="url(#chess)"/>
-        </svg>
-      )}
-      {styleName === 'nature' && (
-        <svg className="pointer-events-none absolute inset-0 w-full h-full -z-10" xmlns="http://www.w3.org/2000/svg" style={{opacity:0.10}}>
-          <defs><pattern id="nature" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-            <path d="M20 60 Q20 40 20 25 Q14 35 8 30 Q14 25 20 25 Q26 35 32 30 Q26 25 20 25" fill="#34d399"/>
-            <path d="M55 55 Q55 38 55 25 Q49 33 44 29 Q49 24 55 25 Q61 33 66 29 Q61 24 55 25" fill="#34d399"/>
-            <circle cx="20" cy="65" r="3" fill="#34d399"/>
-            <circle cx="55" cy="60" r="2.5" fill="#34d399"/>
-            <path d="M5 75 Q10 65 15 75" fill="none" stroke="#34d399" strokeWidth="1.5"/>
-            <path d="M60 72 Q65 62 70 72" fill="none" stroke="#34d399" strokeWidth="1.5"/>
-          </pattern></defs>
-          <rect width="100%" height="100%" fill="url(#nature)"/>
-        </svg>
-      )}
-      {styleName === 'sea' && (
-        <svg className="pointer-events-none absolute inset-0 w-full h-full -z-10" xmlns="http://www.w3.org/2000/svg" style={{opacity:0.12}}>
-          <defs><pattern id="sea" x="0" y="0" width="120" height="60" patternUnits="userSpaceOnUse">
-            <path d="M0 20 Q15 8 30 20 Q45 32 60 20 Q75 8 90 20 Q105 32 120 20" fill="none" stroke="#06b6d4" strokeWidth="2"/>
-            <path d="M0 38 Q15 26 30 38 Q45 50 60 38 Q75 26 90 38 Q105 50 120 38" fill="none" stroke="#06b6d4" strokeWidth="1.5"/>
-            <path d="M0 54 Q15 42 30 54 Q45 66 60 54 Q75 42 90 54 Q105 66 120 54" fill="none" stroke="#0e7490" strokeWidth="1"/>
-            <circle cx="25" cy="12" r="2" fill="#67e8f9"/>
-            <circle cx="80" cy="30" r="1.5" fill="#67e8f9"/>
-          </pattern></defs>
-          <rect width="100%" height="100%" fill="url(#sea)"/>
-        </svg>
-      )}
-      {styleName === 'army' && (
-        <svg className="pointer-events-none absolute inset-0 w-full h-full -z-10" xmlns="http://www.w3.org/2000/svg" style={{opacity:0.18}}>
-          <defs><pattern id="army" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
-            <ellipse cx="15" cy="15" rx="10" ry="7" fill="#4a5240"/>
-            <ellipse cx="42" cy="38" rx="12" ry="8" fill="#3d4535"/>
-            <ellipse cx="50" cy="12" rx="7" ry="5" fill="#5a6350"/>
-            <ellipse cx="8" cy="45" rx="8" ry="5" fill="#4a5240"/>
-            <ellipse cx="30" cy="55" rx="6" ry="4" fill="#3d4535"/>
-          </pattern></defs>
-          <rect width="100%" height="100%" fill="url(#army)"/>
-        </svg>
-      )}
-      {styleName === 'einstein' && (
-        <svg className="pointer-events-none absolute inset-0 w-full h-full -z-10" xmlns="http://www.w3.org/2000/svg" style={{opacity:0.13}}>
-          <defs><pattern id="einstein" x="0" y="0" width="160" height="120" patternUnits="userSpaceOnUse">
-            <text x="5" y="22" fontSize="14" fill="#4a9a7a" fontFamily="monospace" fontWeight="bold">E=mc²</text>
-            <text x="90" y="22" fontSize="11" fill="#4a9a7a" fontFamily="monospace">F=ma</text>
-            <text x="5" y="50" fontSize="11" fill="#4a9a7a" fontFamily="monospace">Δx·Δp≥ℏ/2</text>
-            <text x="90" y="50" fontSize="12" fill="#4a9a7a" fontFamily="monospace">πr²</text>
-            <text x="5" y="78" fontSize="10" fill="#4a9a7a" fontFamily="monospace">∑F=0</text>
-            <text x="60" y="78" fontSize="11" fill="#4a9a7a" fontFamily="monospace">λ=h/mv</text>
-            <text x="5" y="105" fontSize="11" fill="#4a9a7a" fontFamily="monospace">∫∞=-1/12</text>
-            <text x="95" y="105" fontSize="10" fill="#4a9a7a" fontFamily="monospace">c=3×10⁸</text>
-          </pattern></defs>
-          <rect width="100%" height="100%" fill="url(#einstein)"/>
-        </svg>
-      )}
-      {styleName === 'neon' && (
-        <svg className="pointer-events-none absolute inset-0 w-full h-full -z-10" xmlns="http://www.w3.org/2000/svg" style={{opacity:0.07}}>
-          <defs><pattern id="neon" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-            <circle cx="40" cy="40" r="35" fill="none" stroke="#06b6d4" strokeWidth="0.6"/>
-            <circle cx="40" cy="40" r="18" fill="none" stroke="#06b6d4" strokeWidth="0.6"/>
-            <line x1="0" y1="40" x2="80" y2="40" stroke="#06b6d4" strokeWidth="0.4"/>
-            <line x1="40" y1="0" x2="40" y2="80" stroke="#06b6d4" strokeWidth="0.4"/>
-          </pattern></defs>
-          <rect width="100%" height="100%" fill="url(#neon)"/>
-        </svg>
-      )}
-      {styleName === 'glass' && (
-        <svg className="pointer-events-none absolute inset-0 w-full h-full -z-10" xmlns="http://www.w3.org/2000/svg" style={{opacity:0.05}}>
-          <defs><pattern id="glass" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
-            <circle cx="25" cy="25" r="22" fill="none" stroke="white" strokeWidth="0.5"/>
-            <circle cx="25" cy="25" r="8" fill="none" stroke="white" strokeWidth="0.5"/>
-          </pattern></defs>
-          <rect width="100%" height="100%" fill="url(#glass)"/>
-        </svg>
-      )}
 
       {/* Header */}
       <header className={`flex items-center gap-3 px-4 py-3 border-b ${s.headerBorder} flex-shrink-0`}>
