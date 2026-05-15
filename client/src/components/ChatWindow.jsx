@@ -582,35 +582,31 @@ export default function ChatWindow({ lang, mobile = false }) {
       />
 
       {/* Theme pattern overlay */}
-      {styleName === 'chess' && (
-        <div className="pointer-events-none absolute inset-0 -z-10 opacity-[0.15]" style={{
-          backgroundImage: 'repeating-conic-gradient(#f0d9b5 0% 25%, #b58863 0% 50%) 0 0 / 32px 32px',
-          backgroundSize: '32px 32px',
-        }} />
-      )}
-      {styleName !== 'default' && styleName !== 'chess' && (
-        <div className="pointer-events-none absolute inset-0 -z-10 opacity-[0.06]" style={{
-          backgroundImage: styleName === 'nature'
-            ? `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='2' fill='%2334d399'/%3E%3Cpath d='M30 5 Q35 15 30 25 Q25 15 30 5' fill='%2334d399'/%3E%3Ccircle cx='50' cy='40' r='3' fill='%2334d399'/%3E%3Cpath d='M10 40 Q15 50 10 60 Q5 50 10 40' fill='%2334d399'/%3E%3C/svg%3E")`
-            : styleName === 'sea'
-            ? `url("data:image/svg+xml,%3Csvg width='80' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20 Q20 5 40 20 Q60 35 80 20' fill='none' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Cpath d='M0 30 Q20 15 40 30 Q60 45 80 30' fill='none' stroke='%2306b6d4' stroke-width='1'/%3E%3C/svg%3E")`
-            : styleName === 'army'
-            ? `url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='20' height='20' fill='%234a5240'/%3E%3Crect x='20' y='20' width='20' height='20' fill='%234a5240'/%3E%3Crect x='10' y='5' width='8' height='12' rx='2' fill='%236b7a5e'/%3E%3Crect x='30' y='25' width='8' height='12' rx='2' fill='%236b7a5e'/%3E%3C/svg%3E")`
-            : styleName === 'einstein'
-            ? `url("data:image/svg+xml,%3Csvg width='80' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='5' y='25' font-size='11' fill='%234a9a7a' font-family='monospace'%3EE=mc²%3C/text%3E%3Ctext x='40' y='55' font-size='10' fill='%234a9a7a' font-family='monospace'%3EΔx·Δp%3C/text%3E%3Ctext x='10' y='70' font-size='9' fill='%234a9a7a' font-family='monospace'%3EF=ma%3C/text%3E%3C/svg%3E")`
-            : styleName === 'neon'
-            ? `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='20' fill='none' stroke='%2306b6d4' stroke-width='0.5'/%3E%3Ccircle cx='30' cy='30' r='10' fill='none' stroke='%2306b6d4' stroke-width='0.5'/%3E%3Cline x1='0' y1='30' x2='60' y2='30' stroke='%2306b6d4' stroke-width='0.3'/%3E%3Cline x1='30' y1='0' x2='30' y2='60' stroke='%2306b6d4' stroke-width='0.3'/%3E%3C/svg%3E")`
-            : styleName === 'glass'
-            ? `url("data:image/svg+xml,%3Csvg width='50' height='50' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='25' cy='25' r='20' fill='none' stroke='white' stroke-width='0.4'/%3E%3Ccircle cx='25' cy='25' r='5' fill='none' stroke='white' stroke-width='0.4'/%3E%3C/svg%3E")`
-            : styleName === 'minimal'
-            ? `url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23999'/%3E%3C/svg%3E")`
-            : 'none',
-          backgroundSize: styleName === 'minimal' ? '20px 20px'
-            : styleName === 'army' ? '40px 40px'
-            : styleName === 'sea' ? '80px 40px'
-            : '80px 80px',
-        }} />
-      )}
+      {(() => {
+        const patterns = {
+          chess:    { image: 'repeating-conic-gradient(#f0d9b5 0% 25%, #b58863 0% 50%)', size: '32px 32px', opacity: 0.12 },
+          nature:   { image: `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5 Q38 18 30 30 Q22 18 30 5' fill='%2334d399'/%3E%3Cpath d='M10 35 Q18 48 10 60 Q2 48 10 35' fill='%2334d399'/%3E%3Cpath d='M50 25 Q58 38 50 50 Q42 38 50 25' fill='%2334d399'/%3E%3Ccircle cx='10' cy='10' r='2' fill='%2334d399'/%3E%3Ccircle cx='50' cy='15' r='1.5' fill='%2334d399'/%3E%3C/svg%3E")`, size: '60px 60px', opacity: 0.08 },
+          sea:      { image: `url("data:image/svg+xml,%3Csvg width='80' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20 Q10 10 20 20 Q30 30 40 20 Q50 10 60 20 Q70 30 80 20' fill='none' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Cpath d='M0 32 Q10 22 20 32 Q30 42 40 32 Q50 22 60 32 Q70 42 80 32' fill='none' stroke='%2306b6d4' stroke-width='1'/%3E%3C/svg%3E")`, size: '80px 40px', opacity: 0.1 },
+          army:     { image: `url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='20' height='20' fill='%234a5240'/%3E%3Crect x='20' y='20' width='20' height='20' fill='%234a5240'/%3E%3Cellipse cx='10' cy='10' rx='6' ry='4' fill='%236b7a5e'/%3E%3Cellipse cx='30' cy='30' rx='6' ry='4' fill='%236b7a5e'/%3E%3C/svg%3E")`, size: '40px 40px', opacity: 0.15 },
+          einstein: { image: `url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='5' y='20' font-size='12' fill='%234a9a7a' font-family='monospace'%3EE%3Dmc%C2%B2%3C/text%3E%3Ctext x='50' y='50' font-size='11' fill='%234a9a7a' font-family='monospace'%3E%CE%94x%C2%B7%CE%94p%3C/text%3E%3Ctext x='10' y='80' font-size='10' fill='%234a9a7a' font-family='monospace'%3EF%3Dma%3C/text%3E%3Ctext x='55' y='95' font-size='9' fill='%234a9a7a' font-family='monospace'%3E%CF%80r%C2%B2%3C/text%3E%3C/svg%3E")`, size: '100px 100px', opacity: 0.12 },
+          neon:     { image: `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='25' fill='none' stroke='%2306b6d4' stroke-width='0.5'/%3E%3Ccircle cx='30' cy='30' r='12' fill='none' stroke='%2306b6d4' stroke-width='0.5'/%3E%3Cline x1='0' y1='30' x2='60' y2='30' stroke='%2306b6d4' stroke-width='0.3'/%3E%3Cline x1='30' y1='0' x2='30' y2='60' stroke='%2306b6d4' stroke-width='0.3'/%3E%3C/svg%3E")`, size: '60px 60px', opacity: 0.08 },
+          glass:    { image: `url("data:image/svg+xml,%3Csvg width='50' height='50' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='25' cy='25' r='22' fill='none' stroke='white' stroke-width='0.4'/%3E%3Ccircle cx='25' cy='25' r='8' fill='none' stroke='white' stroke-width='0.4'/%3E%3C/svg%3E")`, size: '50px 50px', opacity: 0.06 },
+          minimal:  { image: `url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23888'/%3E%3C/svg%3E")`, size: '20px 20px', opacity: 0.15 },
+        };
+        const p = patterns[styleName];
+        if (!p) return null;
+        return (
+          <div
+            className="pointer-events-none absolute inset-0 -z-10"
+            style={{
+              backgroundImage: p.image,
+              backgroundSize: p.size,
+              backgroundRepeat: 'repeat',
+              opacity: p.opacity,
+            }}
+          />
+        );
+      })()}
 
       {/* Header */}
       <header className={`flex items-center gap-3 px-4 py-3 border-b ${s.headerBorder} flex-shrink-0`}>
