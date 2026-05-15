@@ -340,17 +340,19 @@ export default function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [chatExpanded, setChatExpanded] = useState(false);
   const isMobile = useIsMobile();
-  const [viewportHeight, setViewportHeight] = useState('100%');
+  const [viewportHeight, setViewportHeight] = useState(() => window.visualViewport?.height || window.innerHeight);
 
   useEffect(() => {
     const handler = () => {
-      setViewportHeight(`${window.visualViewport?.height || window.innerHeight}px`);
+      setViewportHeight(window.visualViewport?.height || window.innerHeight);
     };
     window.visualViewport?.addEventListener('resize', handler);
+    window.visualViewport?.addEventListener('scroll', handler);
     window.addEventListener('resize', handler);
     handler();
     return () => {
       window.visualViewport?.removeEventListener('resize', handler);
+      window.visualViewport?.removeEventListener('scroll', handler);
       window.removeEventListener('resize', handler);
     };
   }, []);
@@ -573,7 +575,10 @@ export default function App() {
                 right: 0,
                 bottom: 0,
                 width: '100%',
-                height: viewportHeight,
+                height: `${viewportHeight}px`,
+                maxHeight: `${viewportHeight}px`,
+                top: 0,
+                transition: 'height 0.1s ease',
                 zIndex: 9999,
                 background: '#0d0d18',
                 display: 'flex',

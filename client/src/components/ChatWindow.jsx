@@ -262,23 +262,15 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
 
   useEffect(() => {
     if (!mobile) return;
-    const initialHeight = window.visualViewport?.height || window.innerHeight;
     const handler = () => {
-      const currentHeight = window.visualViewport?.height || window.innerHeight;
-      const diff = initialHeight - currentHeight;
-      setKeyboardOpen(diff > 100);
-      if (diff > 100 && messagesRef.current) {
+      if (messagesRef.current) {
         setTimeout(() => {
           messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' });
-        }, 100);
+        }, 150);
       }
     };
     window.visualViewport?.addEventListener('resize', handler);
-    window.addEventListener('resize', handler);
-    return () => {
-      window.visualViewport?.removeEventListener('resize', handler);
-      window.removeEventListener('resize', handler);
-    };
+    return () => window.visualViewport?.removeEventListener('resize', handler);
   }, [mobile]);
 
   useEffect(() => {
