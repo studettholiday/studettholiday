@@ -221,7 +221,7 @@ const BUTTON_GROUPS = {
     { id: 'events',    label: 'Events'     },
     { id: 'plan',      label: '📋 Plan',      children: [{ id: 'change-group', label: 'Change Group' }, { id: 'add-subject', label: 'Add Subject' }, { id: 'remove-subject', label: 'Remove Subject' }] },
     { id: 'my-notes',  label: '📓 My Notes',  children: [{ id: 'notes', label: 'Notes' }, { id: 'practice-diary', label: 'Practice Diary' }, { id: 'notes-box', label: '📝 Notes Box' }, { id: 'search', label: '🔍 Search' }] },
-    { id: 'report',    label: '⚠️ Report',    children: [{ id: 'report-absence', label: 'Report Absence' }, { id: 'report-event-absence', label: 'Report Event Absence' }, { id: 'report-exam-absence', label: 'Report Exam Absence' }] },
+    { id: 'report',    label: '⚠️ Report',    children: [{ id: 'report-absence', label: 'Lesson Absence' }, { id: 'report-event-absence', label: 'Report Event Absence' }, { id: 'report-exam-absence', label: 'Report Exam Absence' }] },
   ],
 };
 
