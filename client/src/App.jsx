@@ -577,7 +577,6 @@ export default function App() {
                 width: '100%',
                 height: `${viewportHeight}px`,
                 maxHeight: `${viewportHeight}px`,
-                top: 0,
                 transition: 'height 0.1s ease',
                 zIndex: 9999,
                 background: '#0d0d18',
