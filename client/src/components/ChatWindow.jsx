@@ -64,94 +64,6 @@ function getGreeting(role, lang) {
 }
 
 const CHAT_STYLES = {
-  default: {
-    wrap:            'bg-[#0d0d18]',
-    headerBorder:    'border-white/[0.08]',
-    footerBorder:    'border-white/[0.08]',
-    titleColor:      'text-white',
-    assistantBubble: 'bg-white/[0.08] text-gray-100',
-    inputCls:        'bg-white/[0.05] border border-white/15 text-white placeholder-gray-500',
-    selectCls:       'bg-white/[0.05] border border-white/15 text-gray-300',
-    thinkingColor:   'text-gray-500',
-    colorScheme:     'dark',
-  },
-  neon: {
-    wrap:            'bg-[#050510]',
-    headerBorder:    'border-cyan-500/25',
-    footerBorder:    'border-cyan-500/25',
-    titleColor:      'text-cyan-300',
-    assistantBubble: 'bg-[#0a0820] text-cyan-300 border border-cyan-500/20',
-    inputCls:        'bg-[#0a0820] border border-cyan-500/30 text-cyan-200 placeholder-cyan-900',
-    selectCls:       'bg-[#0a0820] border border-cyan-500/30 text-cyan-300',
-    thinkingColor:   'text-cyan-600',
-    colorScheme:     'dark',
-  },
-  minimal: {
-    wrap:            'bg-gray-50',
-    headerBorder:    'border-gray-200',
-    footerBorder:    'border-gray-200',
-    titleColor:      'text-gray-800',
-    assistantBubble: 'bg-gray-200 text-gray-800',
-    inputCls:        'bg-white border border-gray-300 text-gray-800 placeholder-gray-400',
-    selectCls:       'bg-white border border-gray-300 text-gray-700',
-    thinkingColor:   'text-gray-400',
-    colorScheme:     'light',
-  },
-  chess: {
-    wrap:            'bg-[#1a1a1a]',
-    headerBorder:    'border-[#f0d9b5]/20',
-    footerBorder:    'border-[#f0d9b5]/20',
-    titleColor:      'text-[#f0d9b5]',
-    assistantBubble: 'bg-[#2a2a2a] text-[#f0d9b5] border border-[#f0d9b5]/20',
-    inputCls:        'bg-[#2a2a2a] border border-[#f0d9b5]/20 text-[#f0d9b5] placeholder-[#b58863]/50',
-    selectCls:       'bg-[#2a2a2a] border border-[#f0d9b5]/20 text-[#f0d9b5]',
-    thinkingColor:   'text-[#b58863]',
-    colorScheme:     'dark',
-  },
-  nature: {
-    wrap:            'bg-[#0d1f0d]',
-    headerBorder:    'border-emerald-700/30',
-    footerBorder:    'border-emerald-700/30',
-    titleColor:      'text-emerald-300',
-    assistantBubble: 'bg-emerald-950/60 text-emerald-100 border border-emerald-700/30',
-    inputCls:        'bg-emerald-950/40 border border-emerald-700/30 text-emerald-100 placeholder-emerald-700',
-    selectCls:       'bg-emerald-950/40 border border-emerald-700/30 text-emerald-300',
-    thinkingColor:   'text-emerald-600',
-    colorScheme:     'dark',
-  },
-  sea: {
-    wrap:            'bg-[#051525]',
-    headerBorder:    'border-cyan-700/30',
-    footerBorder:    'border-cyan-700/30',
-    titleColor:      'text-cyan-200',
-    assistantBubble: 'bg-[#0a2535] text-cyan-100 border border-cyan-700/25',
-    inputCls:        'bg-[#0a2535] border border-cyan-700/30 text-cyan-100 placeholder-cyan-800',
-    selectCls:       'bg-[#0a2535] border border-cyan-700/30 text-cyan-200',
-    thinkingColor:   'text-cyan-700',
-    colorScheme:     'dark',
-  },
-  army: {
-    wrap:            'bg-[#1a1f14]',
-    headerBorder:    'border-[#4a5240]/40',
-    footerBorder:    'border-[#4a5240]/40',
-    titleColor:      'text-[#a8b89a]',
-    assistantBubble: 'bg-[#252b1e] text-[#c8d4b8] border border-[#4a5240]/30',
-    inputCls:        'bg-[#252b1e] border border-[#4a5240]/40 text-[#c8d4b8] placeholder-[#4a5240]',
-    selectCls:       'bg-[#252b1e] border border-[#4a5240]/40 text-[#a8b89a]',
-    thinkingColor:   'text-[#6b7a5e]',
-    colorScheme:     'dark',
-  },
-  einstein: {
-    wrap:            'bg-[#1a2320]',
-    headerBorder:    'border-[#4a9a7a]/30',
-    footerBorder:    'border-[#4a9a7a]/30',
-    titleColor:      'text-[#e8f5e0]',
-    assistantBubble: 'bg-[#1f2e2a] text-[#d4edda] border border-[#4a9a7a]/25',
-    inputCls:        'bg-[#1f2e2a] border border-[#4a9a7a]/30 text-[#d4edda] placeholder-[#4a9a7a]',
-    selectCls:       'bg-[#1f2e2a] border border-[#4a9a7a]/30 text-[#a8d5b8]',
-    thinkingColor:   'text-[#4a9a7a]',
-    colorScheme:     'dark',
-  },
   glass: {
     wrap:            'bg-white/[0.03] backdrop-blur-2xl',
     headerBorder:    'border-white/15',
@@ -164,14 +76,6 @@ const CHAT_STYLES = {
     colorScheme:     'dark',
   },
 };
-
-const STYLE_OPTIONS = [
-  { id: 'glass',    label: 'Glass',    desc: 'Frosted blur'   },
-  { id: 'default',  label: 'Dark',     desc: 'Clean & minimal'},
-  { id: 'neon',     label: 'Neon',     desc: 'Cyberpunk glow' },
-  { id: 'chess',    label: 'Chess',    desc: 'Classic board'  },
-  { id: 'einstein', label: 'Einstein', desc: 'Chalkboard'     },
-];
 
 function buildContext(libraryFiles, attachedFiles) {
   const parts = [];
@@ -187,7 +91,7 @@ function buildContext(libraryFiles, attachedFiles) {
 }
 
 function MessageBubble({ message, theme, styleName }) {
-  const s = CHAT_STYLES[styleName];
+  const s = CHAT_STYLES['glass'];
   const isUser = message.role === 'user';
 
   if (message.type === 'searching') {
@@ -343,15 +247,13 @@ export default function ChatWindow({ lang, mobile = false }) {
   useEffect(() => {
     setProvider(lang === 'GEO' ? 'gemini' : 'anthropic');
   }, [lang]);
-  const [styleName, setStyleName] = useState('glass');
-  const [styleOpen, setStyleOpen] = useState(false);
-  const stylePanelRef   = useRef(null);
+  const [accentColor, setAccentColor] = useState('#7c3aed');
   const fileInputRef    = useRef(null);
   const editBtnRef      = useRef(null);
   const [attachedFiles, setAttachedFiles] = useState([]);
   // In-memory library: [{id, filename, content}] — cleared on role switch / new chat
   const [libraryFiles, setLibraryFiles] = useState([]);
-  const s = CHAT_STYLES[styleName];
+  const s = CHAT_STYLES['glass'];
 
   function addLibraryFile(filename, content) {
     setLibraryFiles(prev => [...prev, { id: Date.now(), filename, content }]);
@@ -369,18 +271,6 @@ export default function ChatWindow({ lang, mobile = false }) {
     setOpenGroup(null);
     setAttachedFiles([]);
   }, [role, lang]);
-
-  // Close stylize panel on outside click
-  useEffect(() => {
-    if (!styleOpen) return;
-    const handler = (e) => {
-      if (stylePanelRef.current && !stylePanelRef.current.contains(e.target)) {
-        setStyleOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [styleOpen]);
 
   // Close edit submenu on outside click
   useEffect(() => {
@@ -569,12 +459,12 @@ export default function ChatWindow({ lang, mobile = false }) {
   }
 
   return (
-    <div className={`relative flex flex-col ${mobile ? 'w-full h-full rounded-none border-0' : 'max-w-2xl mx-auto border border-white/[0.08] rounded-2xl'} overflow-hidden ${s.wrap}`}>
+    <div className={`relative flex flex-col ${mobile ? 'w-full h-full rounded-none border-0' : 'max-w-2xl mx-auto border rounded-2xl'} overflow-hidden ${s.wrap}`} style={mobile ? undefined : { borderColor: accentColor + '40' }}>
 
       {/* Per-role ambient glow */}
       <div
         className="pointer-events-none absolute inset-0 -z-10"
-        style={{ background: `radial-gradient(ellipse 80% 35% at 50% 0%, ${theme.glow}, transparent)` }}
+        style={{ background: `radial-gradient(ellipse 80% 35% at 50% 0%, ${accentColor}22, transparent)` }}
       />
 
       {/* Header */}
@@ -629,37 +519,14 @@ export default function ChatWindow({ lang, mobile = false }) {
             <option value="gemini">Gemini</option>
           </select>
 
-          {/* Stylize */}
-          <div className="relative" ref={stylePanelRef}>
-            <button
-              onClick={() => setStyleOpen((o) => !o)}
-              className={`text-xs px-3 py-1.5 rounded-lg border transition-colors duration-150 ${
-                styleOpen
-                  ? 'border-white/30 text-white bg-white/10'
-                  : 'border-white/15 text-gray-400 hover:text-white hover:border-white/30'
-              }`}
-            >
-              {lang === 'GEO' ? 'სტილი' : 'Stylize'}
-            </button>
-
-            {styleOpen && (
-              <div className="absolute right-0 top-full mt-2 w-44 rounded-xl border border-white/15 bg-[#0f0f1a] shadow-2xl z-20 overflow-hidden">
-                {STYLE_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.id}
-                    onClick={() => { setStyleName(opt.id); setStyleOpen(false); }}
-                    className={`w-full text-left px-4 py-2.5 flex items-center justify-between transition-colors ${
-                      styleName === opt.id
-                        ? 'bg-white/10 text-white'
-                        : 'text-gray-400 hover:bg-white/[0.05] hover:text-white'
-                    }`}
-                  >
-                    <span className="text-sm font-medium">{lang === 'GEO' ? { glass: 'შუშა', default: 'ბნელი', neon: 'ნეონი', chess: 'ჭადრაკი', einstein: 'აინშტაინი' }[opt.id] : opt.label}</span>
-                    <span className="text-xs text-gray-500">{lang === 'GEO' ? { glass: 'დაბურული მინა', default: 'მინიმალისტური', neon: 'კიბერპანკი', chess: 'კლასიკა', einstein: 'დაფა' }[opt.id] : opt.desc}</span>
-                  </button>
-                ))}
-              </div>
-            )}
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            {['#7c3aed','#2563eb','#059669','#dc2626','#d97706','#db2777','#0891b2','#e2e8f0'].map(color => (
+              <button
+                key={color}
+                onClick={() => setAccentColor(color)}
+                style={{ background: color, width: 18, height: 18, borderRadius: '50%', flexShrink: 0, border: accentColor === color ? '2px solid white' : '2px solid transparent', outline: accentColor === color ? '1px solid rgba(255,255,255,0.4)' : 'none', transition: 'all 0.15s', transform: accentColor === color ? 'scale(1.2)' : 'scale(1)', opacity: accentColor === color ? 1 : 0.65 }}
+              />
+            ))}
           </div>
 
           {loading && (
@@ -835,7 +702,7 @@ export default function ChatWindow({ lang, mobile = false }) {
           </div>
         )}
         {messages.map((msg, i) => (
-          <MessageBubble key={i} message={msg} theme={theme} styleName={styleName} />
+          <MessageBubble key={i} message={msg} theme={theme} styleName="glass" />
         ))}
       </div>
 
