@@ -252,10 +252,53 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
   const stylePanelRef   = useRef(null);
   const fileInputRef    = useRef(null);
   const editBtnRef      = useRef(null);
+  const messagesRef     = useRef(null);
   const [attachedFiles, setAttachedFiles] = useState([]);
   // In-memory library: [{id, filename, content}] — cleared on role switch / new chat
   const [libraryFiles, setLibraryFiles] = useState([]);
   const s = CHAT_STYLES['glass'];
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [isLandscape, setIsLandscape] = useState(false);
+
+  useEffect(() => {
+    if (!mobile) return;
+    const initialHeight = window.visualViewport?.height || window.innerHeight;
+    const handler = () => {
+      const currentHeight = window.visualViewport?.height || window.innerHeight;
+      const diff = initialHeight - currentHeight;
+      setKeyboardOpen(diff > 100);
+      if (diff > 100 && messagesRef.current) {
+        setTimeout(() => {
+          messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' });
+        }, 100);
+      }
+    };
+    window.visualViewport?.addEventListener('resize', handler);
+    window.addEventListener('resize', handler);
+    return () => {
+      window.visualViewport?.removeEventListener('resize', handler);
+      window.removeEventListener('resize', handler);
+    };
+  }, [mobile]);
+
+  useEffect(() => {
+    if (!mobile) return;
+    const handler = () => setIsLandscape(window.innerWidth > window.innerHeight);
+    handler();
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, [mobile]);
+
+  useEffect(() => {
+    if (!mobile) return;
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (conn && (conn.effectiveType === '2g' || conn.effectiveType === 'slow-2g')) {
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: lang === 'GEO' ? '⚠️ ნელი კავშირი აღმოჩენილია. პასუხი შეიძლება დაგვიანდეს.' : '⚠️ Slow connection detected. Responses may take longer.'
+      }]);
+    }
+  }, [mobile]);
 
   function addLibraryFile(filename, content) {
     setLibraryFiles(prev => [...prev, { id: Date.now(), filename, content }]);
@@ -402,6 +445,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
     const userMessage = { role: 'user', content: text };
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
+    setTimeout(() => { messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' }); }, 50);
     setInput('');
     setLoading(true);
 
@@ -429,6 +473,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
       if (aiText.startsWith('YOUTUBE_SEARCH:')) {
         const query = aiText.replace('YOUTUBE_SEARCH:', '').trim();
         setMessages((prev) => [...prev, { role: 'assistant', type: 'searching', text: `Searching YouTube for "${query}"…` }]);
+        setTimeout(() => { messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' }); }, 50);
         try {
           const ytRes = await fetch(`/api/youtube/search?q=${encodeURIComponent(query)}`);
           const ytData = await ytRes.json();
@@ -436,15 +481,18 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
             ...prev.filter((m) => m.type !== 'searching'),
             { role: 'assistant', type: 'youtube_results', query, results: ytData.results ?? [] },
           ]);
+          setTimeout(() => { messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' }); }, 50);
         } catch {
           setMessages((prev) => [
             ...prev.filter((m) => m.type !== 'searching'),
             { role: 'assistant', content: 'Sorry, YouTube search failed.' },
           ]);
+          setTimeout(() => { messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' }); }, 50);
         }
       } else if (aiText.startsWith('WEB_SEARCH:')) {
         const query = aiText.replace('WEB_SEARCH:', '').trim();
         setMessages((prev) => [...prev, { role: 'assistant', type: 'searching', text: `Searching the web for "${query}"…` }]);
+        setTimeout(() => { messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' }); }, 50);
         try {
           const webRes = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
           const webData = await webRes.json();
@@ -452,20 +500,24 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
             ...prev.filter((m) => m.type !== 'searching'),
             { role: 'assistant', type: 'web_results', query, results: webData.results ?? [] },
           ]);
+          setTimeout(() => { messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' }); }, 50);
         } catch {
           setMessages((prev) => [
             ...prev.filter((m) => m.type !== 'searching'),
             { role: 'assistant', content: 'Sorry, web search failed.' },
           ]);
+          setTimeout(() => { messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' }); }, 50);
         }
       } else {
         setMessages((prev) => [...prev, { role: 'assistant', content: aiText }]);
+        setTimeout(() => { messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' }); }, 50);
       }
     } catch {
       setMessages((prev) => [
         ...prev,
         { role: 'assistant', content: 'Error: could not reach the server.' },
       ]);
+      setTimeout(() => { messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' }); }, 50);
     } finally {
       setLoading(false);
     }
@@ -477,7 +529,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
       input[type=range].rainbow-slider::-webkit-slider-thumb { width: 22px; height: 22px; border-radius: 50%; background: white; border: 2px solid rgba(0,0,0,0.3); box-shadow: 0 1px 4px rgba(0,0,0,0.4); appearance: none; cursor: pointer; }
       input[type=range].rainbow-slider::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: white; border: 2px solid rgba(0,0,0,0.3); cursor: pointer; }
     `}</style>
-    <div className={`relative flex flex-col ${mobile ? 'w-full h-full rounded-none border-0' : 'max-w-2xl mx-auto border rounded-2xl'} overflow-hidden ${s.wrap}`} style={mobile ? undefined : { borderColor: accentColor + '40' }}>
+    <div className={`relative flex flex-col ${mobile ? 'w-full h-full rounded-none border-0' : 'max-w-2xl mx-auto border rounded-2xl'} overflow-hidden ${s.wrap}`} style={{ ...(mobile ? {} : { borderColor: accentColor + '40' }), ...(mobile && keyboardOpen ? { height: `${window.visualViewport?.height || window.innerHeight}px` } : {}) }}>
 
       {/* Per-role ambient glow */}
       <div
@@ -779,7 +831,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
       )}
 
       {/* Messages + active panel */}
-      <div className={`${mobile ? 'flex-1' : 'h-[400px]'} overflow-y-auto px-4 py-4`}>
+      <div ref={messagesRef} className={`${mobile ? 'flex-1' : 'h-[400px]'} overflow-y-auto px-4 py-4`} style={{ fontSize: 'clamp(13px, 3.5vw, 16px)', ...(mobile && isLandscape ? { maxHeight: '40vh' } : {}) }}>
         {activePanel && (
           <div className="mb-4">
             <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)}
@@ -826,6 +878,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
           type="button"
           title="Attach document for this conversation only (.pdf, .txt, .md) — not saved to Library"
           onClick={() => fileInputRef.current?.click()}
+          style={{ minHeight: 44, minWidth: 44 }}
           className={`px-3 py-2 rounded-xl text-sm flex-shrink-0 transition-all duration-150 active:scale-95 ${
             attachedFiles.length > 0
               ? PANEL_ACTIVE_CLS[role]
@@ -849,6 +902,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
             type="button"
             title="Knowledge Library"
             onClick={() => setActivePanel(activePanel === 'knowledge-library' ? null : 'knowledge-library')}
+            style={{ minHeight: 44, minWidth: 44 }}
             className={`px-3 py-2 rounded-xl text-sm font-medium flex-shrink-0 transition-all duration-150 active:scale-95 ${
               activePanel === 'knowledge-library'
                 ? PANEL_ACTIVE_CLS[role]
@@ -863,6 +917,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
         <button
           type="submit"
           disabled={loading || !input.trim()}
+          style={{ minHeight: 44, minWidth: 44 }}
           className={`px-4 py-2 rounded-xl text-white text-sm font-medium disabled:opacity-40 active:scale-95 transition-all duration-150 ${theme.sendBtn}`}
         >
           {lang === 'GEO' ? 'გაგზავნა' : 'Send'}

@@ -340,6 +340,20 @@ export default function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [chatExpanded, setChatExpanded] = useState(false);
   const isMobile = useIsMobile();
+  const [viewportHeight, setViewportHeight] = useState('100%');
+
+  useEffect(() => {
+    const handler = () => {
+      setViewportHeight(`${window.visualViewport?.height || window.innerHeight}px`);
+    };
+    window.visualViewport?.addEventListener('resize', handler);
+    window.addEventListener('resize', handler);
+    handler();
+    return () => {
+      window.visualViewport?.removeEventListener('resize', handler);
+      window.removeEventListener('resize', handler);
+    };
+  }, []);
 
   const closeModal = useCallback(() => setModalOpen(false), []);
   const t = T[lang];
@@ -559,7 +573,7 @@ export default function App() {
                 right: 0,
                 bottom: 0,
                 width: '100%',
-                height: '100%',
+                height: viewportHeight,
                 zIndex: 9999,
                 background: '#0d0d18',
                 display: 'flex',
