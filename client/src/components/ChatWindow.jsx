@@ -265,7 +265,7 @@ const GROUP_OPEN_CLS = {
   student:   'bg-emerald-600/20 text-emerald-300 border border-emerald-500/40',
 };
 
-export default function ChatWindow({ lang }) {
+export default function ChatWindow({ lang, mobile = false }) {
   const [role, setRole] = useState('admin');
   const [activePanel, setActivePanel] = useState(null);
   const [openGroup, setOpenGroup] = useState(null);
@@ -513,7 +513,7 @@ export default function ChatWindow({ lang }) {
   }
 
   return (
-    <div className={`relative flex flex-col max-w-2xl mx-auto border border-white/[0.08] rounded-2xl overflow-hidden ${s.wrap}`}>
+    <div className={`relative flex flex-col ${mobile ? 'w-full h-full rounded-none border-0' : 'max-w-2xl mx-auto border border-white/[0.08] rounded-2xl'} overflow-hidden ${s.wrap}`}>
 
       {/* Per-role ambient glow */}
       <div
@@ -771,7 +771,7 @@ export default function ChatWindow({ lang }) {
       )}
 
       {/* Messages + active panel */}
-      <div className="h-[400px] overflow-y-auto px-4 py-4">
+      <div className={`${mobile ? 'flex-1' : 'h-[400px]'} overflow-y-auto px-4 py-4`}>
         {activePanel && (
           <div className="mb-4">
             <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)}

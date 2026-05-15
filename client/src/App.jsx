@@ -531,14 +531,17 @@ export default function App() {
             {chatExpanded && (
               <div style={{
                 position: 'fixed',
-                inset: 0,
-                width: '100vw',
-                height: '100vh',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: '100%',
+                height: '100%',
                 zIndex: 9999,
                 background: '#0d0d18',
-                overflowY: 'auto',
                 display: 'flex',
                 flexDirection: 'column',
+                overflow: 'hidden',
               }}>
                 <button
                   onClick={() => setChatExpanded(false)}
@@ -563,8 +566,14 @@ export default function App() {
                 >
                   ✕
                 </button>
-                <div style={{ flex: 1, padding: '56px 12px 16px' }}>
-                  <ChatWindow lang={lang} />
+                <div style={{
+                  flex: 1,
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: '52px 0 0',
+                }}>
+                  <ChatWindow lang={lang} mobile={true} />
                 </div>
               </div>
             )}
