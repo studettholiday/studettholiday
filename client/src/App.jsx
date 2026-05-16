@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import ChatWindow from './components/ChatWindow';
+import About from './pages/About';
 
 const T = {
   EN: {
@@ -492,6 +493,10 @@ export default function App() {
   useEffect(() => {
     document.documentElement.lang = lang === 'GEO' ? 'ka' : 'en';
   }, [lang]);
+
+  if (window.location.pathname === '/about') {
+    return <About />;
+  }
 
   if (window.location.pathname === '/join') {
     return (
