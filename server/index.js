@@ -4,7 +4,6 @@ const cors = require('cors');
 const path = require('path');
 const chatRouter = require('./routes/chat');
 const dbRouter = require('./routes/db');
-const authRouter = require('./routes/auth');
 const youtubeRoutes = require('./routes/youtube');
 const searchRoutes = require('./routes/search');
 
@@ -15,7 +14,6 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
 app.use('/api/chat', chatRouter);
-app.use('/api/auth', authRouter);
 app.use('/api', dbRouter);
 app.use('/api/youtube', youtubeRoutes);
 app.use('/api/search', searchRoutes);
