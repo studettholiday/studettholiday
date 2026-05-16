@@ -409,13 +409,8 @@ export default function App() {
 
   return (
     <div
-      className="min-h-screen text-white app-root-bg"
+      className="min-h-screen text-white"
       style={{
-        backgroundImage: "linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('/sherlock-bg.jpg')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center 80%',
-        backgroundAttachment: 'scroll',
-        backgroundColor: '#08080f',
         overflowX: 'hidden',
         maxWidth: '100vw',
       }}
