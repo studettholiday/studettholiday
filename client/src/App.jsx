@@ -565,9 +565,17 @@ export default function App() {
       {/* Nav */}
       <nav className="sticky top-0 z-40 border-b border-white/[0.08] bg-[#08080f]/80 backdrop-blur-md">
         <div className="mx-auto max-w-6xl px-6 flex items-center justify-between h-16">
-          <span className="text-base font-bold tracking-tight">
-            Sherlock Is Smart
-          </span>
+          <div className="flex items-center gap-6">
+            <span className="text-base font-bold tracking-tight">
+              Sherlock Is Smart
+            </span>
+            <a
+              href="/about"
+              className="text-sm font-medium text-gray-400 hover:text-white transition-colors duration-200"
+            >
+              {lang === 'GEO' ? 'შესახებ' : 'About'}
+            </a>
+          </div>
           <button
             onClick={() => setLang((l) => { const next = l === 'EN' ? 'GEO' : 'EN'; localStorage.setItem('sherlock_lang', next); return next; })}
             className="rounded-full border border-white/20 px-4 py-1.5 text-sm font-medium text-gray-400 hover:border-white/40 hover:text-white transition-colors duration-200"
