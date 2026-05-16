@@ -2,7 +2,7 @@
 cmds = ["npm install --prefix server", "npm install --prefix client"]
 
 [phases.build]
-cmds = ["npm run build --prefix client"]
+cmds = ["npm run build --prefix client && cp -r client/dist/. server/public/"]
 
 [start]
 cmd = "node server/index.js"
