@@ -818,7 +818,7 @@ function KnowledgeLibraryPanel({ role, libraryFiles = [], onAddFile, onRemoveFil
             <span className="text-2xl mb-1.5">{uploading ? '⏳' : '📄'}</span>
             <p className="text-sm text-white font-medium">{uploading ? 'Processing…' : 'Upload to demo library'}</p>
             <p className="text-xs text-gray-500 mt-1 text-center leading-relaxed">
-              Stored in memory · clears when you leave or click New
+              Upload study materials for your school · accessible to everyone in your Sherlock environment
             </p>
             <p className="text-xs text-gray-600 mt-2">Drop here or click · .pdf .txt .md</p>
             <input type="file" accept=".pdf,.txt,.md"
