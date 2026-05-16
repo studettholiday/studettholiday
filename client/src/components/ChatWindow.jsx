@@ -237,8 +237,10 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
   const [editRoleName, setEditRoleName] = useState('');
   const [editSubmenuOpen, setEditSubmenuOpen] = useState(false);
   const [orgName, setOrgName] = useState('');
+  const [orgNameGenitive, setOrgNameGenitive] = useState('');
   const [orgNameOpen, setOrgNameOpen] = useState(false);
   const [orgNameDraft, setOrgNameDraft] = useState('');
+  const [orgNameGenitiveDraft, setOrgNameGenitiveDraft] = useState('');
   const theme = THEMES[role];
   const [messages, setMessages] = useState([
     { role: 'assistant', content: getGreeting(role, lang) },
@@ -579,7 +581,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
                     </button>
                   )}
                   {role === 'admin' && (
-                    <button onClick={() => { setOrgNameDraft(orgName); setOrgNameOpen(true); setEditSubmenuOpen(false); }}
+                    <button onClick={() => { setOrgNameDraft(orgName); setOrgNameGenitiveDraft(orgNameGenitive); setOrgNameOpen(true); setEditSubmenuOpen(false); }}
                       className="w-full text-left px-4 py-2.5 text-xs text-gray-300 hover:bg-white/[0.05] hover:text-white transition-colors border-t border-white/[0.06]">
                       {lang === 'GEO' ? 'დაწესებულების სახელი' : 'Organization Name / School Name'}
                     </button>
@@ -765,21 +767,35 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
                 {lang === 'GEO' ? 'დაწესებულების სახელი' : 'Organization Name / School Name'}
               </h3>
             </div>
-            <div className="bg-white/[0.04] rounded-xl p-3 border border-white/[0.08]">
-              <label className="text-xs font-medium text-gray-400 uppercase tracking-wide">
-                {lang === 'GEO' ? '🏫 სახელი' : '🏫 Name'}
-              </label>
-              <input
-                autoFocus
-                value={orgNameDraft}
-                onChange={e => setOrgNameDraft(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') { setOrgName(orgNameDraft.trim()); setOrgNameOpen(false); } if (e.key === 'Escape') setOrgNameOpen(false); }}
-                placeholder={lang === 'GEO' ? 'მაგ. შერლოკის მუსიკის სკოლა' : 'e.g. Sherlock Music School'}
-                className="mt-2 w-full rounded-lg border border-white/15 bg-white/[0.05] px-3 py-1.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-white/30"
-              />
+            <div className="bg-white/[0.04] rounded-xl p-3 border border-white/[0.08] flex flex-col gap-3">
+              <div>
+                <label className="text-xs font-medium text-gray-400 uppercase tracking-wide">
+                  სახელი (მაგ: კაკაო)
+                </label>
+                <input
+                  autoFocus
+                  value={orgNameDraft}
+                  onChange={e => setOrgNameDraft(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Escape') setOrgNameOpen(false); }}
+                  placeholder="კაკაო"
+                  className="mt-2 w-full rounded-lg border border-white/15 bg-white/[0.05] px-3 py-1.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-white/30"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-400 uppercase tracking-wide">
+                  სახელი წინადადებაში (მაგ: კაკაოს)
+                </label>
+                <input
+                  value={orgNameGenitiveDraft}
+                  onChange={e => setOrgNameGenitiveDraft(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Escape') setOrgNameOpen(false); }}
+                  placeholder="კაკაოს"
+                  className="mt-2 w-full rounded-lg border border-white/15 bg-white/[0.05] px-3 py-1.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-white/30"
+                />
+              </div>
             </div>
             <div className="flex gap-2 flex-shrink-0">
-              <button onClick={() => { setOrgName(orgNameDraft.trim()); setOrgNameOpen(false); }}
+              <button onClick={() => { setOrgName(orgNameDraft.trim()); setOrgNameGenitive(orgNameGenitiveDraft.trim()); setOrgNameOpen(false); }}
                 className={`flex-1 rounded-xl ${THEMES.admin.sendBtn} px-3 py-2 text-xs text-white font-medium transition-colors`}>
                 {lang === 'GEO' ? 'შენახვა' : 'Save'}
               </button>
@@ -873,7 +889,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
         {activePanel && (
           <div className="mb-4">
             <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)}
-              libraryProps={{ libraryFiles, onAddFile: addLibraryFile, onRemoveFile: removeLibraryFile }} lang={lang} />
+              libraryProps={{ libraryFiles, onAddFile: addLibraryFile, onRemoveFile: removeLibraryFile, orgName, orgNameGenitive }} lang={lang} />
           </div>
         )}
         {messages.map((msg, i) => (

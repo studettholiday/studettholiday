@@ -703,7 +703,7 @@ function TeacherShareFilesPanel({ lang }) {
   );
 }
 
-function KnowledgeLibraryPanel({ role, lang, libraryFiles = [], onAddFile, onRemoveFile }) {
+function KnowledgeLibraryPanel({ role, lang, orgName, orgNameGenitive, libraryFiles = [], onAddFile, onRemoveFile }) {
   const th = TH[role];
   const [tab, setTab] = useState('upload');
   const [uploading, setUploading] = useState(false);
@@ -845,7 +845,7 @@ function KnowledgeLibraryPanel({ role, lang, libraryFiles = [], onAddFile, onRem
             </p>
             <p className="text-xs text-gray-500 mt-1 text-center leading-relaxed">
               {lang === 'GEO'
-                ? 'აქ შეგიძლია ატვირთო სასწავლო მასალა შენი სკოლისთვის · ხელმისაწვდომია "დაწესებულების" ყველა წევრისთვის'
+                ? `აქ შეგიძლია ატვირთო სასწავლო მასალა შენი სკოლისთვის · ხელმისაწვდომია "${orgNameGenitive || 'დაწესებულების'}" ყველა წევრისთვის`
                 : 'Upload study materials for your school · accessible to everyone in your Sherlock environment'}
             </p>
             <p className="text-xs text-gray-600 mt-2">
@@ -1357,10 +1357,14 @@ export const PANEL_ACTIVE_CLS = {
 
 export function RolePanel({ role, panel, onClose, libraryProps, lang = 'EN' }) {
   const th = TH[role];
+  const orgName = libraryProps?.orgName ?? '';
+  const panelTitle = (panel === 'knowledge-library' && lang === 'GEO' && orgName)
+    ? `${orgName} ბიბლიოთეკა`
+    : getPanelTitle(panel, lang);
   return (
     <div className={`rounded-2xl border ${th.border} bg-[#0d0d18] overflow-hidden flex flex-col max-h-[350px]`}>
       <div className={`flex items-center justify-between px-4 py-2.5 border-b ${th.border} ${th.hdr} flex-shrink-0`}>
-        <span className={`text-sm font-semibold ${th.accent}`}>{getPanelTitle(panel, lang)}</span>
+        <span className={`text-sm font-semibold ${th.accent}`}>{panelTitle}</span>
         <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-sm leading-none">✕</button>
       </div>
       <div className="p-4 overflow-y-auto flex-1">
