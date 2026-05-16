@@ -60,7 +60,7 @@ export default function About() {
 
         <section className="mx-auto max-w-2xl px-6 pt-20 pb-32">
           <h1
-            className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-br from-white via-gray-100 to-gray-500 bg-clip-text text-transparent leading-tight pb-2 mb-10"
+            className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-br from-white via-gray-100 to-gray-500 bg-clip-text text-transparent leading-tight mb-10"
             style={{ fontFamily: "'Noto Sans Georgian', sans-serif" }}
           >
             {t.title}
