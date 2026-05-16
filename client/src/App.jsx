@@ -211,6 +211,120 @@ function FeatureCarousel3D({ lang }) {
 const FIELD_CLS =
   'w-full rounded-xl border border-white/15 bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/30 transition-colors';
 
+function JoinPage() {
+  const code = new URLSearchParams(window.location.search).get('code') ?? '';
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [status, setStatus] = useState('checking');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  useEffect(() => {
+    if (!code) {
+      setStatus('invalid');
+      setErrorMsg('No invite code provided.');
+      return;
+    }
+    fetch(`/api/invite/verify?code=${encodeURIComponent(code)}`)
+      .then(r => r.ok ? r.json() : r.json().then(d => Promise.reject(d)))
+      .then(() => setStatus('valid'))
+      .catch(d => { setStatus('invalid'); setErrorMsg(d.error ?? 'Invalid or expired invite link.'); });
+  }, []);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setStatus('loading');
+    try {
+      const res = await fetch('/api/invite/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, name: form.name, email: form.email, password: form.password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setStatus('error');
+        setErrorMsg(data.error ?? 'Something went wrong. Please try again.');
+        return;
+      }
+      setStatus('success');
+    } catch {
+      setStatus('error');
+      setErrorMsg('Network error. Please try again.');
+    }
+  }
+
+  return (
+    <div className="min-h-screen text-white flex items-center justify-center p-4" style={{ position: 'relative' }}>
+      <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 0, pointerEvents: 'none' }} />
+      <div className="relative z-10 w-full max-w-md rounded-2xl border border-white/[0.08] bg-[#0f0f1a] p-8 shadow-2xl">
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-bold text-white">Sherlock Is Smart</h1>
+          <p className="text-gray-400 mt-2 text-sm">Create your account</p>
+        </div>
+
+        {status === 'checking' && (
+          <p className="text-center text-gray-400 text-sm py-4">Verifying invite code…</p>
+        )}
+
+        {status === 'invalid' && (
+          <div className="text-center py-4">
+            <p className="text-red-400 font-medium">{errorMsg || 'This invite link is invalid or has expired.'}</p>
+          </div>
+        )}
+
+        {status === 'success' && (
+          <div className="text-center py-8">
+            <p className="text-3xl mb-4">🎉</p>
+            <p className="text-white font-medium">Account created! Welcome to Sherlock.</p>
+          </div>
+        )}
+
+        {(status === 'valid' || status === 'loading' || status === 'error') && (
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <input
+              required
+              type="text"
+              placeholder="Your name"
+              value={form.name}
+              onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+              className={FIELD_CLS}
+              autoComplete="name"
+            />
+            <input
+              required
+              type="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+              className={FIELD_CLS}
+              autoComplete="off"
+            />
+            <input
+              required
+              type="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+              className={FIELD_CLS}
+              autoComplete="new-password"
+            />
+
+            {status === 'error' && (
+              <p className="text-sm text-red-400">{errorMsg}</p>
+            )}
+
+            <button
+              type="submit"
+              disabled={status === 'loading'}
+              className="mt-1 w-full rounded-xl bg-indigo-600 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500 active:scale-95 transition-all duration-150 disabled:opacity-50"
+            >
+              {status === 'loading' ? '…' : 'Create Account'}
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function SignupModal({ lang, onClose }) {
   const t = T[lang];
   const [form, setForm] = useState({ email: '', school: '', type: '' });
@@ -378,6 +492,15 @@ export default function App() {
   useEffect(() => {
     document.documentElement.lang = lang === 'GEO' ? 'ka' : 'en';
   }, [lang]);
+
+  if (window.location.pathname === '/join') {
+    return (
+      <div className="min-h-screen text-white" style={{ overflowX: 'hidden' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.45)', zIndex: 0, pointerEvents: 'none' }} />
+        <JoinPage />
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (modalOpen || chatExpanded) {

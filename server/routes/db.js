@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const express = require('express');
 const router = express.Router();
 const pool = require('../services/db');
@@ -13,6 +14,26 @@ pool.query(`
 `).then(() =>
   pool.query(`ALTER TABLE knowledge_library ADD COLUMN IF NOT EXISTS uploaded_by TEXT DEFAULT 'admin'`)
 ).catch(err => console.error('Library migration failed:', err.message));
+
+pool.query(`
+  CREATE TABLE IF NOT EXISTS invite_codes (
+    id SERIAL PRIMARY KEY,
+    code VARCHAR(16) UNIQUE NOT NULL,
+    used BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT NOW()
+  )
+`).catch(err => console.error('Invite codes migration failed:', err.message));
+
+pool.query(`
+  CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    invite_code VARCHAR(16),
+    created_at TIMESTAMP DEFAULT NOW()
+  )
+`).catch(err => console.error('Users migration failed:', err.message));
 
 pool.query(`
   CREATE TABLE IF NOT EXISTS waitlist (
@@ -103,6 +124,68 @@ router.delete('/library/:id', async (req, res) => {
     res.json({ ok: true });
   } catch (err) {
     console.error('Library delete error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/invite', async (_req, res) => {
+  const code = crypto.randomBytes(6).toString('hex');
+  try {
+    const result = await pool.query(
+      'INSERT INTO invite_codes (code) VALUES ($1) RETURNING *',
+      [code]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/invite', async (_req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM invite_codes ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/invite/verify', async (req, res) => {
+  const { code } = req.query;
+  if (!code) return res.status(400).json({ error: 'code required' });
+  try {
+    const result = await pool.query('SELECT * FROM invite_codes WHERE code = $1', [code]);
+    if (result.rowCount === 0) return res.status(404).json({ error: 'Invalid invite code' });
+    if (result.rows[0].used) return res.status(410).json({ error: 'Invite code already used' });
+    res.json({ valid: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/invite/signup', async (req, res) => {
+  const { code, name, email, password } = req.body ?? {};
+  if (!code || !name || !email || !password) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+  try {
+    const codeResult = await pool.query('SELECT * FROM invite_codes WHERE code = $1', [code]);
+    if (codeResult.rowCount === 0) return res.status(404).json({ error: 'Invalid invite code' });
+    if (codeResult.rows[0].used) return res.status(410).json({ error: 'Invite code already used' });
+
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
+    const passwordHash = `${salt}:${hash}`;
+
+    await pool.query(
+      'INSERT INTO users (name, email, password_hash, invite_code) VALUES ($1, $2, $3, $4)',
+      [name, email, passwordHash, code]
+    );
+    await pool.query('UPDATE invite_codes SET used = TRUE WHERE code = $1', [code]);
+
+    res.json({ success: true });
+  } catch (err) {
+    if (err.code === '23505') return res.status(409).json({ error: 'Email already registered' });
     res.status(500).json({ error: err.message });
   }
 });

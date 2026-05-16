@@ -401,22 +401,83 @@ function AnnouncePanel({ role, lang }) {
 
 function InvitePanel({ role, lang }) {
   const th = TH[role];
-  const [email, setEmail] = useState('');
-  const [sent, setSent] = useState('');
+  const [links, setLinks] = useState([]);
+  const [copiedId, setCopiedId] = useState(null);
+  const [generating, setGenerating] = useState(false);
 
-  function send() { if (email.trim()) { setSent(email.trim()); setEmail(''); setTimeout(() => setSent(''), 3000); } }
+  const origin = window.location.origin;
+
+  useEffect(() => {
+    fetch('/api/invite')
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setLinks(data); })
+      .catch(() => {});
+  }, []);
+
+  async function generate() {
+    setGenerating(true);
+    try {
+      const res = await fetch('/api/invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+      if (res.ok) {
+        const data = await res.json();
+        setLinks(prev => [data, ...prev]);
+      }
+    } catch {}
+    setGenerating(false);
+  }
+
+  function copy(link) {
+    const url = `${origin}/join?code=${link.code}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedId(link.id);
+      setTimeout(() => setCopiedId(id => id === link.id ? null : id), 2000);
+    });
+  }
 
   return (
     <div className="space-y-3">
-      <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-        placeholder={lang === 'GEO' ? 'ელ. ფოსტა' : 'Email address'} className={FIELD} />
-      {sent
-        ? <p className={`text-sm ${th.conf}`}>{lang === 'GEO' ? `✅ მოწვევა გაიგზავნა: ${sent}!` : `✅ Invitation sent to ${sent}!`}</p>
-        : <button onClick={send} disabled={!email.trim()}
-            className={`rounded-xl ${th.btn} disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors`}>
-            {lang === 'GEO' ? 'მოწვევის გაგზავნა' : 'Send Invitation'}
-          </button>
-      }
+      {links.length === 0 ? (
+        <p className="text-xs text-gray-500 text-center py-4">
+          {lang === 'GEO' ? 'მოწვევის ბმულები არ არის.' : 'No invite links yet.'}
+        </p>
+      ) : (
+        <div className="space-y-2">
+          {links.map(link => {
+            const url = `${origin}/join?code=${link.code}`;
+            const isCopied = copiedId === link.id;
+            return (
+              <div key={link.id} className={`flex items-center gap-2 rounded-xl border ${th.border} px-3 py-2`}>
+                <p className="flex-1 text-xs text-gray-400 truncate font-mono min-w-0">{url}</p>
+                {link.used && (
+                  <span className="text-xs text-gray-600 flex-shrink-0">used</span>
+                )}
+                <button
+                  onClick={() => copy(link)}
+                  disabled={link.used}
+                  className={`flex-shrink-0 text-xs px-2.5 py-1 rounded-lg transition-colors ${
+                    isCopied
+                      ? 'bg-emerald-500/20 text-emerald-400'
+                      : link.used
+                        ? 'opacity-30 cursor-not-allowed border border-white/10 text-gray-500'
+                        : `${th.btn} text-white`
+                  }`}
+                >
+                  {isCopied
+                    ? (lang === 'GEO' ? '✅ დაკოპირდა!' : '✅ Copied!')
+                    : (lang === 'GEO' ? 'კოპირება' : 'Copy')}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+      <button
+        onClick={generate}
+        disabled={generating}
+        className={`w-full rounded-xl border border-dashed ${th.border} py-2 text-xs text-gray-500 hover:text-white transition-colors disabled:opacity-50`}
+      >
+        {generating ? '…' : (lang === 'GEO' ? '+ ახალი ბმულის გენერირება' : '+ Generate New Link')}
+      </button>
     </div>
   );
 }
