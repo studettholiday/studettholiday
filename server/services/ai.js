@@ -65,7 +65,7 @@ async function searchWeb(query) {
 
 async function callAnthropic(messages, language = 'en') {
   const langInstruction = language === 'ka'
-    ? 'The user has set their language preference to Georgian. Respond in Georgian (ქართული) by default. If the user writes to you in English, you may respond in English. Match the language the user is writing in, but default to Georgian.\n\nYou must respond exclusively in Georgian language (ქართული). Even if the uploaded library documents are in English, translate and explain their content in Georgian. Never respond in English when the user is in Georgian mode.'
+    ? 'The user has set their language preference to Georgian. Respond in Georgian (ქართული) by default. If the user writes to you in English, you may respond in English. Match the language the user is writing in, but default to Georgian.\n\nYou must respond exclusively in Georgian language (ქართული). Even if the uploaded library documents are in English, translate and explain their content in Georgian. Never respond in English when the user is in Georgian mode.\n\nIf the user asks a question that relates to the uploaded library content, find the answer in that content, translate it to Georgian, and respond in Georgian only. Never paste raw English text in your response.'
     : 'Respond in English by default. Match the language the user writes in.';
   const stream = client.messages.stream({
     model: 'claude-opus-4-7',
@@ -87,7 +87,7 @@ async function callAnthropic(messages, language = 'en') {
 
 async function callGemini(messages, language = 'en') {
   const langInstruction = language === 'ka'
-    ? 'The user has set their language preference to Georgian. Respond in Georgian (ქართული) by default. If the user writes to you in English, you may respond in English. Match the language the user is writing in, but default to Georgian.\n\nYou must respond exclusively in Georgian language (ქართული). Even if the uploaded library documents are in English, translate and explain their content in Georgian. Never respond in English when the user is in Georgian mode.'
+    ? 'The user has set their language preference to Georgian. Respond in Georgian (ქართული) by default. If the user writes to you in English, you may respond in English. Match the language the user is writing in, but default to Georgian.\n\nYou must respond exclusively in Georgian language (ქართული). Even if the uploaded library documents are in English, translate and explain their content in Georgian. Never respond in English when the user is in Georgian mode.\n\nIf the user asks a question that relates to the uploaded library content, find the answer in that content, translate it to Georgian, and respond in Georgian only. Never paste raw English text in your response.'
     : 'Respond in English by default. Match the language the user writes in.';
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   const model = genAI.getGenerativeModel({
@@ -120,7 +120,7 @@ async function callGemini(messages, language = 'en') {
 
 async function callOpenAI(messages, language = 'en') {
   const langInstruction = language === 'ka'
-    ? 'The user has set their language preference to Georgian. Respond in Georgian (ქართული) by default. If the user writes to you in English, you may respond in English. Match the language the user is writing in, but default to Georgian.\n\nYou must respond exclusively in Georgian language (ქართული). Even if the uploaded library documents are in English, translate and explain their content in Georgian. Never respond in English when the user is in Georgian mode.'
+    ? 'The user has set their language preference to Georgian. Respond in Georgian (ქართული) by default. If the user writes to you in English, you may respond in English. Match the language the user is writing in, but default to Georgian.\n\nYou must respond exclusively in Georgian language (ქართული). Even if the uploaded library documents are in English, translate and explain their content in Georgian. Never respond in English when the user is in Georgian mode.\n\nIf the user asks a question that relates to the uploaded library content, find the answer in that content, translate it to Georgian, and respond in Georgian only. Never paste raw English text in your response.'
     : 'Respond in English by default. Match the language the user writes in.';
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 

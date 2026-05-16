@@ -72,7 +72,11 @@ router.post('/', async (req, res) => {
         .map(r => `=== ${r.filename} ===\n${r.content}`)
         .join('\n\n');
       if (combined.length > 12000) combined = combined.slice(0, 12000);
-      contextPrefix += `SCHOOL KNOWLEDGE LIBRARY (always use this to answer questions):\n\n${combined}\n\n---\n\n`;
+      if (language === 'ka') {
+        contextPrefix += `შემდეგი არის სკოლის ბიბლიოთეკის შინაარსი. შესაძლოა ინგლისურ ენაზე იყოს. შენ ᲐᲣᲪᲘᲚᲔᲑᲚᲐᲓ უნდა წაიკითხო, გაიგო და კითხვებზე პასუხი გასცე მხოლოდ ქართულ ენაზე. არ დაუბრუნო მომხმარებელს ინგლისური ტექსტი — ყველაფერი თარგმნე ქართულად პასუხის გაცემამდე.\n\nბიბლიოთეკის შინაარსი:\n\n${combined}\n\n---\n\n`;
+      } else {
+        contextPrefix += `SCHOOL KNOWLEDGE LIBRARY (always use this to answer questions):\n\n${combined}\n\n---\n\n`;
+      }
     }
   } catch (err) {
     console.error('Library fetch error:', err.message);
@@ -80,7 +84,11 @@ router.post('/', async (req, res) => {
 
   if (context && typeof context === 'string' && context.trim()) {
     const docContent = context.slice(0, 8000);
-    contextPrefix += `The user has uploaded a document. Use this as your knowledge base to answer questions:\n\n${docContent}\n\nAnswer questions based on this document. If the question is not covered in the document, say so clearly.\n\n---\n\n`;
+    if (language === 'ka') {
+      contextPrefix += `მომხმარებელმა ატვირთა დოკუმენტი. შესაძლოა ინგლისურ ენაზე იყოს. შენ ᲐᲣᲪᲘᲚᲔᲑᲚᲐᲓ უნდა წაიკითხო, გაიგო და კითხვებზე პასუხი გასცე მხოლოდ ქართულ ენაზე. არ დაუბრუნო მომხმარებელს ინგლისური ტექსტი — ყველაფერი თარგმნე ქართულად პასუხის გაცემამდე.\n\nდოკუმენტის შინაარსი:\n\n${docContent}\n\nუპასუხე კითხვებს ამ დოკუმენტის საფუძველზე. თუ კითხვა არ ეხება დოკუმენტს, ნათლად აცნობე ამის შესახებ.\n\n---\n\n`;
+    } else {
+      contextPrefix += `The user has uploaded a document. Use this as your knowledge base to answer questions:\n\n${docContent}\n\nAnswer questions based on this document. If the question is not covered in the document, say so clearly.\n\n---\n\n`;
+    }
   }
 
   let processedMessages = trimmed;
