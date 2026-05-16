@@ -413,8 +413,22 @@ export default function App() {
       style={{
         overflowX: 'hidden',
         maxWidth: '100vw',
+        position: 'relative',
       }}
     >
+      {/* Dark overlay for readability */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        background: 'rgba(0, 0, 0, 0.45)',
+        zIndex: 0,
+        pointerEvents: 'none',
+      }} />
+
+      <div style={{ position: 'relative', zIndex: 1 }}>
 
       {modalOpen && (
         <SignupModal lang={lang} onClose={closeModal} />
@@ -624,6 +638,7 @@ export default function App() {
         </div>
       </section>
 
+      </div>{/* end relative z-index:1 wrapper */}
     </div>
   );
 }

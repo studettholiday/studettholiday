@@ -27,10 +27,3 @@ body, #root {
   min-height: 100vh;
 }
 
-@media (max-width: 768px) {
-  body, #root {
-    background-attachment: scroll;
-    background-position: center top;
-    background-size: cover;
-  }
-}
