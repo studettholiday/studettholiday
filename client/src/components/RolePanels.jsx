@@ -845,7 +845,7 @@ function KnowledgeLibraryPanel({ role, lang, libraryFiles = [], onAddFile, onRem
             </p>
             <p className="text-xs text-gray-500 mt-1 text-center leading-relaxed">
               {lang === 'GEO'
-                ? 'აქ შეგიძლია ატვირთო სასწავლო მასალა შენი სკოლისთვის · ხელმისაწვდომია სკოლის ყველა მონაწილისთვის'
+                ? 'აქ შეგიძლია ატვირთო სასწავლო მასალა შენი სკოლისთვის · ხელმისაწვდომია "დაწესებულების" ყველა წევრისთვის'
                 : 'Upload study materials for your school · accessible to everyone in your Sherlock environment'}
             </p>
             <p className="text-xs text-gray-600 mt-2">

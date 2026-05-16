@@ -236,6 +236,9 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
   const [editDraft, setEditDraft] = useState({});
   const [editRoleName, setEditRoleName] = useState('');
   const [editSubmenuOpen, setEditSubmenuOpen] = useState(false);
+  const [orgName, setOrgName] = useState('');
+  const [orgNameOpen, setOrgNameOpen] = useState(false);
+  const [orgNameDraft, setOrgNameDraft] = useState('');
   const theme = THEMES[role];
   const [messages, setMessages] = useState([
     { role: 'assistant', content: getGreeting(role, lang) },
@@ -575,6 +578,12 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
                       {lang === 'GEO' ? 'სტუდენტის პროფილი' : 'Student Profile'}
                     </button>
                   )}
+                  {role === 'admin' && (
+                    <button onClick={() => { setOrgNameDraft(orgName); setOrgNameOpen(true); setEditSubmenuOpen(false); }}
+                      className="w-full text-left px-4 py-2.5 text-xs text-gray-300 hover:bg-white/[0.05] hover:text-white transition-colors border-t border-white/[0.06]">
+                      {lang === 'GEO' ? 'დაწესებულების სახელი' : 'Organization Name / School Name'}
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -746,6 +755,42 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
           </div>
         );
       })()}
+
+      {/* Org name modal */}
+      {orgNameOpen && (
+        <div className="absolute inset-0 z-30 bg-black/70 flex items-center justify-center p-4">
+          <div className="bg-[#0f0f1a] border border-white/15 rounded-2xl p-4 w-full max-w-sm flex flex-col gap-4">
+            <div className="flex-shrink-0">
+              <h3 className="text-sm font-semibold text-white">
+                {lang === 'GEO' ? 'დაწესებულების სახელი' : 'Organization Name / School Name'}
+              </h3>
+            </div>
+            <div className="bg-white/[0.04] rounded-xl p-3 border border-white/[0.08]">
+              <label className="text-xs font-medium text-gray-400 uppercase tracking-wide">
+                {lang === 'GEO' ? '🏫 სახელი' : '🏫 Name'}
+              </label>
+              <input
+                autoFocus
+                value={orgNameDraft}
+                onChange={e => setOrgNameDraft(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') { setOrgName(orgNameDraft.trim()); setOrgNameOpen(false); } if (e.key === 'Escape') setOrgNameOpen(false); }}
+                placeholder={lang === 'GEO' ? 'მაგ. შერლოკის მუსიკის სკოლა' : 'e.g. Sherlock Music School'}
+                className="mt-2 w-full rounded-lg border border-white/15 bg-white/[0.05] px-3 py-1.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-white/30"
+              />
+            </div>
+            <div className="flex gap-2 flex-shrink-0">
+              <button onClick={() => { setOrgName(orgNameDraft.trim()); setOrgNameOpen(false); }}
+                className={`flex-1 rounded-xl ${THEMES.admin.sendBtn} px-3 py-2 text-xs text-white font-medium transition-colors`}>
+                {lang === 'GEO' ? 'შენახვა' : 'Save'}
+              </button>
+              <button onClick={() => setOrgNameOpen(false)}
+                className="flex-1 rounded-xl border border-white/15 px-3 py-2 text-xs text-gray-400 hover:text-white transition-colors">
+                {lang === 'GEO' ? 'გაუქმება' : 'Cancel'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Label editor modal */}
       {editOpen && editTarget && (
