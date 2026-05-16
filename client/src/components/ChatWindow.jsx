@@ -58,9 +58,16 @@ const GEO_GREETINGS = {
   student:   "გამარჯობა! მე ვარ შერლოკი, თქვენი სკოლის ასისტენტი. მკითხეთ თქვენი განრიგის, მოახლოებული ღონისძიებების, შენიშვნების ან სკოლის ბიბლიოთეკაში არსებული ნებისმიერი ინფორმაციის შესახებ!",
 };
 
-function getGreeting(role, lang) {
-  if (lang === 'GEO') return GEO_GREETINGS[role];
-  return GREETINGS[role];
+function getGreeting(role, lang, orgName = '', orgNameGenitive = '') {
+  if (lang === 'GEO') {
+    const base = GEO_GREETINGS[role];
+    if (!orgName) return base;
+    const gen = orgNameGenitive || (orgName + 'ს');
+    return base.replace(/სკოლის/g, gen);
+  }
+  const base = GREETINGS[role];
+  if (!orgName) return base;
+  return base.replace(/school/gi, orgName);
 }
 
 const CHAT_STYLES = {
@@ -243,7 +250,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
   const [orgNameGenitiveDraft, setOrgNameGenitiveDraft] = useState('');
   const theme = THEMES[role];
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: getGreeting(role, lang) },
+    { role: 'assistant', content: getGreeting(role, lang, orgName, orgNameGenitive) },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -306,7 +313,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
   }
 
   useEffect(() => {
-    setMessages([{ role: 'assistant', content: getGreeting(role, lang) }]);
+    setMessages([{ role: 'assistant', content: getGreeting(role, lang, orgName, orgNameGenitive) }]);
     setInput('');
     setLoading(false);
     setActivePanel(null);
@@ -375,7 +382,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
   }
 
   function clearChat() {
-    setMessages([{ role: 'assistant', content: getGreeting(role, lang) }]);
+    setMessages([{ role: 'assistant', content: getGreeting(role, lang, orgName, orgNameGenitive) }]);
     setInput('');
     setLoading(false);
     setActivePanel(null);
