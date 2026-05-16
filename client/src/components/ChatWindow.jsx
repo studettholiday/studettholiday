@@ -464,7 +464,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
 
       if (aiText.startsWith('YOUTUBE_SEARCH:')) {
         const query = aiText.replace('YOUTUBE_SEARCH:', '').trim();
-        setMessages((prev) => [...prev, { role: 'assistant', type: 'searching', text: `Searching YouTube for "${query}"…` }]);
+        setMessages((prev) => [...prev, { role: 'assistant', type: 'searching', text: lang === 'GEO' ? `YouTube-ზე ძიება: "${query}"…` : `Searching YouTube for "${query}"…` }]);
         setTimeout(() => { messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' }); }, 50);
         try {
           const ytRes = await fetch(`/api/youtube/search?q=${encodeURIComponent(query)}`);
@@ -477,13 +477,13 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
         } catch {
           setMessages((prev) => [
             ...prev.filter((m) => m.type !== 'searching'),
-            { role: 'assistant', content: 'Sorry, YouTube search failed.' },
+            { role: 'assistant', content: lang === 'GEO' ? 'YouTube ძიება ვერ მოხდა.' : 'Sorry, YouTube search failed.' },
           ]);
           setTimeout(() => { messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' }); }, 50);
         }
       } else if (aiText.startsWith('WEB_SEARCH:')) {
         const query = aiText.replace('WEB_SEARCH:', '').trim();
-        setMessages((prev) => [...prev, { role: 'assistant', type: 'searching', text: `Searching the web for "${query}"…` }]);
+        setMessages((prev) => [...prev, { role: 'assistant', type: 'searching', text: lang === 'GEO' ? `ვებ-ძიება: "${query}"…` : `Searching the web for "${query}"…` }]);
         setTimeout(() => { messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' }); }, 50);
         try {
           const webRes = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
@@ -496,7 +496,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
         } catch {
           setMessages((prev) => [
             ...prev.filter((m) => m.type !== 'searching'),
-            { role: 'assistant', content: 'Sorry, web search failed.' },
+            { role: 'assistant', content: lang === 'GEO' ? 'ვებ ძიება ვერ მოხდა.' : 'Sorry, web search failed.' },
           ]);
           setTimeout(() => { messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' }); }, 50);
         }
@@ -507,7 +507,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
     } catch {
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: 'Error: could not reach the server.' },
+        { role: 'assistant', content: lang === 'GEO' ? 'შეცდომა: სერვერთან კავშირი ვერ მოხდა.' : 'Error: could not reach the server.' },
       ]);
       setTimeout(() => { messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' }); }, 50);
     } finally {
@@ -546,7 +546,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
         )}
         {libraryFiles.length > 0 && (
           <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex-shrink-0">
-            📚 Demo library — clears when you leave
+            {lang === 'GEO' ? '📚 დემო ბიბლიოთეკა — ტოვებისას იშლება' : '📚 Demo library — clears when you leave'}
           </span>
         )}
 
@@ -660,7 +660,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
             </div>
 
           {loading && (
-            <span className={`text-xs animate-pulse ${s.thinkingColor}`}>Thinking…</span>
+            <span className={`text-xs animate-pulse ${s.thinkingColor}`}>{lang === 'GEO' ? 'ფიქრობს...' : 'Thinking…'}</span>
           )}
         </div>
       </header>

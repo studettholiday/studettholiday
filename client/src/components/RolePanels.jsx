@@ -184,7 +184,7 @@ function getPanelTitle(panel, lang) {
 
 // ─── Admin / Assistant panels ─────────────────────────────────────────────────
 
-function GroupsPanel({ role }) {
+function GroupsPanel({ role, lang }) {
   const th = TH[role];
   const [groups, setGroups] = useState(INIT_GROUPS);
   const [editingId, setEditingId] = useState(null);
@@ -234,12 +234,12 @@ function GroupsPanel({ role }) {
       <button
         onClick={addGroup}
         className={`w-full rounded-xl border border-dashed ${th.border} py-2 text-xs text-gray-500 hover:text-white transition-colors`}
-      >+ Add Group</button>
+      >{lang === 'GEO' ? '+ ჯგუფის დამატება' : '+ Add Group'}</button>
     </div>
   );
 }
 
-function AdminSchedulePanel() {
+function AdminSchedulePanel({ lang }) {
   const [rows, setRows] = useState(INIT_SCHEDULE);
 
   function update(id, col, val) { setRows(rs => rs.map(r => r.id === id ? { ...r, [col]: val } : r)); }
@@ -252,10 +252,10 @@ function AdminSchedulePanel() {
       <table className="w-full text-xs border-separate border-spacing-y-0.5">
         <thead>
           <tr className="text-gray-500">
-            <th className="text-left pb-1.5 font-medium pr-2">Group</th>
-            <th className="text-left pb-1.5 font-medium pr-2">Day</th>
-            <th className="text-left pb-1.5 font-medium pr-2">Time</th>
-            <th className="text-left pb-1.5 font-medium pr-2">Subject</th>
+            <th className="text-left pb-1.5 font-medium pr-2">{lang === 'GEO' ? 'ჯგუფი' : 'Group'}</th>
+            <th className="text-left pb-1.5 font-medium pr-2">{lang === 'GEO' ? 'დღე' : 'Day'}</th>
+            <th className="text-left pb-1.5 font-medium pr-2">{lang === 'GEO' ? 'დრო' : 'Time'}</th>
+            <th className="text-left pb-1.5 font-medium pr-2">{lang === 'GEO' ? 'საგანი' : 'Subject'}</th>
             <th />
           </tr>
         </thead>
@@ -274,12 +274,14 @@ function AdminSchedulePanel() {
           ))}
         </tbody>
       </table>
-      <button onClick={addRow} className="text-xs text-gray-500 hover:text-white transition-colors">+ Add row</button>
+      <button onClick={addRow} className="text-xs text-gray-500 hover:text-white transition-colors">
+        {lang === 'GEO' ? '+ სტრიქონის დამატება' : '+ Add row'}
+      </button>
     </div>
   );
 }
 
-function StudentsPanel({ role }) {
+function StudentsPanel({ role, lang }) {
   const th = TH[role];
   const [students, setStudents] = useState(INIT_STUDENTS);
 
@@ -310,7 +312,9 @@ function StudentsPanel({ role }) {
           >✕</button>
         </div>
       ))}
-      <button onClick={add} className="text-xs text-gray-500 hover:text-white transition-colors pt-1">+ Add student</button>
+      <button onClick={add} className="text-xs text-gray-500 hover:text-white transition-colors pt-1">
+        {lang === 'GEO' ? '+ სტუდენტის დამატება' : '+ Add student'}
+      </button>
     </div>
   );
 }
@@ -347,7 +351,7 @@ function AdminEventsPanel() {
   );
 }
 
-function BroadcastPanel() {
+function BroadcastPanel({ lang }) {
   const [msg, setMsg] = useState('');
   const [sent, setSent] = useState(false);
 
@@ -356,19 +360,19 @@ function BroadcastPanel() {
   return (
     <div className="space-y-3">
       <textarea rows={4} value={msg} onChange={e => setMsg(e.target.value)}
-        placeholder="Write your notification message…" className={FIELD} />
+        placeholder={lang === 'GEO' ? 'დაწერეთ შეტყობინება...' : 'Write your notification message…'} className={FIELD} />
       {sent
-        ? <p className="text-emerald-400 text-sm">✅ Notification sent to everyone!</p>
+        ? <p className="text-emerald-400 text-sm">{lang === 'GEO' ? '✅ შეტყობინება გაიგზავნა!' : '✅ Notification sent to everyone!'}</p>
         : <button onClick={send} disabled={!msg.trim()}
             className="rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
-            Send to Everyone
+            {lang === 'GEO' ? 'ყველასთვის გაგზავნა' : 'Send to Everyone'}
           </button>
       }
     </div>
   );
 }
 
-function AnnouncePanel({ role }) {
+function AnnouncePanel({ role, lang }) {
   const th = TH[role];
   const [group, setGroup] = useState(ALL_GROUP_NAMES[0]);
   const [msg, setMsg] = useState('');
@@ -383,19 +387,19 @@ function AnnouncePanel({ role }) {
         {ALL_GROUP_NAMES.map(g => <option key={g}>{g}</option>)}
       </select>
       <textarea rows={3} value={msg} onChange={e => setMsg(e.target.value)}
-        placeholder="Your message…" className={FIELD} />
+        placeholder={lang === 'GEO' ? 'თქვენი შეტყობინება...' : 'Your message…'} className={FIELD} />
       {sent
-        ? <p className={`text-sm ${th.conf}`}>✅ Announced to {sent}!</p>
+        ? <p className={`text-sm ${th.conf}`}>{lang === 'GEO' ? `✅ გამოცხადდა: ${sent}!` : `✅ Announced to ${sent}!`}</p>
         : <button onClick={send} disabled={!msg.trim()}
             className={`rounded-xl ${th.btn} disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors`}>
-            Send Announcement
+            {lang === 'GEO' ? 'გამოცხადების გაგზავნა' : 'Send Announcement'}
           </button>
       }
     </div>
   );
 }
 
-function InvitePanel({ role }) {
+function InvitePanel({ role, lang }) {
   const th = TH[role];
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState('');
@@ -405,19 +409,19 @@ function InvitePanel({ role }) {
   return (
     <div className="space-y-3">
       <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-        placeholder="Email address" className={FIELD} />
+        placeholder={lang === 'GEO' ? 'ელ. ფოსტა' : 'Email address'} className={FIELD} />
       {sent
-        ? <p className={`text-sm ${th.conf}`}>✅ Invitation sent to {sent}!</p>
+        ? <p className={`text-sm ${th.conf}`}>{lang === 'GEO' ? `✅ მოწვევა გაიგზავნა: ${sent}!` : `✅ Invitation sent to ${sent}!`}</p>
         : <button onClick={send} disabled={!email.trim()}
             className={`rounded-xl ${th.btn} disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors`}>
-            Send Invitation
+            {lang === 'GEO' ? 'მოწვევის გაგზავნა' : 'Send Invitation'}
           </button>
       }
     </div>
   );
 }
 
-function SubjectsPanel({ role }) {
+function SubjectsPanel({ role, lang }) {
   const th = TH[role];
   const [subjects, setSubjects] = useState(['Guitar Basics', 'Music Theory', 'Vocals', 'Band Practice', 'Ear Training']);
   const [draft, setDraft] = useState('');
@@ -437,7 +441,7 @@ function SubjectsPanel({ role }) {
       <div className="flex gap-2">
         <input value={draft} onChange={e => setDraft(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') add(); }}
-          placeholder="Add subject…" className={`${FIELD} py-1.5`} />
+          placeholder={lang === 'GEO' ? 'საგნის დამატება...' : 'Add subject…'} className={`${FIELD} py-1.5`} />
         <button onClick={add} className={`rounded-xl ${th.btn} px-3 py-1.5 text-sm text-white transition-colors`}>+</button>
       </div>
     </div>
@@ -457,10 +461,14 @@ function AdminViewEventsPanel() {
   );
 }
 
-function AdminAddEventPanel({ role }) {
+function AdminAddEventPanel({ role, lang }) {
   const th = TH[role];
   const [form, setForm] = useState({ name: '', date: '', time: '', place: '' });
   const [added, setAdded] = useState(false);
+
+  const placeholders = lang === 'GEO'
+    ? [['name','ღონისძიების სახელი'],['date','თარიღი'],['time','დრო'],['place','ადგილი']]
+    : [['name','Event name'],['date','Date (e.g. 1 Jan 2026)'],['time','Time (e.g. 18:00)'],['place','Place']];
 
   function add() {
     if (form.name.trim()) {
@@ -472,27 +480,31 @@ function AdminAddEventPanel({ role }) {
 
   return (
     <div className="space-y-3">
-      {[['name','Event name'],['date','Date (e.g. 1 Jan 2026)'],['time','Time (e.g. 18:00)'],['place','Place']].map(([field, placeholder]) => (
+      {placeholders.map(([field, placeholder]) => (
         <input key={field} value={form[field]} onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
           placeholder={placeholder} className={FIELD} />
       ))}
       {added
-        ? <p className="text-emerald-400 text-sm">✅ Event added!</p>
+        ? <p className="text-emerald-400 text-sm">{lang === 'GEO' ? '✅ ღონისძიება დამატებულია!' : '✅ Event added!'}</p>
         : <button onClick={add} disabled={!form.name.trim()}
             className={`rounded-xl ${th.btn} disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors`}>
-            Add Event
+            {lang === 'GEO' ? 'ღონისძიების დამატება' : 'Add Event'}
           </button>
       }
     </div>
   );
 }
 
-function AdminDeleteEventPanel() {
+function AdminDeleteEventPanel({ lang }) {
   const [events, setEvents] = useState(INIT_EVENTS);
 
   return (
     <div className="space-y-2">
-      {events.length === 0 && <p className="text-xs text-gray-500 text-center py-4">No events.</p>}
+      {events.length === 0 && (
+        <p className="text-xs text-gray-500 text-center py-4">
+          {lang === 'GEO' ? 'ღონისძიებები არ არის.' : 'No events.'}
+        </p>
+      )}
       {events.map(ev => (
         <div key={ev.id} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2.5">
           <div className="flex-1 min-w-0">
@@ -507,7 +519,7 @@ function AdminDeleteEventPanel() {
   );
 }
 
-function AssistantRequestsPanel() {
+function AssistantRequestsPanel({ lang }) {
   const [requests, setRequests] = useState(INIT_REQUESTS);
 
   function resolve(id, status) {
@@ -531,28 +543,32 @@ function AssistantRequestsPanel() {
             <div className="flex gap-2 mt-2">
               <button onClick={() => resolve(r.id, 'approved')}
                 className="text-xs px-2.5 py-1 rounded-lg bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/40 transition-colors">
-                ✅ Approve
+                {lang === 'GEO' ? '✅ დამტკიცება' : '✅ Approve'}
               </button>
               <button onClick={() => resolve(r.id, 'rejected')}
                 className="text-xs px-2.5 py-1 rounded-lg bg-red-600/20 text-red-400 hover:bg-red-600/40 transition-colors">
-                ❌ Reject
+                {lang === 'GEO' ? '❌ უარყოფა' : '❌ Reject'}
               </button>
             </div>
           ) : (
             <p className={`text-xs mt-1 font-medium ${r.status === 'approved' ? 'text-emerald-400' : 'text-red-400'}`}>
-              {r.status === 'approved' ? '✅ Approved' : '❌ Rejected'}
+              {r.status === 'approved'
+                ? (lang === 'GEO' ? '✅ დამტკიცებული' : '✅ Approved')
+                : (lang === 'GEO' ? '❌ უარყოფილი' : '❌ Rejected')}
             </p>
           )}
         </div>
       ))}
       {requests.every(r => r.status !== 'pending') && (
-        <p className="text-xs text-gray-500 text-center py-2">All requests resolved.</p>
+        <p className="text-xs text-gray-500 text-center py-2">
+          {lang === 'GEO' ? 'ყველა მოთხოვნა განხილულია.' : 'All requests resolved.'}
+        </p>
       )}
     </div>
   );
 }
 
-function TeachersPanel({ role }) {
+function TeachersPanel({ role, lang }) {
   const th = TH[role];
   const [teachers, setTeachers] = useState(INIT_TEACHERS);
   const [name,    setName]    = useState('');
@@ -576,23 +592,25 @@ function TeachersPanel({ role }) {
             <p className="text-xs text-gray-500">{t.subject}</p>
           </div>
           <button onClick={() => setTeachers(ts => ts.filter(x => x.id !== t.id))}
-            className="text-gray-600 hover:text-red-400 text-xs transition-colors">Remove</button>
+            className="text-gray-600 hover:text-red-400 text-xs transition-colors">
+            {lang === 'GEO' ? 'წაშლა' : 'Remove'}
+          </button>
         </div>
       ))}
       <div className="pt-1 space-y-2 border-t border-white/[0.06]">
         <div className="flex gap-2 pt-1">
           <input value={name} onChange={e => setName(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') add(); }}
-            placeholder="Name" className={`${FIELD} py-1.5`} />
+            placeholder={lang === 'GEO' ? 'სახელი' : 'Name'} className={`${FIELD} py-1.5`} />
           <input value={subject} onChange={e => setSubject(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') add(); }}
-            placeholder="Subject" className={`${FIELD} py-1.5`} />
+            placeholder={lang === 'GEO' ? 'საგანი' : 'Subject'} className={`${FIELD} py-1.5`} />
         </div>
         {added
-          ? <p className={`text-sm ${th.conf}`}>✅ Teacher added!</p>
+          ? <p className={`text-sm ${th.conf}`}>{lang === 'GEO' ? '✅ მასწავლებელი დამატებულია!' : '✅ Teacher added!'}</p>
           : <button onClick={add} disabled={!name.trim() || !subject.trim()}
               className={`rounded-xl ${th.btn} disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors`}>
-              Add Teacher
+              {lang === 'GEO' ? 'მასწავლებლის დამატება' : 'Add Teacher'}
             </button>
         }
       </div>
@@ -602,14 +620,14 @@ function TeachersPanel({ role }) {
 
 // ─── Teacher panels ───────────────────────────────────────────────────────────
 
-function MySchedulePanel() {
+function MySchedulePanel({ lang }) {
   return (
     <table className="w-full text-xs">
       <thead>
         <tr className="text-gray-500">
-          <th className="text-left pb-2 font-medium">Day</th>
-          <th className="text-left pb-2 font-medium">Time</th>
-          <th className="text-left pb-2 font-medium">Group</th>
+          <th className="text-left pb-2 font-medium">{lang === 'GEO' ? 'დღე' : 'Day'}</th>
+          <th className="text-left pb-2 font-medium">{lang === 'GEO' ? 'დრო' : 'Time'}</th>
+          <th className="text-left pb-2 font-medium">{lang === 'GEO' ? 'ჯგუფი' : 'Group'}</th>
         </tr>
       </thead>
       <tbody>
@@ -625,20 +643,20 @@ function MySchedulePanel() {
   );
 }
 
-function MyGroupsPanel() {
+function MyGroupsPanel({ lang }) {
   return (
     <div className="grid grid-cols-2 gap-2">
       {TEACHER_GROUPS.map(g => (
         <div key={g.name} className="rounded-xl border border-blue-500/20 bg-blue-500/[0.05] p-3">
           <p className="text-xs text-white font-medium">{g.name}</p>
-          <p className="text-xs text-gray-500 mt-0.5">{g.count} students</p>
+          <p className="text-xs text-gray-500 mt-0.5">{g.count} {lang === 'GEO' ? 'სტუდენტი' : 'students'}</p>
         </div>
       ))}
     </div>
   );
 }
 
-function TeacherShareFilesPanel() {
+function TeacherShareFilesPanel({ lang }) {
   const [group, setGroup] = useState(TEACHER_GROUPS[0].name);
   const [fileName, setFileName] = useState('');
   const [note, setNote] = useState('');
@@ -667,25 +685,25 @@ function TeacherShareFilesPanel() {
         <div className="flex-1 min-w-0">
           {fileName
             ? <p className="text-xs text-white truncate">{fileName}</p>
-            : <p className="text-xs text-gray-500">Choose file (.pdf, .jpg, .png, .mp4)</p>
+            : <p className="text-xs text-gray-500">{lang === 'GEO' ? 'ფაილის არჩევა (.pdf, .jpg, .png, .mp4)' : 'Choose file (.pdf, .jpg, .png, .mp4)'}</p>
           }
         </div>
         <input type="file" accept=".pdf,.jpg,.jpeg,.png,.mp4" onChange={handleFile} className="hidden" />
       </label>
       <textarea rows={2} value={note} onChange={e => setNote(e.target.value)}
-        placeholder="Optional message…" className={FIELD} />
+        placeholder={lang === 'GEO' ? 'სურვილისამებრ შეტყობინება...' : 'Optional message…'} className={FIELD} />
       {sent
-        ? <p className="text-blue-400 text-sm">✅ Files shared with {sent}!</p>
+        ? <p className="text-blue-400 text-sm">{lang === 'GEO' ? `✅ ფაილები გაიზიარა: ${sent}!` : `✅ Files shared with ${sent}!`}</p>
         : <button onClick={send} disabled={!fileName}
             className="rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
-            Share Files
+            {lang === 'GEO' ? 'ფაილების გაზიარება' : 'Share Files'}
           </button>
       }
     </div>
   );
 }
 
-function KnowledgeLibraryPanel({ role, libraryFiles = [], onAddFile, onRemoveFile }) {
+function KnowledgeLibraryPanel({ role, lang, libraryFiles = [], onAddFile, onRemoveFile }) {
   const th = TH[role];
   const [tab, setTab] = useState('upload');
   const [uploading, setUploading] = useState(false);
@@ -790,11 +808,15 @@ function KnowledgeLibraryPanel({ role, libraryFiles = [], onAddFile, onRemoveFil
     }
   }
 
+  const tabs = lang === 'GEO'
+    ? [['upload', '⬆️ ატვირთვა'], ['preview', '🔍 გადახედვა']]
+    : [['upload', '⬆️ Upload'],    ['preview', '🔍 Preview']];
+
   return (
     <div className="space-y-3">
       {/* Tab row */}
       <div className="flex gap-2">
-        {[['upload', '⬆️ Upload'], ['preview', '🔍 Preview']].map(([id, label]) => (
+        {tabs.map(([id, label]) => (
           <button key={id} onClick={() => setTab(id)}
             className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
               tab === id
@@ -816,11 +838,19 @@ function KnowledgeLibraryPanel({ role, libraryFiles = [], onAddFile, onRemoveFil
               dragOver ? 'border-white/50 bg-white/[0.07]' : 'border-white/20 hover:border-white/40'
             } ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
             <span className="text-2xl mb-1.5">{uploading ? '⏳' : '📄'}</span>
-            <p className="text-sm text-white font-medium">{uploading ? 'Processing…' : 'Upload to demo library'}</p>
-            <p className="text-xs text-gray-500 mt-1 text-center leading-relaxed">
-              Upload study materials for your school · accessible to everyone in your Sherlock environment
+            <p className="text-sm text-white font-medium">
+              {uploading
+                ? (lang === 'GEO' ? 'დამუშავება...' : 'Processing…')
+                : (lang === 'GEO' ? 'ატვირთე ბიბლიოთეკაში' : 'Upload to demo library')}
             </p>
-            <p className="text-xs text-gray-600 mt-2">Drop here or click · .pdf .txt .md</p>
+            <p className="text-xs text-gray-500 mt-1 text-center leading-relaxed">
+              {lang === 'GEO'
+                ? 'აქ შეგიძლია ატვირთო სასწავლო მასალა შენი სკოლისთვის · ხელმისაწვდომია სკოლის ყველა მონაწილისთვის'
+                : 'Upload study materials for your school · accessible to everyone in your Sherlock environment'}
+            </p>
+            <p className="text-xs text-gray-600 mt-2">
+              {lang === 'GEO' ? 'ჩააგდე ან დააჭირე · .pdf .txt .md' : 'Drop here or click · .pdf .txt .md'}
+            </p>
             <input type="file" accept=".pdf,.txt,.md"
               onChange={e => { handleUpload(e.target.files?.[0]); e.target.value = ''; }}
               className="hidden" disabled={uploading} />
@@ -830,7 +860,9 @@ function KnowledgeLibraryPanel({ role, libraryFiles = [], onAddFile, onRemoveFil
           )}
           <div className="space-y-1.5">
             {libraryFiles.length === 0 && !uploading && (
-              <p className="text-xs text-gray-600 text-center py-2">No files loaded yet.</p>
+              <p className="text-xs text-gray-600 text-center py-2">
+                {lang === 'GEO' ? 'ფაილები არ არის ატვირთული.' : 'No files loaded yet.'}
+              </p>
             )}
             {libraryFiles.map(f => (
               <div key={f.id} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2">
@@ -844,10 +876,14 @@ function KnowledgeLibraryPanel({ role, libraryFiles = [], onAddFile, onRemoveFil
         </div>
       ) : (
         <div className="space-y-2">
-          <p className="text-xs text-gray-500 font-medium">Test your library</p>
+          <p className="text-xs text-gray-500 font-medium">
+            {lang === 'GEO' ? 'შეამოწმე ბიბლიოთეკა' : 'Test your library'}
+          </p>
           <div className="h-32 overflow-y-auto rounded-xl border border-white/10 bg-white/[0.02] p-2 space-y-1.5">
             {previewMsgs.length === 0 && (
-              <p className="text-xs text-gray-600 text-center mt-8">Ask a question about your uploaded content</p>
+              <p className="text-xs text-gray-600 text-center mt-8">
+                {lang === 'GEO' ? 'დასვი კითხვა ატვირთული კონტენტის შესახებ' : 'Ask a question about your uploaded content'}
+              </p>
             )}
             {previewMsgs.map((m, i) => (
               <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -860,7 +896,9 @@ function KnowledgeLibraryPanel({ role, libraryFiles = [], onAddFile, onRemoveFil
             ))}
             {previewLoading && (
               <div className="flex justify-start">
-                <div className="px-2.5 py-1.5 rounded-xl text-xs bg-white/[0.10] text-gray-500 animate-pulse">Thinking…</div>
+                <div className="px-2.5 py-1.5 rounded-xl text-xs bg-white/[0.10] text-gray-500 animate-pulse">
+                  {lang === 'GEO' ? 'ფიქრობს...' : 'Thinking…'}
+                </div>
               </div>
             )}
           </div>
@@ -869,13 +907,13 @@ function KnowledgeLibraryPanel({ role, libraryFiles = [], onAddFile, onRemoveFil
               value={previewInput}
               onChange={e => setPreviewInput(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) sendPreview(e); }}
-              placeholder="Ask something from your library..."
+              placeholder={lang === 'GEO' ? 'კითხვა ბიბლიოთეკიდან...' : 'Ask something from your library...'}
               disabled={previewLoading}
               className={`${FIELD} py-1.5 flex-1 text-xs`}
             />
             <button type="submit" disabled={!previewInput.trim() || previewLoading}
               className={`rounded-xl ${th.btn} disabled:opacity-40 px-3 py-1.5 text-xs text-white font-medium transition-colors flex-shrink-0`}>
-              Send
+              {lang === 'GEO' ? 'გაგზავნა' : 'Send'}
             </button>
           </form>
         </div>
@@ -886,14 +924,14 @@ function KnowledgeLibraryPanel({ role, libraryFiles = [], onAddFile, onRemoveFil
 
 // ─── Student panels ───────────────────────────────────────────────────────────
 
-function StudentSchedulePanel() {
+function StudentSchedulePanel({ lang }) {
   return (
     <table className="w-full text-xs">
       <thead>
         <tr className="text-gray-500">
-          <th className="text-left pb-2 font-medium">Day</th>
-          <th className="text-left pb-2 font-medium">Time</th>
-          <th className="text-left pb-2 font-medium">Subject</th>
+          <th className="text-left pb-2 font-medium">{lang === 'GEO' ? 'დღე' : 'Day'}</th>
+          <th className="text-left pb-2 font-medium">{lang === 'GEO' ? 'დრო' : 'Time'}</th>
+          <th className="text-left pb-2 font-medium">{lang === 'GEO' ? 'საგანი' : 'Subject'}</th>
         </tr>
       </thead>
       <tbody>
@@ -936,7 +974,7 @@ function StudentLibraryPanel() {
   );
 }
 
-function StudentNotesPanel() {
+function StudentNotesPanel({ lang }) {
   const [notes, setNotes] = useState([
     'Practice the G major scale daily',
     'Bring a pick on Tuesday',
@@ -960,7 +998,7 @@ function StudentNotesPanel() {
           value={draft}
           onChange={e => setDraft(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') add(); }}
-          placeholder="Add a note…"
+          placeholder={lang === 'GEO' ? 'ჩანაწერის დამატება...' : 'Add a note…'}
           className={`${FIELD} py-1.5`}
         />
         <button onClick={add} className="rounded-xl bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 text-sm text-white transition-colors">+</button>
@@ -969,7 +1007,7 @@ function StudentNotesPanel() {
   );
 }
 
-function StudentPracticeDiaryPanel() {
+function StudentPracticeDiaryPanel({ lang }) {
   const [mood, setMood] = useState('😊');
   const [what, setWhat] = useState('');
   const [goal, setGoal] = useState('');
@@ -980,7 +1018,7 @@ function StudentPracticeDiaryPanel() {
   return (
     <div className="space-y-3">
       <div>
-        <p className="text-xs text-gray-500 mb-1.5">Today's mood</p>
+        <p className="text-xs text-gray-500 mb-1.5">{lang === 'GEO' ? 'დღევანდელი განწყობა' : "Today's mood"}</p>
         <div className="flex gap-2">
           {MOODS.map(m => (
             <button
@@ -992,21 +1030,21 @@ function StudentPracticeDiaryPanel() {
         </div>
       </div>
       <textarea rows={2} value={what} onChange={e => setWhat(e.target.value)}
-        placeholder="What did you practice today?" className={FIELD} />
+        placeholder={lang === 'GEO' ? 'რას ვარჯიშობდი დღეს?' : 'What did you practice today?'} className={FIELD} />
       <textarea rows={2} value={goal} onChange={e => setGoal(e.target.value)}
-        placeholder="Tomorrow's goal…" className={FIELD} />
+        placeholder={lang === 'GEO' ? 'ხვალინდელი მიზანი...' : "Tomorrow's goal…"} className={FIELD} />
       {saved
-        ? <p className="text-emerald-400 text-sm">✅ Entry saved!</p>
+        ? <p className="text-emerald-400 text-sm">{lang === 'GEO' ? '✅ ჩანაწერი შენახულია!' : '✅ Entry saved!'}</p>
         : <button onClick={save} disabled={!what.trim()}
             className="rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
-            Save Entry
+            {lang === 'GEO' ? 'ჩანაწერის შენახვა' : 'Save Entry'}
           </button>
       }
     </div>
   );
 }
 
-function StudentReportAbsencePanel() {
+function StudentReportAbsencePanel({ lang }) {
   const [group, setGroup] = useState(STUDENT_GROUPS[0]);
   const [reason, setReason] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -1020,19 +1058,19 @@ function StudentReportAbsencePanel() {
         {STUDENT_GROUPS.map(g => <option key={g}>{g}</option>)}
       </select>
       <textarea rows={3} value={reason} onChange={e => setReason(e.target.value)}
-        placeholder="Reason for absence…" className={FIELD} />
+        placeholder={lang === 'GEO' ? 'გაცდენის მიზეზი...' : 'Reason for absence…'} className={FIELD} />
       {submitted
-        ? <p className="text-emerald-400 text-sm">✅ Sent to your teacher</p>
+        ? <p className="text-emerald-400 text-sm">{lang === 'GEO' ? '✅ მასწავლებელს გაეგზავნა' : '✅ Sent to your teacher'}</p>
         : <button onClick={submit} disabled={!reason.trim()}
             className="rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
-            Report Absence
+            {lang === 'GEO' ? 'გაცდენის შეტყობინება' : 'Report Absence'}
           </button>
       }
     </div>
   );
 }
 
-function StudentReportEventAbsencePanel() {
+function StudentReportEventAbsencePanel({ lang }) {
   const [event, setEvent] = useState(INIT_EVENTS[0]?.name ?? '');
   const [reason, setReason] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -1046,19 +1084,19 @@ function StudentReportEventAbsencePanel() {
         {INIT_EVENTS.map(ev => <option key={ev.id}>{ev.name}</option>)}
       </select>
       <textarea rows={3} value={reason} onChange={e => setReason(e.target.value)}
-        placeholder="Reason for absence…" className={FIELD} />
+        placeholder={lang === 'GEO' ? 'გაცდენის მიზეზი...' : 'Reason for absence…'} className={FIELD} />
       {submitted
-        ? <p className="text-emerald-400 text-sm">✅ Sent to assistant</p>
+        ? <p className="text-emerald-400 text-sm">{lang === 'GEO' ? '✅ ასისტენტს გაეგზავნა' : '✅ Sent to assistant'}</p>
         : <button onClick={submit} disabled={!reason.trim()}
             className="rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
-            Submit Report
+            {lang === 'GEO' ? 'მოხსენების გაგზავნა' : 'Submit Report'}
           </button>
       }
     </div>
   );
 }
 
-function StudentReportExamAbsencePanel() {
+function StudentReportExamAbsencePanel({ lang }) {
   const [subject, setSubject] = useState(STUDENT_ENROLLED[0]);
   const [reason, setReason] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -1072,19 +1110,19 @@ function StudentReportExamAbsencePanel() {
         {STUDENT_ENROLLED.map(s => <option key={s}>{s}</option>)}
       </select>
       <textarea rows={3} value={reason} onChange={e => setReason(e.target.value)}
-        placeholder="Reason for absence…" className={FIELD} />
+        placeholder={lang === 'GEO' ? 'გაცდენის მიზეზი...' : 'Reason for absence…'} className={FIELD} />
       {submitted
-        ? <p className="text-emerald-400 text-sm">✅ Sent to assistant</p>
+        ? <p className="text-emerald-400 text-sm">{lang === 'GEO' ? '✅ ასისტენტს გაეგზავნა' : '✅ Sent to assistant'}</p>
         : <button onClick={submit} disabled={!reason.trim()}
             className="rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
-            Submit Report
+            {lang === 'GEO' ? 'მოხსენების გაგზავნა' : 'Submit Report'}
           </button>
       }
     </div>
   );
 }
 
-function StudentChangeGroupPanel() {
+function StudentChangeGroupPanel({ lang }) {
   const available = ALL_GROUP_NAMES.filter(g => g !== STUDENT_CURRENT_GROUP);
   const [newGroup, setNewGroup] = useState(available[0]);
   const [reason, setReason] = useState('');
@@ -1095,30 +1133,30 @@ function StudentChangeGroupPanel() {
   return (
     <div className="space-y-3">
       <div className="rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2">
-        <p className="text-xs text-gray-500">Current group</p>
+        <p className="text-xs text-gray-500">{lang === 'GEO' ? 'მიმდინარე ჯგუფი' : 'Current group'}</p>
         <p className="text-sm text-white font-medium mt-0.5">{STUDENT_CURRENT_GROUP}</p>
       </div>
       <div>
-        <p className="text-xs text-gray-500 mb-1.5">Request transfer to</p>
+        <p className="text-xs text-gray-500 mb-1.5">{lang === 'GEO' ? 'გადასვლის მოთხოვნა' : 'Request transfer to'}</p>
         <select value={newGroup} onChange={e => setNewGroup(e.target.value)} style={{ colorScheme: 'dark' }}
           className={`${FIELD} cursor-pointer`}>
           {available.map(g => <option key={g}>{g}</option>)}
         </select>
       </div>
       <textarea rows={2} value={reason} onChange={e => setReason(e.target.value)}
-        placeholder="Reason for transfer (optional)…" className={FIELD} />
+        placeholder={lang === 'GEO' ? 'გადასვლის მიზეზი (სურვილისამებრ)...' : 'Reason for transfer (optional)…'} className={FIELD} />
       {sent
-        ? <p className="text-emerald-400 text-sm">✅ Request sent to assistant</p>
+        ? <p className="text-emerald-400 text-sm">{lang === 'GEO' ? '✅ მოთხოვნა გაიგზავნა' : '✅ Request sent to assistant'}</p>
         : <button onClick={submit}
             className="rounded-xl bg-emerald-600 hover:bg-emerald-500 px-4 py-2 text-sm text-white font-medium transition-colors">
-            Submit Request
+            {lang === 'GEO' ? 'მოთხოვნის გაგზავნა' : 'Submit Request'}
           </button>
       }
     </div>
   );
 }
 
-function StudentAddSubjectPanel() {
+function StudentAddSubjectPanel({ lang }) {
   const available = ALL_SUBJECTS.filter(s => !STUDENT_ENROLLED.includes(s));
   const [subject, setSubject] = useState(available[0] ?? '');
   const [sent, setSent] = useState(false);
@@ -1128,7 +1166,7 @@ function StudentAddSubjectPanel() {
   return (
     <div className="space-y-3">
       <div className="rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2">
-        <p className="text-xs text-gray-500 mb-1">Currently enrolled</p>
+        <p className="text-xs text-gray-500 mb-1">{lang === 'GEO' ? 'ამჟამად ჩარიცხული' : 'Currently enrolled'}</p>
         <div className="flex flex-wrap gap-1.5">
           {STUDENT_ENROLLED.map(s => (
             <span key={s} className="text-xs bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full">{s}</span>
@@ -1136,24 +1174,24 @@ function StudentAddSubjectPanel() {
         </div>
       </div>
       <div>
-        <p className="text-xs text-gray-500 mb-1.5">Subject to add</p>
+        <p className="text-xs text-gray-500 mb-1.5">{lang === 'GEO' ? 'დასამატებელი საგანი' : 'Subject to add'}</p>
         <select value={subject} onChange={e => setSubject(e.target.value)} style={{ colorScheme: 'dark' }}
           className={`${FIELD} cursor-pointer`}>
           {available.map(s => <option key={s}>{s}</option>)}
         </select>
       </div>
       {sent
-        ? <p className="text-emerald-400 text-sm">✅ Request sent to assistant</p>
+        ? <p className="text-emerald-400 text-sm">{lang === 'GEO' ? '✅ მოთხოვნა გაიგზავნა' : '✅ Request sent to assistant'}</p>
         : <button onClick={submit} disabled={!subject}
             className="rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
-            Submit Request
+            {lang === 'GEO' ? 'მოთხოვნის გაგზავნა' : 'Submit Request'}
           </button>
       }
     </div>
   );
 }
 
-function StudentRemoveSubjectPanel() {
+function StudentRemoveSubjectPanel({ lang }) {
   const [checked, setChecked] = useState([]);
   const [sent, setSent] = useState(false);
 
@@ -1162,7 +1200,7 @@ function StudentRemoveSubjectPanel() {
 
   return (
     <div className="space-y-3">
-      <p className="text-xs text-gray-500">Select subjects to remove</p>
+      <p className="text-xs text-gray-500">{lang === 'GEO' ? 'აირჩიეთ წასაშლელი საგნები' : 'Select subjects to remove'}</p>
       <div className="space-y-2">
         {STUDENT_ENROLLED.map(s => (
           <label key={s} className="flex items-center gap-3 cursor-pointer rounded-xl border border-white/10 px-3 py-2 hover:bg-white/[0.03] transition-colors">
@@ -1177,10 +1215,10 @@ function StudentRemoveSubjectPanel() {
         ))}
       </div>
       {sent
-        ? <p className="text-emerald-400 text-sm">✅ Request sent to assistant</p>
+        ? <p className="text-emerald-400 text-sm">{lang === 'GEO' ? '✅ მოთხოვნა გაიგზავნა' : '✅ Request sent to assistant'}</p>
         : <button onClick={submit} disabled={!checked.length}
             className="rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 px-4 py-2 text-sm text-white font-medium transition-colors">
-            Submit Request
+            {lang === 'GEO' ? 'მოთხოვნის გაგზავნა' : 'Submit Request'}
           </button>
       }
     </div>
@@ -1238,35 +1276,35 @@ function StudentSearchPanel({ lang }) {
 
 function panelContent(role, panel, libraryProps, lang) {
   switch (panel) {
-    case 'groups':          return <GroupsPanel role={role} />;
-    case 'admin-schedule':  return <AdminSchedulePanel />;
-    case 'students':        return <StudentsPanel role={role} />;
+    case 'groups':          return <GroupsPanel role={role} lang={lang} />;
+    case 'admin-schedule':  return <AdminSchedulePanel lang={lang} />;
+    case 'students':        return <StudentsPanel role={role} lang={lang} />;
     case 'admin-events':    return <AdminEventsPanel />;
-    case 'broadcast':       return <BroadcastPanel />;
+    case 'broadcast':       return <BroadcastPanel lang={lang} />;
     case 'admin-announce':
-    case 'announce':        return <AnnouncePanel role={role} />;
-    case 'invite':          return <InvitePanel role={role} />;
-    case 'my-schedule':     return <MySchedulePanel />;
-    case 'my-groups':       return <MyGroupsPanel />;
-    case 'share-files':       return <TeacherShareFilesPanel />;
-    case 'knowledge-library': return <KnowledgeLibraryPanel role={role} {...(libraryProps ?? {})} />;
-    case 'schedule':        return <StudentSchedulePanel />;
+    case 'announce':        return <AnnouncePanel role={role} lang={lang} />;
+    case 'invite':          return <InvitePanel role={role} lang={lang} />;
+    case 'my-schedule':     return <MySchedulePanel lang={lang} />;
+    case 'my-groups':       return <MyGroupsPanel lang={lang} />;
+    case 'share-files':       return <TeacherShareFilesPanel lang={lang} />;
+    case 'knowledge-library': return <KnowledgeLibraryPanel role={role} lang={lang} {...(libraryProps ?? {})} />;
+    case 'schedule':        return <StudentSchedulePanel lang={lang} />;
     case 'events':          return <StudentEventsPanel />;
     case 'library':         return <StudentLibraryPanel />;
-    case 'notes':           return <StudentNotesPanel />;
-    case 'practice-diary':  return <StudentPracticeDiaryPanel />;
-    case 'report-absence':        return <StudentReportAbsencePanel />;
-    case 'report-event-absence':  return <StudentReportEventAbsencePanel />;
-    case 'report-exam-absence':   return <StudentReportExamAbsencePanel />;
-    case 'change-group':    return <StudentChangeGroupPanel />;
-    case 'add-subject':     return <StudentAddSubjectPanel />;
-    case 'remove-subject':  return <StudentRemoveSubjectPanel />;
-    case 'requests':        return <AssistantRequestsPanel />;
-    case 'teachers':        return <TeachersPanel role={role} />;
-    case 'subjects':        return <SubjectsPanel role={role} />;
+    case 'notes':           return <StudentNotesPanel lang={lang} />;
+    case 'practice-diary':  return <StudentPracticeDiaryPanel lang={lang} />;
+    case 'report-absence':        return <StudentReportAbsencePanel lang={lang} />;
+    case 'report-event-absence':  return <StudentReportEventAbsencePanel lang={lang} />;
+    case 'report-exam-absence':   return <StudentReportExamAbsencePanel lang={lang} />;
+    case 'change-group':    return <StudentChangeGroupPanel lang={lang} />;
+    case 'add-subject':     return <StudentAddSubjectPanel lang={lang} />;
+    case 'remove-subject':  return <StudentRemoveSubjectPanel lang={lang} />;
+    case 'requests':        return <AssistantRequestsPanel lang={lang} />;
+    case 'teachers':        return <TeachersPanel role={role} lang={lang} />;
+    case 'subjects':        return <SubjectsPanel role={role} lang={lang} />;
     case 'view-events':     return <AdminViewEventsPanel />;
-    case 'add-event':       return <AdminAddEventPanel role={role} />;
-    case 'delete-event':    return <AdminDeleteEventPanel />;
+    case 'add-event':       return <AdminAddEventPanel role={role} lang={lang} />;
+    case 'delete-event':    return <AdminDeleteEventPanel lang={lang} />;
     case 'notes-box':       return <StudentNotesBoxPanel />;
     case 'search':          return <StudentSearchPanel lang={lang} />;
     default:                return null;
