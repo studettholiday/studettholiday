@@ -336,7 +336,7 @@ function SignupModal({ lang, onClose }) {
 
 
 export default function App() {
-  const [lang, setLang] = useState('EN');
+  const [lang, setLang] = useState(() => localStorage.getItem('sherlock_lang') || 'EN');
   const [modalOpen, setModalOpen] = useState(false);
   const [chatExpanded, setChatExpanded] = useState(false);
   const isMobile = useIsMobile();
@@ -441,7 +441,7 @@ export default function App() {
             Sherlock Is Smart
           </span>
           <button
-            onClick={() => setLang((l) => (l === 'EN' ? 'GEO' : 'EN'))}
+            onClick={() => setLang((l) => { const next = l === 'EN' ? 'GEO' : 'EN'; localStorage.setItem('sherlock_lang', next); return next; })}
             className="rounded-full border border-white/20 px-4 py-1.5 text-sm font-medium text-gray-400 hover:border-white/40 hover:text-white transition-colors duration-200"
           >
             {lang === 'EN' ? 'GEO' : 'EN'}
