@@ -899,7 +899,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
 
       {/* Role panel — sibling above messages, has its own scroll, never overlaps */}
       {activePanel && (
-        <div className="overflow-y-auto flex-shrink-0 max-h-64 border-b border-white/10 px-4 py-4">
+        <div className="overflow-y-auto flex-shrink-0 max-h-52 border-b border-white/10 px-4 py-4">
           <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)}
             libraryProps={{ libraryFiles, onAddFile: addLibraryFile, onRemoveFile: removeLibraryFile, orgName, orgNameGenitive }} lang={lang} />
         </div>
