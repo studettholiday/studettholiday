@@ -897,17 +897,19 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
         </div>
       )}
 
-      {/* Messages + active panel */}
-      <div ref={messagesRef} className={`flex-1 overflow-y-auto px-4 py-4`} style={{ fontSize: 'clamp(13px, 3.5vw, 16px)', ...(mobile && isLandscape ? { maxHeight: '40vh' } : {}) }}>
+      {/* Messages area */}
+      <div className="flex-1 relative overflow-hidden" style={{ fontSize: 'clamp(13px, 3.5vw, 16px)', ...(mobile && isLandscape ? { maxHeight: '40vh' } : {}) }}>
+        <div ref={messagesRef} className="h-full overflow-y-auto px-4 py-4">
+          {messages.map((msg, i) => (
+            <MessageBubble key={i} message={msg} theme={theme} styleName="glass" />
+          ))}
+        </div>
         {activePanel && (
-          <div className="mb-4">
+          <div className="absolute inset-0 z-20 bg-[#0d0d18]/95 backdrop-blur-sm p-4 overflow-y-auto">
             <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)}
               libraryProps={{ libraryFiles, onAddFile: addLibraryFile, onRemoveFile: removeLibraryFile, orgName, orgNameGenitive }} lang={lang} />
           </div>
         )}
-        {messages.map((msg, i) => (
-          <MessageBubble key={i} message={msg} theme={theme} styleName="glass" />
-        ))}
       </div>
 
       {/* Thinking indicator — fixed below messages, never scrolls away */}
