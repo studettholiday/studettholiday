@@ -542,7 +542,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
       @keyframes dotBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
       .dot-bounce { animation: dotBounce 0.6s ease-in-out infinite; }
     `}</style>
-    <div className={`relative flex flex-col ${mobile ? 'w-full rounded-none border-0' : 'max-w-2xl mx-auto border rounded-2xl'} ${s.wrap}`} style={{ height: mobile ? '100dvh' : '680px', overflow: 'hidden', ...(mobile ? {} : { borderColor: accentColor + '40' }) }}>
+    <div className={`relative flex flex-col ${mobile ? 'w-full rounded-none border-0' : 'max-w-2xl mx-auto border rounded-2xl'} ${s.wrap}`} style={{ height: mobile ? '100dvh' : 'min(680px, calc(100vh - 180px))', overflow: 'hidden', ...(mobile ? {} : { borderColor: accentColor + '40' }) }}>
 
       {/* Per-role ambient glow */}
       <div
