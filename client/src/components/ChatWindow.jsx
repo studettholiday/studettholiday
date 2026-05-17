@@ -897,19 +897,19 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
         </div>
       )}
 
-      {/* Panel + Messages container — fixed total height, panel shrinks messages area */}
-      <div className="flex flex-col flex-1 overflow-hidden">
-        {activePanel && (
-          <div className="max-h-72 overflow-y-auto flex-shrink-0 bg-[#0d0d18]/95 backdrop-blur-sm border-b border-white/10 p-4">
-            <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)}
-              libraryProps={{ libraryFiles, onAddFile: addLibraryFile, onRemoveFile: removeLibraryFile, orgName, orgNameGenitive }} lang={lang} />
-          </div>
-        )}
-        <div ref={messagesRef} className="flex-1 overflow-y-auto px-4 py-4" style={{ fontSize: 'clamp(13px, 3.5vw, 16px)' }}>
-          {messages.map((msg, i) => (
-            <MessageBubble key={i} message={msg} theme={theme} styleName="glass" />
-          ))}
+      {/* Role panel — sibling above messages, has its own scroll, never overlaps */}
+      {activePanel && (
+        <div className="overflow-y-auto flex-shrink-0 max-h-[350px] border-b border-white/10 px-4 py-4">
+          <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)}
+            libraryProps={{ libraryFiles, onAddFile: addLibraryFile, onRemoveFile: removeLibraryFile, orgName, orgNameGenitive }} lang={lang} />
         </div>
+      )}
+
+      {/* Messages */}
+      <div ref={messagesRef} className="flex-1 overflow-y-auto px-4 py-4" style={{ fontSize: 'clamp(13px, 3.5vw, 16px)' }}>
+        {messages.map((msg, i) => (
+          <MessageBubble key={i} message={msg} theme={theme} styleName="glass" />
+        ))}
       </div>
 
       {/* Thinking indicator — fixed below messages, never scrolls away */}
