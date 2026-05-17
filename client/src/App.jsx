@@ -750,7 +750,7 @@ export default function App() {
               </h2>
               <p className="mt-3 text-gray-400">{t.chatSubtitle}</p>
             </div>
-            <div className="mx-auto max-w-2xl px-4">
+            <div className="mx-auto max-w-2xl px-4" style={{height:"680px"}}>
               <ChatWindow lang={lang} />
             </div>
           </>
