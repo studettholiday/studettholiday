@@ -3,7 +3,9 @@ import { useState } from 'react';
 const T = {
   EN: {
     title: 'About',
-    body: `I run a music school in Tbilisi. Scheduling chaos, students missing information, teachers sharing files through WhatsApp at midnight. I built Sherlock to fix my own problems. Now students get answers at 3am without texting anyone. Teachers send materials to exact groups. The AI stays on topic — it won't help a student write a love letter when they should be learning solfège. Everyone in the institution — admin, assistant, teacher, student — has exactly the tools they need, nothing more, nothing less. You decide how much AI power to use, because you pay for AI directly — we never touch your budget.`,
+    body: `I run a music school in Tbilisi. Scheduling chaos, students missing information, teachers sharing files through WhatsApp at midnight. I built Sherlock to fix my own problems. Now students get answers at 3am without texting anyone. Teachers send materials to exact groups. The AI stays on topic — it won't help a student write a love letter when they should be learning solfège. Everyone in the institution — admin, assistant, teacher, student — has exactly the tools they need, nothing more, nothing less. You decide how much AI power to use, because you pay for AI directly — we never touch your budget.
+
+— From the founder of Sherlock Is Smart.`,
     pricingTitle: 'Pricing',
     pricing: '$4 per student per month. No setup fees. No hidden costs. You bring your own AI key.',
     back: '← Back',
