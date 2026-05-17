@@ -899,14 +899,14 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
 
       {/* Role panel — sibling above messages, has its own scroll, never overlaps */}
       {activePanel && (
-        <div className="overflow-y-auto flex-shrink-0 max-h-52 border-b border-white/10 px-4 py-4">
+        <div style={{position:'absolute',top:0,left:0,right:0,zIndex:20,maxHeight:'60%',overflowY:'auto',background:'rgba(13,13,26,0.97)',backdropFilter:'blur(12px)',borderBottom:'1px solid rgba(255,255,255,0.1)',padding:'16px'}}>
           <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)}
             libraryProps={{ libraryFiles, onAddFile: addLibraryFile, onRemoveFile: removeLibraryFile, orgName, orgNameGenitive }} lang={lang} />
         </div>
       )}
 
       {/* Messages */}
-      <div ref={messagesRef} className="flex-1 overflow-y-auto px-4 py-4" style={{ fontSize: 'clamp(13px, 3.5vw, 16px)' }}>
+      <div ref={messagesRef} className="flex-1 overflow-y-auto px-4 py-4 relative" style={{ fontSize: 'clamp(13px, 3.5vw, 16px)' }}>
         {messages.map((msg, i) => (
           <MessageBubble key={i} message={msg} theme={theme} styleName="glass" />
         ))}
