@@ -898,7 +898,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
       )}
 
       {/* Messages + active panel */}
-      <div ref={messagesRef} className={`${mobile ? 'flex-1' : 'h-[400px]'} overflow-y-auto px-4 py-4`} style={{ fontSize: 'clamp(13px, 3.5vw, 16px)', ...(mobile && isLandscape ? { maxHeight: '40vh' } : {}) }}>
+      <div ref={messagesRef} className={`flex-1 overflow-y-auto px-4 py-4`} style={{ fontSize: 'clamp(13px, 3.5vw, 16px)', ...(mobile && isLandscape ? { maxHeight: '40vh' } : {}) }}>
         {activePanel && (
           <div className="mb-4">
             <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)}
