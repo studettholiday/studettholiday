@@ -448,6 +448,9 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
     const text = input.trim();
     if (!text || loading) return;
 
+    setActivePanel(null);
+    setOpenGroup(null);
+
     const userMessage = { role: 'user', content: text };
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
