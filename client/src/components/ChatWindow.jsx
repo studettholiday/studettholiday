@@ -723,10 +723,10 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
       {(() => {
         const inactiveCls = s.colorScheme === 'light'
           ? 'border border-gray-300 text-gray-500 hover:text-gray-900 hover:border-gray-400'
-          : 'border border-white/15 text-gray-400 hover:text-white hover:border-white/30';
+          : 'border border-white/40 text-white/70 hover:text-white hover:border-white/60';
         const inactiveGroupCls = s.colorScheme === 'light'
           ? 'border border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400'
-          : 'border border-white/15 text-gray-400 hover:text-white hover:border-white/30';
+          : 'border border-white/40 text-white/70 hover:text-white hover:border-white/60';
         const openGroupDef = openGroup ? getButtonGroups(lang)[role].find(g => g.id === openGroup) : null;
         return (
           <div className={`flex flex-col border-b ${s.headerBorder} flex-shrink-0`}>
