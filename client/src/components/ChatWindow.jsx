@@ -542,7 +542,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
       @keyframes dotBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
       .dot-bounce { animation: dotBounce 0.6s ease-in-out infinite; }
     `}</style>
-    <div className={`relative flex flex-col ${mobile ? 'w-full h-full rounded-none border-0' : 'h-full max-w-2xl mx-auto border rounded-2xl'} overflow-hidden ${s.wrap}`} style={{ ...(mobile ? {} : { borderColor: accentColor + '40' }) }}>
+    <div className={`relative flex flex-col ${mobile ? 'w-full rounded-none border-0' : 'max-w-2xl mx-auto border rounded-2xl'} ${s.wrap}`} style={{ height: mobile ? '100dvh' : '680px', overflow: 'hidden', ...(mobile ? {} : { borderColor: accentColor + '40' }) }}>
 
       {/* Per-role ambient glow */}
       <div
@@ -897,17 +897,19 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
         </div>
       )}
 
-      {/* Messages + active panel */}
-      <div ref={messagesRef} className="flex-1 relative overflow-y-auto px-4 py-4" style={{ fontSize: 'clamp(13px, 3.5vw, 16px)' }}>
-        {messages.map((msg, i) => (
-          <MessageBubble key={i} message={msg} theme={theme} styleName="glass" />
-        ))}
+      {/* Panel + Messages container — fixed total height, panel shrinks messages area */}
+      <div className="flex flex-col flex-1 overflow-hidden">
         {activePanel && (
-          <div className="absolute inset-0 z-20 overflow-y-auto bg-[#0d0d18]/95 backdrop-blur-sm p-4">
+          <div className="max-h-72 overflow-y-auto flex-shrink-0 bg-[#0d0d18]/95 backdrop-blur-sm border-b border-white/10 p-4">
             <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)}
               libraryProps={{ libraryFiles, onAddFile: addLibraryFile, onRemoveFile: removeLibraryFile, orgName, orgNameGenitive }} lang={lang} />
           </div>
         )}
+        <div ref={messagesRef} className="flex-1 overflow-y-auto px-4 py-4" style={{ fontSize: 'clamp(13px, 3.5vw, 16px)' }}>
+          {messages.map((msg, i) => (
+            <MessageBubble key={i} message={msg} theme={theme} styleName="glass" />
+          ))}
+        </div>
       </div>
 
       {/* Thinking indicator — fixed below messages, never scrolls away */}
