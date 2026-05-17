@@ -176,7 +176,7 @@ const GEO_PANEL_TITLES = {
   'knowledge-library':     'ცოდნის ბიბლიოთეკა',
   'notes-box':             'ჩანაწერების ყუთი',
   'search':                'ძებნა',
-  'ai-use':                'AI Power Settings',
+  'ai-use':                'AI სიმძლავრის პარამეტრები',
 };
 
 function getPanelTitle(panel, lang) {
@@ -1338,9 +1338,9 @@ function StudentSearchPanel({ lang }) {
 // ─── Panel router ─────────────────────────────────────────────────────────────
 
 const AI_MODES = [
-  { id: 'FOCUS', desc: 'Library only. Sherlock answers only from documents you upload. Zero hallucination, maximum control. Cheapest option.' },
-  { id: 'SMART', desc: 'Library + general knowledge. Sherlock uses your documents first, then its own knowledge. Balanced cost.' },
-  { id: 'FULL',  desc: 'Unrestricted. Sherlock can search the web, generate content, answer anything. Most powerful, highest cost.' },
+  { id: 'FOCUS', desc: 'Library only. Sherlock answers only from documents you upload. Zero hallucination, maximum control. Cheapest option.', descGeo: 'მხოლოდ ბიბლიოთეკა. შერლოკი პასუხობს მხოლოდ ატვირთული დოკუმენტებიდან. ნულოვანი ჰალუცინაცია, მაქსიმალური კონტროლი. ყველაზე იაფი.' },
+  { id: 'SMART', desc: 'Library + general knowledge. Sherlock uses your documents first, then its own knowledge. Balanced cost.',             descGeo: 'ბიბლიოთეკა + ზოგადი ცოდნა. შერლოკი პირველ რიგში იყენებს თქვენს დოკუმენტებს, შემდეგ საკუთარ ცოდნას. დაბალანსებული ხარჯი.' },
+  { id: 'FULL',  desc: 'Unrestricted. Sherlock can search the web, generate content, answer anything. Most powerful, highest cost.',          descGeo: 'შეუზღუდავი. შერლოკს შეუძლია ინტერნეტ-ძიება, კონტენტის გენერირება, ნებისმიერ კითხვაზე პასუხი. ყველაზე მძლავრი, ყველაზე მაღალი ხარჯი.' },
 ];
 
 const BORDER_SEL = {
@@ -1350,8 +1350,9 @@ const BORDER_SEL = {
   student:   'border-emerald-500',
 };
 
-function AiUsePanel({ role }) {
+function AiUsePanel({ role, lang }) {
   const th = TH[role];
+  const geo = lang === 'GEO';
   const [selected, setSelected] = useState(() => localStorage.getItem('sherlock_demo_mode'));
   const [confirmed, setConfirmed] = useState(null);
 
@@ -1364,7 +1365,9 @@ function AiUsePanel({ role }) {
   return (
     <div className="space-y-3">
       <p className="text-xs text-gray-400 leading-relaxed">
-        As admin, you control how much AI power your school uses. This directly affects your API costs.
+        {geo
+          ? 'როგორც ადმინი, თქვენ აკონტროლებთ რამხელა AI სიმძლავრეს იყენებს თქვენი სკოლა. ეს პირდაპირ გავლენას ახდენს თქვენს API ხარჯებზე.'
+          : 'As admin, you control how much AI power your school uses. This directly affects your API costs.'}
       </p>
       <div className="space-y-2">
         {AI_MODES.map(mode => (
@@ -1377,18 +1380,18 @@ function AiUsePanel({ role }) {
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 <p className={`text-xs font-bold mb-1 ${selected === mode.id ? th.accent : 'text-white'}`}>{mode.id}</p>
-                <p className="text-xs text-gray-400 leading-relaxed">{mode.desc}</p>
+                <p className="text-xs text-gray-400 leading-relaxed">{geo ? mode.descGeo : mode.desc}</p>
               </div>
               <button
                 onClick={() => choose(mode.id)}
                 className={`flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium text-white transition-colors ${th.btn}`}
-              >Set</button>
+              >{geo ? 'დაყენება' : 'Set'}</button>
             </div>
           </div>
         ))}
       </div>
       {confirmed && (
-        <p className={`text-xs font-medium ${th.conf}`}>✓ Set to {confirmed}</p>
+        <p className={`text-xs font-medium ${th.conf}`}>✓ {geo ? `დაყენებულია: ${confirmed}` : `Set to ${confirmed}`}</p>
       )}
     </div>
   );
@@ -1427,7 +1430,7 @@ function panelContent(role, panel, libraryProps, lang) {
     case 'delete-event':    return <AdminDeleteEventPanel lang={lang} />;
     case 'notes-box':       return <StudentNotesBoxPanel />;
     case 'search':          return <StudentSearchPanel lang={lang} />;
-    case 'ai-use':          return <AiUsePanel role={role} />;
+    case 'ai-use':          return <AiUsePanel role={role} lang={lang} />;
     default:                return null;
   }
 }
