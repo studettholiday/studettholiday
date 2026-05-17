@@ -542,7 +542,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
       @keyframes dotBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
       .dot-bounce { animation: dotBounce 0.6s ease-in-out infinite; }
     `}</style>
-    <div className={`relative flex flex-col ${mobile ? 'w-full h-full rounded-none border-0' : 'max-w-2xl mx-auto border rounded-2xl'} overflow-hidden ${s.wrap}`} style={{ ...(mobile ? {} : { height: '600px', borderColor: accentColor + '40' }) }}>
+    <div className={`relative flex flex-col ${mobile ? 'w-full h-full rounded-none border-0' : 'max-w-2xl mx-auto border rounded-2xl'} overflow-hidden ${s.wrap}`} style={{ ...(mobile ? {} : { borderColor: accentColor + '40' }), ...(mobile && keyboardOpen ? { height: `${window.visualViewport?.height || window.innerHeight}px` } : {}) }}>
 
       {/* Per-role ambient glow */}
       <div
@@ -897,8 +897,8 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
         </div>
       )}
 
-      {/* Messages area */}
-      <div ref={messagesRef} className="flex-1 overflow-y-auto px-4 py-4" style={{ fontSize: 'clamp(13px, 3.5vw, 16px)' }}>
+      {/* Messages + active panel */}
+      <div ref={messagesRef} className={`${mobile ? 'flex-1' : 'h-[400px]'} overflow-y-auto px-4 py-4`} style={{ fontSize: 'clamp(13px, 3.5vw, 16px)', ...(mobile && isLandscape ? { maxHeight: '40vh' } : {}) }}>
         {activePanel && (
           <div className="mb-4">
             <RolePanel role={role} panel={activePanel} onClose={() => setActivePanel(null)}
