@@ -141,6 +141,7 @@ const PANEL_TITLES = {
   'knowledge-library':     'Knowledge Library',
   'notes-box':             'Notes Box',
   'search':                'Search',
+  'ai-use':                'AI Power Settings',
 };
 
 const GEO_PANEL_TITLES = {
@@ -175,6 +176,7 @@ const GEO_PANEL_TITLES = {
   'knowledge-library':     'ცოდნის ბიბლიოთეკა',
   'notes-box':             'ჩანაწერების ყუთი',
   'search':                'ძებნა',
+  'ai-use':                'AI Power Settings',
 };
 
 function getPanelTitle(panel, lang) {
@@ -1335,6 +1337,63 @@ function StudentSearchPanel({ lang }) {
 
 // ─── Panel router ─────────────────────────────────────────────────────────────
 
+const AI_MODES = [
+  { id: 'FOCUS', desc: 'Library only. Sherlock answers only from documents you upload. Zero hallucination, maximum control. Cheapest option.' },
+  { id: 'SMART', desc: 'Library + general knowledge. Sherlock uses your documents first, then its own knowledge. Balanced cost.' },
+  { id: 'FULL',  desc: 'Unrestricted. Sherlock can search the web, generate content, answer anything. Most powerful, highest cost.' },
+];
+
+const BORDER_SEL = {
+  admin:     'border-purple-500',
+  assistant: 'border-orange-500',
+  teacher:   'border-blue-500',
+  student:   'border-emerald-500',
+};
+
+function AiUsePanel({ role }) {
+  const th = TH[role];
+  const [selected, setSelected] = useState(() => localStorage.getItem('sherlock_demo_mode'));
+  const [confirmed, setConfirmed] = useState(null);
+
+  function choose(modeId) {
+    localStorage.setItem('sherlock_demo_mode', modeId);
+    setSelected(modeId);
+    setConfirmed(modeId);
+  }
+
+  return (
+    <div className="space-y-3">
+      <p className="text-xs text-gray-400 leading-relaxed">
+        As admin, you control how much AI power your school uses. This directly affects your API costs.
+      </p>
+      <div className="space-y-2">
+        {AI_MODES.map(mode => (
+          <div
+            key={mode.id}
+            className={`rounded-xl border p-3 transition-colors ${
+              selected === mode.id ? `${BORDER_SEL[role]} bg-white/[0.06]` : `${th.border} bg-white/[0.02]`
+            }`}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <p className={`text-xs font-bold mb-1 ${selected === mode.id ? th.accent : 'text-white'}`}>{mode.id}</p>
+                <p className="text-xs text-gray-400 leading-relaxed">{mode.desc}</p>
+              </div>
+              <button
+                onClick={() => choose(mode.id)}
+                className={`flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium text-white transition-colors ${th.btn}`}
+              >Set</button>
+            </div>
+          </div>
+        ))}
+      </div>
+      {confirmed && (
+        <p className={`text-xs font-medium ${th.conf}`}>✓ Set to {confirmed}</p>
+      )}
+    </div>
+  );
+}
+
 function panelContent(role, panel, libraryProps, lang) {
   switch (panel) {
     case 'groups':          return <GroupsPanel role={role} lang={lang} />;
@@ -1368,6 +1427,7 @@ function panelContent(role, panel, libraryProps, lang) {
     case 'delete-event':    return <AdminDeleteEventPanel lang={lang} />;
     case 'notes-box':       return <StudentNotesBoxPanel />;
     case 'search':          return <StudentSearchPanel lang={lang} />;
+    case 'ai-use':          return <AiUsePanel role={role} />;
     default:                return null;
   }
 }
