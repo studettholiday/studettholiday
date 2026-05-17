@@ -532,6 +532,8 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
     <style>{`
       input[type=range].rainbow-slider::-webkit-slider-thumb { width: 22px; height: 22px; border-radius: 50%; background: white; border: 2px solid rgba(0,0,0,0.3); box-shadow: 0 1px 4px rgba(0,0,0,0.4); appearance: none; cursor: pointer; }
       input[type=range].rainbow-slider::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: white; border: 2px solid rgba(0,0,0,0.3); cursor: pointer; }
+      @keyframes dotBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+      .dot-bounce { animation: dotBounce 0.6s ease-in-out infinite; }
     `}</style>
     <div className={`relative flex flex-col ${mobile ? 'w-full h-full rounded-none border-0' : 'max-w-2xl mx-auto border rounded-2xl'} overflow-hidden ${s.wrap}`} style={{ ...(mobile ? {} : { borderColor: accentColor + '40' }), ...(mobile && keyboardOpen ? { height: `${window.visualViewport?.height || window.innerHeight}px` } : {}) }}>
 
@@ -677,9 +679,6 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
               )}
             </div>
 
-          {loading && (
-            <span className={`text-xs animate-pulse ${s.thinkingColor}`}>{lang === 'GEO' ? 'ფიქრობს...' : 'Thinking…'}</span>
-          )}
         </div>
       </header>
 
@@ -902,6 +901,20 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
         {messages.map((msg, i) => (
           <MessageBubble key={i} message={msg} theme={theme} styleName="glass" />
         ))}
+      </div>
+
+      {/* Thinking indicator — fixed below messages, never scrolls away */}
+      <div style={{ display: loading ? 'flex' : 'none', alignItems: 'flex-end', gap: '8px', flexShrink: 0 }}
+        className={`px-4 py-2 border-t ${s.footerBorder}`}>
+        <div className={`w-8 h-8 text-sm rounded-full ${theme.avatar} flex items-center justify-center text-white font-bold flex-shrink-0`}>
+          S
+        </div>
+        <div className={`px-4 py-2.5 rounded-2xl rounded-bl-sm ${s.assistantBubble} flex items-center gap-1.5`}>
+          {[0, 1, 2].map(d => (
+            <div key={d} className="dot-bounce w-2 h-2 rounded-full"
+              style={{ background: accentColor, animationDelay: `${d * 0.15}s` }} />
+          ))}
+        </div>
       </div>
 
       {/* Attached file pills */}
