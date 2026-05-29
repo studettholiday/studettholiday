@@ -3,20 +3,40 @@ import { useState } from 'react';
 const T = {
   EN: {
     title: 'About',
-    body: `I run a music school in Tbilisi. Scheduling chaos, students missing information, teachers sharing files through WhatsApp at midnight. I built Sherlock to fix my own problems. Now students get answers at 3am without texting anyone. Teachers send materials to exact groups. The AI stays on topic — it won't help a student write a love letter when they should be learning solfège. Everyone in the institution — admin, assistant, teacher, student — has exactly the tools they need, nothing more, nothing less. You decide how much AI power to use, because you pay for AI directly — we never touch your budget.
+    body: `I run a music school in Tbilisi. Scheduling chaos, students missing information, teachers sharing files on WhatsApp at midnight. I built Sherlock to fix my own problems. Now students get answers at 3am without texting anyone. Teachers share materials with specific groups. The AI stays on topic — it won't help a student write a love letter when they should be learning solfège. Everyone in the institution — admin, assistant, teacher, student — has exactly the tools they need, nothing more, nothing less.
 
-— From the founder of Sherlock Is Smart.`,
+— From the founder of Sherlock Is Smart`,
     pricingTitle: 'Pricing',
-    pricing: '$4 per student per month. No setup fees. No hidden costs. You bring your own AI key.',
+    pricing: `Sherlock plans for you. Each plan includes a number of AI conversations per month (1 conversation = 1 question + 1 answer). All other features — schedule, library, file uploads, invites — are unlimited.
+
+Starter — $11/month — 200 conversations
+Standard — $29/month — 700 conversations
+Pro — $75/month — 2000 conversations
+
+When your AI conversation limit runs out, the rest of the app keeps working normally. The AI resets at the start of the next month (you'll be able to chat with Sherlock again).
+
+Free trial: 14 days (30 conversations).
+
+Given recent concerns about AI in education, you can restrict the AI for students and use it only for yourself — they still get full access to every other feature.`,
     back: '← Back',
   },
   GEO: {
     title: 'ჩვენს შესახებ',
-    body: `მე ვარ მუსიკალური სკოლის ხელმძღვანელი თბილისში. გრაფიკი ქაოსია! მოსწავლეები ინფორმაციას ვერ იღებენ, მასწავლებლები ფაილებს WhatsApp-ის საშუალებით შუაღამისას აზიარებენ. შერლოკი ჩემი პრობლემების გადასაჭრელად შევქმენი. ახლა მოსწავლეები პასუხებს დილის 3 საათზეც კი იღებენ, ვინმეს შეწუხების გარეშე. მასწავლებლები მასალებს კონკრეტულ ჯგუფებს უგზავნიან. ხელოვნური ინტელექტი კონკრეტულ თემატიკას არ სცდება - ის არ დაეხმარება მოსწავლეს სასიყვარულო წერილის დაწერაში, როცა სოლფეჯიოს უნდა მეცადინეობდეს. დაწესებულების ყველა წევრს - ადმინისტრაციას, ასისტენტს, მასწავლებელს, მოსწავლეს - აქვს ზუსტად ის ინსტრუმენტები, რაც სჭირდება, არც მეტი, არც ნაკლები. თქვენ წყვეტთ, რამდენი ხელოვნური ინტელექტის ინტეგრაცია გინდათ და რა შეზღუდვები წესდება მოხმარებაზე, თქვენ აიყვანთ ფასიან ან უფასო ხელოვნურ ინტელექტს - ჩვენ არასდროს ვეხებით თქვენს ბიუჯეტს.
+    body: `მე ვარ მუსიკალური სკოლის ხელმძღვანელი თბილისში. გრაფიკი ქაოსია, მოსწავლეები ინფორმაციას ვერ იღებენ, მასწავლებლები ფაილებს WhatsApp-ით შუაღამისას აზიარებენ. შერლოკი ჩემი პრობლემების გადასაჭრელად შევქმენი. ახლა მოსწავლეები პასუხებს დილის 3 საათზე იღებენ შეტყობინებების გარეშე. მასწავლებლები მასალებს კონკრეტულ ჯგუფებს უგზავნიან. ხელოვნური ინტელექტი თემატიკას არ სცდება — ის არ დაეხმარება მოსწავლეს სასიყვარულო წერილის დაწერაში, როცა სოლფეჯიოს უნდა მეცადინეობდეს. დაწესებულების ყველა წევრს — ადმინისტრაციას, ასისტენტს, მასწავლებელს, მოსწავლეს — ზუსტად ის ხელსაწყოები აქვთ, რაც სჭირდებათ.
 
-— შერლოკი არის ჭკვიანის შემქმნელისგან.`,
+— Sherlock Is Smart-ის შემქმნელისგან`,
     pricingTitle: 'ფასი',
-    pricing: '4$ თითო მოსწავლეზე თვეში. რეგისტრაცია/გადმოწერა საფასურს არ საჭიროებს. ფარული ხარჯები არ არის. თქვენ თან გაქვთ თქვენი საკუთარი ხელოვნური ინტელექტის გასაღები.',
+    pricing: `შერლოკის გეგმები თქვენთვის. თითოეული მოიცავს AI საუბრების გარკვეულ რაოდენობას თვეში (1 საუბარი = 1 კითხვა + 1 პასუხი). დანარჩენი ფუნქციები — განრიგი, ბიბლიოთეკა, ფაილების ატვირთვა, მოწვევები — შეუზღუდავია.
+
+Starter — ₾29/თვეში — 200 საუბარი
+Standard — ₾79/თვეში — 700 საუბარი
+Pro — ₾199/თვეში — 2000 საუბარი
+
+როდესაც საუბრის ლიმიტი ამოიწურება, აპის დანარჩენი ფუნქციები ჩვეულებრივად აგრძელებს მუშაობას. ხოლო ხელოვნური ინტელექტი შემდეგი თვიდან განახლდება (შეძლებთ კვლავ ესაუბროთ შერლოკს).
+
+უფასო საცდელი პერიოდი: 14 დღე (30 საუბარი).
+
+რადგან ამ ბოლო პერიოდში გაჩნდა ნეგატიური დამოკიდებულება ხელოვნური ინტელექტის მიმართ, შეგიძლიათ შეზღუდოთ მოსწავლეებისთვის და გამოიყენოთ მხოლოდ თქვენთვის, ხოლო ისინი ისარგებლებენ ყველა დანარჩენი ფუნქციით.`,
     back: '← უკან',
   },
 };
@@ -85,7 +105,7 @@ export default function About() {
               {t.pricingTitle}
             </h2>
             <p
-              className="text-gray-300 text-base leading-relaxed"
+              className="text-gray-300 text-base leading-relaxed whitespace-pre-line"
               style={{ fontFamily: "'Noto Sans Georgian', sans-serif" }}
             >
               {t.pricing}
