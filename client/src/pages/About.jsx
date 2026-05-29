@@ -18,6 +18,8 @@ When your AI conversation limit runs out, the rest of the app keeps working norm
 Free trial: 14 days (30 conversations).
 
 Given recent concerns about AI in education, you can restrict the AI for students and use it only for yourself — they still get full access to every other feature.`,
+    privacy: 'Privacy',
+    terms: 'Terms',
     back: '← Back',
   },
   GEO: {
@@ -37,6 +39,8 @@ Pro — ₾199/თვეში — 2000 საუბარი
 უფასო საცდელი პერიოდი: 14 დღე (30 საუბარი).
 
 რადგან ამ ბოლო პერიოდში გაჩნდა ნეგატიური დამოკიდებულება ხელოვნური ინტელექტის მიმართ, შეგიძლიათ შეზღუდოთ მოსწავლეებისთვის და გამოიყენოთ მხოლოდ თქვენთვის, ხოლო ისინი ისარგებლებენ ყველა დანარჩენი ფუნქციით.`,
+    privacy: 'კონფიდენციალურობა',
+    terms: 'წესები',
     back: '← უკან',
   },
 };
@@ -111,6 +115,26 @@ export default function About() {
               {t.pricing}
             </p>
           </div>
+
+          <footer className="text-center text-xs text-gray-500 mt-8">
+            <a
+              href="https://app.sherlock.school/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gray-300 transition-colors duration-200"
+            >
+              {t.privacy}
+            </a>
+            {' · '}
+            <a
+              href="https://app.sherlock.school/terms"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gray-300 transition-colors duration-200"
+            >
+              {t.terms}
+            </a>
+          </footer>
         </section>
       </div>
     </div>
