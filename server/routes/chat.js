@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
     return res.status(429).json({ error: 'Too many requests. Please try again later.' });
   }
 
-  const { messages, provider = 'anthropic', context, language = 'en' } = req.body;
+  const { messages, context, language = 'en' } = req.body;
 
   if (!Array.isArray(messages) || messages.length === 0) {
     return res.status(400).json({ error: 'messages array is required' });
@@ -50,7 +50,7 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: `Message too long. Maximum ${MAX_MESSAGE_LENGTH} characters allowed.` });
   }
 
-  // Anthropic requires the conversation to start with a user message.
+  // Gemini requires the conversation to start with a user message.
   // Strip any leading assistant turns (e.g. the client's greeting bubble).
   const trimmed = messages.slice(
     messages.findIndex((m) => m.role === 'user')
@@ -99,7 +99,7 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    const reply = await routeToProvider(provider, processedMessages, language);
+    const reply = await routeToProvider(processedMessages, language);
     res.json({ message: reply });
   } catch (err) {
     console.error('AI error:', err.message);

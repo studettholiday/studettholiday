@@ -256,11 +256,6 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [provider, setProvider] = useState(lang === 'GEO' ? 'gemini' : 'anthropic');
-
-  useEffect(() => {
-    setProvider(lang === 'GEO' ? 'gemini' : 'anthropic');
-  }, [lang]);
   const [accentColor, setAccentColor] = useState('#7c3aed');
   const [styleOpen, setStyleOpen] = useState(false);
   const stylePanelRef   = useRef(null);
@@ -476,7 +471,7 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages, provider, context: buildContext(libraryFiles, attachedFiles), language: lang === 'GEO' ? 'ka' : 'en' }),
+        body: JSON.stringify({ messages: apiMessages, provider: 'gemini', context: buildContext(libraryFiles, attachedFiles), language: lang === 'GEO' ? 'ka' : 'en' }),
       });
       const data = await res.json();
       const aiText = data.message ?? 'No response.';
@@ -606,18 +601,6 @@ export default function ChatWindow({ lang, mobile = false, onClose = null }) {
               )}
             </div>
           )}
-          <select
-            value={provider}
-            onChange={(e) => setProvider(e.target.value)}
-            disabled={loading}
-            style={{ colorScheme: s.colorScheme }}
-            className={`text-sm rounded-lg px-2 py-1 focus:outline-none ${theme.ring} disabled:opacity-40 ${s.selectCls}`}
-          >
-            <option value="anthropic">Claude</option>
-            <option value="openai">GPT-4</option>
-            <option value="gemini">Gemini</option>
-          </select>
-
           {/* show on all devices */}
           <div className="relative flex-shrink-0" ref={stylePanelRef}>
               <button

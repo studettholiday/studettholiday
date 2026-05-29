@@ -1,8 +1,4 @@
-const Anthropic = require('@anthropic-ai/sdk');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const OpenAI = require('openai');
-
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const SYSTEM_PROMPT = `You are Sherlock Is Smart,
 an AI assistant for school management. Be concise and clear.
@@ -63,28 +59,6 @@ async function searchWeb(query) {
   }));
 }
 
-async function callAnthropic(messages, language = 'en') {
-  const langInstruction = language === 'ka'
-    ? 'The user has set their language preference to Georgian. Respond in Georgian (ქართული) by default. If the user writes to you in English, you may respond in English. Match the language the user is writing in, but default to Georgian.\n\nYou must respond exclusively in Georgian language (ქართული). Even if the uploaded library documents are in English, translate and explain their content in Georgian. Never respond in English when the user is in Georgian mode.\n\nIf the user asks a question that relates to the uploaded library content, find the answer in that content, translate it to Georgian, and respond in Georgian only. Never paste raw English text in your response.'
-    : 'Respond in English by default. Match the language the user writes in.';
-  const stream = client.messages.stream({
-    model: 'claude-opus-4-7',
-    max_tokens: 8192,
-    system: [
-      {
-        type: 'text',
-        text: langInstruction + '\n\n' + SYSTEM_PROMPT,
-        cache_control: { type: 'ephemeral' },
-      },
-    ],
-    messages,
-  });
-
-  const response = await stream.finalMessage();
-  const textBlock = response.content.find((b) => b.type === 'text');
-  return textBlock?.text ?? '';
-}
-
 async function callGemini(messages, language = 'en') {
   const langInstruction = language === 'ka'
     ? 'The user has set their language preference to Georgian. Respond in Georgian (ქართული) by default. If the user writes to you in English, you may respond in English. Match the language the user is writing in, but default to Georgian.\n\nYou must respond exclusively in Georgian language (ქართული). Even if the uploaded library documents are in English, translate and explain their content in Georgian. Never respond in English when the user is in Georgian mode.\n\nIf the user asks a question that relates to the uploaded library content, find the answer in that content, translate it to Georgian, and respond in Georgian only. Never paste raw English text in your response.'
@@ -118,40 +92,10 @@ async function callGemini(messages, language = 'en') {
   }
 }
 
-async function callOpenAI(messages, language = 'en') {
-  const langInstruction = language === 'ka'
-    ? 'The user has set their language preference to Georgian. Respond in Georgian (ქართული) by default. If the user writes to you in English, you may respond in English. Match the language the user is writing in, but default to Georgian.\n\nYou must respond exclusively in Georgian language (ქართული). Even if the uploaded library documents are in English, translate and explain their content in Georgian. Never respond in English when the user is in Georgian mode.\n\nIf the user asks a question that relates to the uploaded library content, find the answer in that content, translate it to Georgian, and respond in Georgian only. Never paste raw English text in your response.'
-    : 'Respond in English by default. Match the language the user writes in.';
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-  const formatted = messages.map(m => ({
-    role: m.role,
-    content: m.content
-  }));
-
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    messages: [
-      { role: 'system', content: langInstruction + '\n\n' + RESTRICTED_SYSTEM_PROMPT },
-      ...formatted
-    ],
-    max_tokens: 2048
-  });
-
-  return response.choices[0].message.content ?? '';
-}
-
-async function routeToProvider(provider, messages, language = 'en') {
-  switch (provider) {
-    case 'anthropic':
-      return callAnthropic(messages, language);
-    case 'openai':
-      return callOpenAI(messages, language);
-    case 'gemini':
-      return callGemini(messages, language);
-    default:
-      throw new Error(`Unknown provider: ${provider}`);
-  }
+// Demo is hardcoded to Gemini. The signature stays compatible with the
+// existing chat.js caller; any provider arg is ignored.
+async function routeToProvider(messages, language = 'en') {
+  return callGemini(messages, language);
 }
 
 module.exports = { routeToProvider, searchYouTube, searchWeb };
