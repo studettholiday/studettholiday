@@ -602,7 +602,7 @@ export default function App() {
 
           <div className="mt-10 flex flex-wrap gap-3 justify-center">
             <button
-              onClick={() => setModalOpen(true)}
+              onClick={() => { window.location.href = 'https://app.sherlock.school'; }}
               className="rounded-xl border border-white/15 px-7 py-3 text-sm font-semibold text-gray-300 hover:border-white/30 hover:text-white active:scale-95 transition-all duration-150"
             >
               {t.getStarted}
